@@ -1,42 +1,69 @@
-#court{
-    width: 1201px;
-    height: 443px;
-    position: absolute;
-    left: 50%;
-    transform: translate(-50%, 0);
+body{
 
-    canvas{
+    div{
         position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        opacity: 0.8;
-        z-index: 1000;
+        display: none
     }
 
-    #ball{
-        left: 50px;
-        top: 50px;
-        position: absolute;
-        width: 42px;
-        height: 42px;
+    
+    #keyInWindow{
+        display: block;
+        p{
+            display: none;
+        }
     }
 
-    #leftPlayer{
-        left: 100px;
-        top: 100px;
-        position: absolute;
-        width: 69px;
-        height: 175px;
-    }
+    // #keyOutWindow{
+    //     display: block;
+    // }
 
-    #rightPlayer{
+    // #gameFindWindow{
+    //     display: block;
+    // }
+
+
+
+    #court{
+        display: none;
+        width: 1201px;
+        height: 443px;
         position: absolute;
-        transform: scaleX(-1);
-        left: 400px;
-        top: 100px;
-        width: 69px;
-        height: 175px;
+        left: 50%;
+        transform: translate(-50%, 0);
+    
+        canvas{
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.8;
+            z-index: 1000;
+        }
+    
+        #ball{
+            left: 50px;
+            top: 50px;
+            position: absolute;
+            width: 42px;
+            height: 42px;
+        }
+    
+        #leftPlayer{
+            left: 100px;
+            top: 100px;
+            position: absolute;
+            width: 69px;
+            height: 175px;
+        }
+    
+        #rightPlayer{
+            position: absolute;
+            transform: scaleX(-1);
+            left: 400px;
+            top: 100px;
+            width: 69px;
+            height: 175px;
+        }
     }
 }

@@ -1,11 +1,22 @@
-#court {
+body div {
+  position: absolute;
+  display: none;
+}
+body #keyInWindow {
+  display: block;
+}
+body #keyInWindow p {
+  display: none;
+}
+body #court {
+  display: none;
   width: 1201px;
   height: 443px;
   position: absolute;
   left: 50%;
   transform: translate(-50%, 0);
 }
-#court canvas {
+body #court canvas {
   position: absolute;
   top: 0;
   left: 0;
@@ -14,21 +25,21 @@
   opacity: 0.8;
   z-index: 1000;
 }
-#court #ball {
+body #court #ball {
   left: 50px;
   top: 50px;
   position: absolute;
   width: 42px;
   height: 42px;
 }
-#court #leftPlayer {
+body #court #leftPlayer {
   left: 100px;
   top: 100px;
   position: absolute;
   width: 69px;
   height: 175px;
 }
-#court #rightPlayer {
+body #court #rightPlayer {
   position: absolute;
   transform: scaleX(-1);
   left: 400px;

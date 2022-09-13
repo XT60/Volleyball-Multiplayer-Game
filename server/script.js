@@ -20,13 +20,13 @@ let startDelay = 5000;
 const maxInterval = 200; 
 
 io.on("connection", (socket) => {
-    socket.join("commonRoom");
-    console.log(`${socket.id} connected and joined commonRoom, `+ `roomSize: ${io.sockets.adapter.rooms.get('commonRoom').size}`);
+    // socket.join("commonRoom");
+    // console.log(`${socket.id} connected and joined commonRoom, `+ `roomSize: ${io.sockets.adapter.rooms.get('commonRoom').size}`);
     socket.on("keydown", (eventCode) => handleKeydown(gameState, socket.id, eventCode));
     socket.on("keyup", (eventCode) => handleKeyUp(gameState, socket.id, eventCode));
-    if (addPlayer(socket.id)){
-        startGame()
-    }
+    // if (addPlayer(socket.id)){
+    //     startGame()
+    // }
 
 }); 
 
@@ -57,7 +57,7 @@ function startGame(){
         if (startDelay < 0 && !isGameFinished){
             updatePlayer(gameState, 'leftPlayer', interval);
             updatePlayer(gameState, 'rightPlayer', interval);
-            // isGameFinished = updateBall(gameState, interval);
+            isGameFinished = updateBall(gameState, interval);
     
             io.emit("newGameState", gameState);
         }

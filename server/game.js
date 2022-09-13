@@ -8,10 +8,9 @@ const ballRadius = 25;
 const groundLevel = 409;
 const netRect = [599, 191, 8, 220];
 const playerShootArea = {
-    leftPlayer: [42, 72, 27, 24],
-    rightPlayer: [3, 72, 27, 24]
+    leftPlayer: [42, 15, 65, 70],
+    rightPlayer: [-31, 15, 65, 70]
 };
-const shootVel = [10, 20];
 const players = {
     leftPlayer: null,
     rightPlayer: null
@@ -22,8 +21,9 @@ const playerDefaultPos = {
 };
 const playerVelInterval = [0.8, -2];
 const ballDefaultPos = [midCourt - ballRadius, 20];
-const ballDefaultVel = [0.6, 0];
-const ballGMultiplier = 0.05;
+const xBallVel = 0.4;
+const ballDefaultVel = [xBallVel, 0];
+const ballGMultiplier = 0.02;
 const playerTerritory = {
     leftPlayer: [0, midCourt - playerSize[0]],
     rightPlayer: [midCourt, 1201 - playerSize[0]]
@@ -54,7 +54,7 @@ function initGame(){
         }
     }
     
-    if (Math.random() >= 0.5){
+    if (Math.random() >= 0){
         gameState.ball.vel[0] *= -1;
     }
     return gameState;
@@ -93,6 +93,7 @@ function handleKeydown(gameState, socketID, eventCode){
                 if (player.action !== 'shooting' &&
                     player.action !== 'blocking'){
                     player.action = 'moving';
+                    console.log("moving")
                     player.vel[0] = -playerVelInterval[0];
                 }
                 break;
@@ -100,23 +101,27 @@ function handleKeydown(gameState, socketID, eventCode){
                 if (player.action !== 'shooting' &&
                     player.action !== 'blocking'){
                     player.action = 'moving';
+                    console.log("moving")
                     player.vel[0] = playerVelInterval[0]
+                }
+                break;
+            case 'ArrowUp':
+                if (player.action !== 'shooting' &&
+                    player.action !== 'blocking'){
+                    const playerRect = [...player.pos, ...playerSize];
+                    if (rectRectCollision(playerRect, blockArea[playerName])){
+                        player.action = 'blocking';
+                        console.log("blocking")
+                        player.vel[1] = playerVelInterval[1];
+                        player.vel[0] = 0;
+                    }
                 }
                 break;
             case 'Space':
                 if (player.action !== 'shooting' &&
                     player.action !== 'blocking'){
-                    const playerRect = [...player.pos, ...playerSize];
-                    console.log(blockArea[playerName])
-                    console.log(playerRect)
-                    if (rectRectCollision(playerRect, blockArea[playerName])){
-                        console.log('blocking')
-                        player.action = 'blocking';
-                        player.vel[1] = playerVelInterval[1];
-                    }
-                    else{
-                        player.action = 'shooting';
-                    }
+                    player.action = 'shooting';
+                    console.log("shooting")
                     player.vel[0] = 0;
                 }
                 break;      
@@ -186,23 +191,35 @@ function updatePlayer(gameState, playerName, timeInterval){
     player.vel[1] += gravity * timeInterval;
 
     // shooting a ball
-    if (player.action === 'shooting'){
-        const area = playerShootArea[playerName];
-        const shootArea = [player.pos[0] + area[0], player.pos[1] + area[1], area[2], area[3]];
-        if (rectCircleCollision(shootArea, gameState.ball.pos, ballRadius)){
-            if (playerName === 'leftPlayer'){
-                gameState[ball].vel = [...shootVel];
-            }
-            else{
-                gameState[ball].vel = [shootVel[0] * -1, shootVel[1]];
-            }
-        }
-        else{
-            player.action = 'moving';
-        }
+    // if (player.action === 'shooting'){
+    const area = playerShootArea[playerName];
+    const shootArea = [player.pos[0] + area[0], player.pos[1] + area[1], area[2], area[3]];
+    const ballPos = [gameState.ball.pos[0] + ballRadius, gameState.ball.pos[1] + ballRadius];
+    // console.log( `${shootArea}, ${gameState.ball.pos}, ${ballPos}`)
+    if (rectCircleCollision(shootArea, ballPos, ballRadius)){
+        shootBall(gameState, playerName);
+        console.log(gameState.ball.vel);
+    }
+    else{
+        player.action = 'moving';
     }
 }
 
+function shootBall(gameState, playerName){
+    const dest = [0, 0];
+    const ball = gameState.ball;
+    if(playerName === "leftPlayer"){
+        dest[0] = 900;
+        ball.vel[0] = xBallVel;
+    }
+    else{
+        dest[0] = 300;
+        ball.vel[0] = -xBallVel;
+    }
+    const xInt = Math.abs(dest[0] - ball.pos[0])
+    const time =  xInt / xBallVel;
+    ball.vel[1] = -(gravity * time * 0.5 - xInt / time); 
+}
 
 function updateBall(gameState, timeInterval){
     // position
@@ -220,15 +237,33 @@ function updateBall(gameState, timeInterval){
 }
 
 function rectCircleCollision(rect, cPos, cRadius){
-    return !(cPos[0] < rect[0] - cRadius || rect[0] + rect[2] + cRadius < cPos[0] || 
-        cPos[1] < rect[1] - cRadius || rect[1] + rect[3] + cRadius < cPos[1]) 
+    //circle definitelly don't overlap rect
+    const res = cPos[0] < rect[0] - cRadius || rect[0] + rect[2] + cRadius < cPos[0] || 
+        cPos[1] < rect[1] - cRadius || rect[1] + rect[3] + cRadius < cPos[1];
+    if (res) return false;
+    
+    let xDiff = rect[0] - cPos[0];
+    let yDiff = rect[1] - cPos[1];
+
+    // rest except the rect edges
+    if ((-rect[2] - cRadius < xDiff && xDiff < cRadius &&  -rect[3] < yDiff && yDiff < 0) || (
+        -rect[3] -cRadius < yDiff && yDiff < cRadius && -rect[2] < xDiff && xDiff < 0)){
+            return true;
+        }
+        
+    // rect edges
+    if (xDiff )
+    if (yDiff <= -rect[3]){
+        yDiff += rect[3];
+    }
+    if (xDiff <= -rect[2]){
+        xDiff += rect[2];
+    }
+    console.log(xDiff, yDiff);
+    return xDiff * xDiff + yDiff * yDiff < cRadius * cRadius;
 }
 
 function rectRectCollision(recta, rectb){
-    console.log(recta[0] + recta[2] < rectb[0])
-    console.log(recta[1] + recta[3] < rectb[1])
-    console.log(recta[0] > rectb[0] + rectb[2]) 
-    console.log(recta[0] > rectb[1] + rectb[3])
     return !(recta[0] + recta[2] < rectb[0] ||
             recta[1] + recta[3] < rectb[1] ||
             recta[0] > rectb[0] + rectb[2] || 
