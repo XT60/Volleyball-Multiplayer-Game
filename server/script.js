@@ -1,9 +1,9 @@
 const { createServer } = require("http");
 const http = createServer(); 
 
-const { handleKeyUp, handleKeydown, updatePlayer, updateBall , initGame, addPlayer} = require("./game");
+const { handleKeyUp, handleKeydown, updatePlayer, updateBall , initGame, addPlayer, updateScale, getPlayers} = require("./game");
 
-const { playerShootArea, netRect, blockArea } = require("../server/game.js")
+const { playerShootArea, netRect, blockArea, scaleTicks } = require("../server/game.js")
 
 const io = require("socket.io")(http, {
     cors: {
@@ -14,38 +14,51 @@ const io = require("socket.io")(http, {
 
 const loopInterval = 1000 / 45;
 let lastFrame = 0;
-let isGameFinished = false;
-const gameState = initGame(); 
-let startDelay = 5000;
-const maxInterval = 200; 
+let winner = false;
+let gameState; 
+let startDelay = 1000;
+const maxInterval = 100; 
+const score = {
+    leftPlayer: 0,
+    rightPlayer: 0
+}
+const restartDelay = 1000;
 
 io.on("connection", (socket) => {
-    // socket.join("commonRoom");
-    // console.log(`${socket.id} connected and joined commonRoom, `+ `roomSize: ${io.sockets.adapter.rooms.get('commonRoom').size}`);
+    socket.join("commonRoom");
+    console.log(`${socket.id} connected and joined commonRoom, `+ `roomSize: ${io.sockets.adapter.rooms.get('commonRoom').size}`);
     socket.on("keydown", (eventCode) => handleKeydown(gameState, socket.id, eventCode));
     socket.on("keyup", (eventCode) => handleKeyUp(gameState, socket.id, eventCode));
-    // if (addPlayer(socket.id)){
-    //     startGame()
-    // }
-
+    if (addPlayer(socket.id)){
+        startGame();
+    }
 }); 
 
-
-
 function startGame(){
-    initGame();
-    // debug only
+    gameState = initGame();
     io.emit("debugInfo", {
         playerShootArea, 
         netRect, 
-        blockArea
+        blockArea,
     });
-    //
+
+    io.emit("initData", {
+        scaleTicks,
+        players: getPlayers(),
+        gameState,
+        score
+    })
+
     console.log("game started");
-    myInterval = setInterval(() => {
-        if (isGameFinished){
-            console.log('game has ended');
-            clearInterval(myInterval);
+    // after game has endeed:       clearInterval(myInterval)
+    const myInterval = setInterval(() => {
+        if (winner){
+            score[winner] += 1;
+            console.log(`${winner} earned a point`);
+            gameState = initGame();
+            io.emit('scoreUpdate', score);
+            startDelay = restartDelay;
+            winner = null; 
         }
 
         date = new Date();
@@ -54,10 +67,11 @@ function startGame(){
         // console.log(1000 / interval);
         lastFrame = currTime;
 
-        if (startDelay < 0 && !isGameFinished){
+        if (startDelay < 0 && !winner){
             updatePlayer(gameState, 'leftPlayer', interval);
             updatePlayer(gameState, 'rightPlayer', interval);
-            isGameFinished = updateBall(gameState, interval);
+            winner = updateBall(gameState, interval);
+            updateScale(gameState, currTime)
     
             io.emit("newGameState", gameState);
         }

@@ -1,22 +1,25 @@
-body div {
+body > div {
   position: absolute;
   display: none;
 }
-body #keyInWindow {
+
+body {
+  zoom: 0.8;
+}
+body #gameArea #court {
   display: block;
-}
-body #keyInWindow p {
-  display: none;
-}
-body #court {
-  display: none;
   width: 1201px;
   height: 443px;
   position: absolute;
   left: 50%;
   transform: translate(-50%, 0);
 }
-body #court canvas {
+body #gameArea #court #courtImg {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+body #gameArea #court canvas {
   position: absolute;
   top: 0;
   left: 0;
@@ -25,25 +28,59 @@ body #court canvas {
   opacity: 0.8;
   z-index: 1000;
 }
-body #court #ball {
+body #gameArea #court #ball {
   left: 50px;
   top: 50px;
   position: absolute;
   width: 42px;
   height: 42px;
 }
-body #court #leftPlayer {
+body #gameArea #court #leftPlayer {
   left: 100px;
   top: 100px;
   position: absolute;
   width: 69px;
   height: 175px;
 }
-body #court #rightPlayer {
+body #gameArea #court #rightPlayer {
   position: absolute;
   transform: scaleX(-1);
   left: 400px;
   top: 100px;
   width: 69px;
   height: 175px;
+}
+body #gameArea #powerMeter {
+  position: absolute;
+  width: 557px;
+  height: 117px;
+  bottom: 0;
+}
+body #gameArea #powerMeter .indicator {
+  position: absolute;
+  height: 100%;
+  width: 2%;
+  left: 0;
+  top: 0;
+  transition: left 0.19s linear;
+}
+body #gameArea #powerMeter #gameIndicator {
+  background-color: gold;
+}
+body #gameArea #powerMeter #leftIndicator {
+  background-color: green;
+  opacity: 0.7;
+  display: none;
+  z-index: 100;
+}
+body #gameArea #powerMeter #rightIndicator {
+  background-color: blue;
+  opacity: 0.7;
+  display: none;
+  z-index: 100;
+}
+body #gameArea #scoreBoard {
+  position: absolute;
+  left: 50%;
+  top: 0;
 }

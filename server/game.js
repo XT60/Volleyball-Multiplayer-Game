@@ -1,3 +1,4 @@
+const { ja } = require("faker/lib/locales");
 
 //actions: standing moving shooting blocking
 const gravity = 0.02;
@@ -19,11 +20,12 @@ const playerDefaultPos = {
     leftPlayer: [300 - playerSize[0], groundLevel - playerSize[1]],
     rightPlayer: [900, groundLevel - playerSize[1]]
 };
-const playerVelInterval = [0.8, -2];
 const ballDefaultPos = [midCourt - ballRadius, 20];
 const xBallVel = 0.4;
 const ballDefaultVel = [xBallVel, 0];
 const ballGMultiplier = 0.02;
+let lastContact = null;
+const playerVelInterval = [0.8, -2];
 const playerTerritory = {
     leftPlayer: [0, midCourt - playerSize[0]],
     rightPlayer: [midCourt, 1201 - playerSize[0]]
@@ -35,30 +37,74 @@ const blockArea = {
     rightPlayer: [midCourt, groundLevel - blockAreaSize[1],
     blockAreaSize[0], blockAreaSize[1]]
 }
+const scaleTicks = 11;
+const scaleTickTime = 200;
+
+const intDev = (x, y) => Math.floor(x / y);
+
+function updateScale(gameState, currTime){
+    const scale = gameState.scale
+    if (scale.nextTick > currTime)    return false;
+    if (scale.nextTick < currTime && scale.nextTick + scaleTickTime > currTime){
+        if (scale.currTick + scale.trend >= scaleTicks || scale.currTick + scale.trend < 0){
+            scale.trend *= -1;
+        } 
+        // console.log({
+        //     currTick: scale.nextTick,
+        //     currTime,
+        //     nextTick: scale.nextTick + scaleTickTime,
+        // })
+        scale.nextTick = scale.nextTick + scaleTickTime;
+        scale.currTick += scale.trend;
+        return true;
+    }
+    const missedTicks = intDev((currTime - scale.nextTick), scaleTickTime);
+    const missedTrends = intDev(missedTicks + scale.currTick, scaleTicks);
+    if (missedTrends % 2 === 1){
+        scale.trend *= -1;
+        scale.currTick = scaleTicks - 1 - (scale.currTick + missedTicks) % scaleTicks; 
+    }
+    else{
+        scale.currTick = (scale.currTick + missedTicks) % scaleTicks; 
+    }
+    
+    scale.nextTick = scale.nextTick + scaleTickTime * (missedTicks + 1);
+    return true
+}
 
 function initGame(){
     const gameState = {
         leftPlayer: {
             pos: [...playerDefaultPos['leftPlayer']],
             action: 'standing',
-            vel: [0, 0]
+            vel: [0, 0],
+            shootValue: null
         },
         rightPlayer: {
             pos: [...playerDefaultPos['rightPlayer']],
             action: 'standing',
-            vel: [0, 0]
+            vel: [0, 0],
+            shootValue: null
         },
         ball: {
             pos: [...ballDefaultPos],
             vel: [...ballDefaultVel]
+        },
+        scale: {
+            currTick: 0,
+            nextTick: scaleTickTime,
+            trend: 1
         }
     }
-    
+    lastContact = null;
+
     if (Math.random() >= 0){
         gameState.ball.vel[0] *= -1;
     }
     return gameState;
 }
+
+
 
 function addPlayer(socketID) {
     if (!players['leftPlayer']){
@@ -69,6 +115,10 @@ function addPlayer(socketID) {
         players['rightPlayer'] = socketID;
         return true;
     }
+}
+
+function getPlayers(){
+    return players;
 }
 
 
@@ -111,18 +161,16 @@ function handleKeydown(gameState, socketID, eventCode){
                     const playerRect = [...player.pos, ...playerSize];
                     if (rectRectCollision(playerRect, blockArea[playerName])){
                         player.action = 'blocking';
-                        console.log("blocking")
+                        console.log("blocking");
                         player.vel[1] = playerVelInterval[1];
                         player.vel[0] = 0;
                     }
                 }
                 break;
             case 'Space':
-                if (player.action !== 'shooting' &&
-                    player.action !== 'blocking'){
-                    player.action = 'shooting';
-                    console.log("shooting")
-                    player.vel[0] = 0;
+                if (!player.shootValue){
+                    player.shootValue = gameState.scale.currTick;
+                    console.log(`${playerName} set shootValue at: ${player.shootValue}`);
                 }
                 break;      
         }    
@@ -198,7 +246,7 @@ function updatePlayer(gameState, playerName, timeInterval){
     // console.log( `${shootArea}, ${gameState.ball.pos}, ${ballPos}`)
     if (rectCircleCollision(shootArea, ballPos, ballRadius)){
         shootBall(gameState, playerName);
-        console.log(gameState.ball.vel);
+        // console.log(gameState.ball.vel);
     }
     else{
         player.action = 'moving';
@@ -206,6 +254,7 @@ function updatePlayer(gameState, playerName, timeInterval){
 }
 
 function shootBall(gameState, playerName){
+    const shootValue = gameState[playerName].shootValue;
     const dest = [0, 0];
     const ball = gameState.ball;
     if(playerName === "leftPlayer"){
@@ -219,6 +268,9 @@ function shootBall(gameState, playerName){
     const xInt = Math.abs(dest[0] - ball.pos[0])
     const time =  xInt / xBallVel;
     ball.vel[1] = -(gravity * time * 0.5 - xInt / time); 
+    // console.log(`${playerName} shot ball with shootValue: ${shootValue}`);
+    gameState[playerName].shootValue = null;
+    lastContact = playerName;
 }
 
 function updateBall(gameState, timeInterval){
@@ -226,14 +278,39 @@ function updateBall(gameState, timeInterval){
     const ball = gameState['ball'];
     ball.pos[0] += ball.vel[0] * timeInterval;
     ball.pos[1] += ball.vel[1] * timeInterval * ballGMultiplier;
-    if (ball.pos[0] < 0 || ball.pos[0] > courtSize[0] ||
-        ball.pos[1] > groundLevel || rectCircleCollision(netRect, ball.pos, ballRadius)){
-            return true;
-        }
-
     // velocity
     ball.vel[1] += gravity * timeInterval;
-    return false;
+    if (ball.pos[0] < 0 || ball.pos[0] > courtSize[0] || ball.pos[1] < 0){
+        return otherPlayer(lastContact);
+    }
+
+    if (ball.pos[1] > groundLevel){
+        if (lastContact === 'rightPlayer'){
+            if (ball.pos[0] < netRect[0] - ballRadius){
+                return 'rightPlayer';
+            }
+            return 'leftPlayer';
+        }
+        if (ball.pos[0] < netRect[0] - ballRadius){
+            return 'rightPlayer';
+        }
+        return 'leftPlayer';
+    }
+        
+    if (rectCircleCollision(netRect, ball.pos, ballRadius)){
+        return otherPlayer(lastContact);
+    }
+
+    return null;
+
+    
+}
+
+function otherPlayer(playerName){
+    if (playerName === "leftPlayer"){
+        return "rightPlayer";
+    }
+    return "leftPlayer";
 }
 
 function rectCircleCollision(rect, cPos, cRadius){
@@ -259,7 +336,7 @@ function rectCircleCollision(rect, cPos, cRadius){
     if (xDiff <= -rect[2]){
         xDiff += rect[2];
     }
-    console.log(xDiff, yDiff);
+    // console.log(xDiff, yDiff);
     return xDiff * xDiff + yDiff * yDiff < cRadius * cRadius;
 }
 
@@ -278,8 +355,11 @@ module.exports = {
     initGame,
     addPlayer,
     handleKeyUp,
+    updateScale,
+    getPlayers,
 
     playerShootArea,
     netRect,
     blockArea,
+    scaleTicks
 }

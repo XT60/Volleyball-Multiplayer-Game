@@ -46,23 +46,36 @@
     </div> 
 
 
-    <div id="court">
-        <button id="startGame">Start Game</button>
-        <button id="return">Return to main Menu</button>
-        <canvas width="1201" height="443"></canvas>
-        <img id="courtImg" src="../images/court.png" alt="valleyball court">
-
-        <img id="ball" src="../images/ball.png" alt="ball image">
-
-        <div id="leftPlayer">
-            <img src="../images/stickman.png" alt="stickman">
+    <span id="gameArea">
+        <div id="court">
+            <button id="startGame">Start Game</button>
+            <button id="return">Return to main Menu</button>
+            <canvas width="1201" height="443"></canvas>
+            <img id="courtImg" src="../images/court.png" alt="valleyball court">
+    
+            <img id="ball" src="../images/ball.png" alt="ball image">
+    
+            <div id="leftPlayer">
+                <img src="../images/stickman.png" alt="stickman">
+            </div>
+    
+            <div id="rightPlayer">
+                <img src="../images/stickman.png" alt="stickman">
+            </div>
         </div>
 
-        <div id="rightPlayer">
-            <img src="../images/stickman.png" alt="stickman">
+        <div id="powerMeter">
+            <img id="scale" src="../images/scale.png" alt="scale">
+            <div id="gameIndicator" class="indicator"></div>
+            <div id="leftIndicator" class="indicator"></div>
+            <div id="rightIndicator" class="indicator"></div>
         </div>
-        
-    </div>
+
+        <div id="scoreBoard">
+            <p>leftPlayer: <span id="leftPlayerScore">0</span></p>
+            <p>rightPlayer: <span id="rightPlayerScore">0</span></p>
+        </div>
+    </span>
     <script type="module" src="script.js"></script>
 </body>
 </html>
