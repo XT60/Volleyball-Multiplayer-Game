@@ -8,14 +8,20 @@ const playerSize = [69, 175];
 const ballRadius = 25; 
 const groundLevel = 409;
 const netRect = [599, 191, 8, 220];
+
 const playerShootArea = {
     leftPlayer: [42, 15, 65, 70],
     rightPlayer: [-31, 15, 65, 70]
 };
+const blockRect = {
+    leftPlayer: [39, 0, 30, 88],
+    rightPlayer: [0, 0, 30, 88]
+};
+
 const players = {
     leftPlayer: null,
     rightPlayer: null
-}
+};
 const playerDefaultPos = {
     leftPlayer: [300 - playerSize[0], groundLevel - playerSize[1]],
     rightPlayer: [900, groundLevel - playerSize[1]]
@@ -30,14 +36,18 @@ const playerTerritory = {
     leftPlayer: [0, midCourt - playerSize[0]],
     rightPlayer: [midCourt, 1201 - playerSize[0]]
 }
-const blockAreaSize = [50, 20]
-const blockArea = {
-    leftPlayer: [midCourt - blockAreaSize[0], 
-    groundLevel - blockAreaSize[1], blockAreaSize[0], blockAreaSize[1]],
-    rightPlayer: [midCourt, groundLevel - blockAreaSize[1],
-    blockAreaSize[0], blockAreaSize[1]]
+const blockZoneSize = [50, 20]
+const blockZone = {
+    leftPlayer: [midCourt - blockZoneSize[0], 
+    groundLevel - blockZoneSize[1], blockZoneSize[0], blockZoneSize[1]],
+    rightPlayer: [midCourt, groundLevel - blockZoneSize[1],
+    blockZoneSize[0], blockZoneSize[1]]
 }
+
+ 
 const scaleTicks = 11;
+const midTick = (scaleTicks - 1) / 2;
+const jinx = [0.2 / midTick, 5 / midTick];
 const scaleTickTime = 200;
 
 const intDev = (x, y) => Math.floor(x / y);
@@ -159,7 +169,7 @@ function handleKeydown(gameState, socketID, eventCode){
                 if (player.action !== 'shooting' &&
                     player.action !== 'blocking'){
                     const playerRect = [...player.pos, ...playerSize];
-                    if (rectRectCollision(playerRect, blockArea[playerName])){
+                    if (rectRectCollision(playerRect, blockZone[playerName])){
                         player.action = 'blocking';
                         console.log("blocking");
                         player.vel[1] = playerVelInterval[1];
@@ -246,15 +256,18 @@ function updatePlayer(gameState, playerName, timeInterval){
     // console.log( `${shootArea}, ${gameState.ball.pos}, ${ballPos}`)
     if (rectCircleCollision(shootArea, ballPos, ballRadius)){
         shootBall(gameState, playerName);
-        // console.log(gameState.ball.vel);
     }
     else{
         player.action = 'moving';
     }
 }
 
+
 function shootBall(gameState, playerName){
-    const shootValue = gameState[playerName].shootValue;
+    let shootValue = gameState[playerName].shootValue;
+    if (shootValue === null){
+        shootValue = 0;
+    }
     const dest = [0, 0];
     const ball = gameState.ball;
     if(playerName === "leftPlayer"){
@@ -268,10 +281,15 @@ function shootBall(gameState, playerName){
     const xInt = Math.abs(dest[0] - ball.pos[0])
     const time =  xInt / xBallVel;
     ball.vel[1] = -(gravity * time * 0.5 - xInt / time); 
+    console.log(ball.vel);
+    // ball.vel[0] += getRandom(-jinx[0], jinx[0]) * (shootValue - midTick);
+    // ball.vel[1] += getRandom(-jinx[1], jinx[1]) * (shootValue - midTick);
+    console.log(ball.vel);
     // console.log(`${playerName} shot ball with shootValue: ${shootValue}`);
     gameState[playerName].shootValue = null;
     lastContact = playerName;
 }
+
 
 function updateBall(gameState, timeInterval){
     // position
@@ -302,8 +320,6 @@ function updateBall(gameState, timeInterval){
     }
 
     return null;
-
-    
 }
 
 function otherPlayer(playerName){
@@ -347,6 +363,16 @@ function rectRectCollision(recta, rectb){
             recta[1] > rectb[1] + rectb[3]) 
 }
 
+function getRandom(a, b, accuracy = 100){
+    if (b < a){
+        console.log("invalid getRandom arguments: " + `a=${a} and b=${b}`);
+        return 0;
+    }
+    if (b == a)    return a;
+    interval = (b - a) * accuracy;
+    return (Math.random() % interval) / accuracy + a;
+}
+
 
 module.exports = {
     handleKeydown,
@@ -360,6 +386,7 @@ module.exports = {
 
     playerShootArea,
     netRect,
-    blockArea,
-    scaleTicks
+    blockZone,
+    scaleTicks,
+    blockRect
 }

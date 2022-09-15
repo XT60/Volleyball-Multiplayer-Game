@@ -6,8 +6,22 @@ body > div {
 body {
   zoom: 0.8;
 }
+body #keyInWindow form input[type=submit] {
+  background-color: red;
+}
+body #keyInWindow p {
+  display: none;
+}
+body #gameArea {
+  display: none;
+}
+body #gameArea #readyMsg {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
 body #gameArea #court {
-  display: block;
   width: 1201px;
   height: 443px;
   position: absolute;

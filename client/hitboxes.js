@@ -4,21 +4,24 @@ const context = canvasElement.getContext('2d');
 // playerTerritory      green       #52BE80
 // playerShootArea      red         #C0392B
 // netRect              yellow      #F1C40F 
-// blockArea            purple      #7D3C98
+// blockZone            purple      #7D3C98
+// blockRect            orange
 
 const red = "#C0392B";
 const yellow = "#F1C40F";
 const purple = "#7D3C98";
+// const orange = "#ff8c00";
 
 let playerShootArea;
 let netRect;
-let blockArea;
-
+let blockZone;
+let blockRect;
 
 export function initHitboxes(debugInfo){
-    playerShootArea = debugInfo.playerShootArea
-    netRect = debugInfo.netRect
-    blockArea = debugInfo.blockArea
+    playerShootArea = debugInfo.playerShootArea;
+    netRect = debugInfo.netRect;
+    blockZone = debugInfo.blockZone;
+    blockRect = debugInfo.blockRect;
 } 
 
 
@@ -30,8 +33,11 @@ export function drawHitboxes(gameState){
 
     drawRect(netRect, yellow);
 
-    drawRect(blockArea.leftPlayer, purple);
-    drawRect(blockArea.rightPlayer, purple);
+    drawRect(blockZone.leftPlayer, purple);
+    drawRect(blockZone.rightPlayer, purple);
+
+    // drawRect(getRect(gameState.leftPlayer.pos, blockRect.leftPlayer), orange);
+    // drawRect(getRect(gameState.rightPlayer.pos, blockRect.rightPlayer), orange);
 }
 
 

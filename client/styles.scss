@@ -6,18 +6,16 @@ body > div{
 
 body{
     zoom: 0.8;
-    // :first-child div{
-    //     position: absolute;
-    //     display: none
-    // }
 
-    
-    // #keyInWindow{
-    //     display: block;
-    //     p{
-    //         display: none;
-    //     }
-    // }
+    #keyInWindow{
+        // display: block;
+        form input[type="submit"]{
+            background-color: red;
+        }
+        p{
+            display: none;
+        }
+    }
 
     // #keyOutWindow{
     //     display: block;
@@ -29,8 +27,16 @@ body{
 
 
     #gameArea{
+        display: none;
+        
+        #readyMsg{
+            display: none;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
         #court{
-            display: block;
             width: 1201px;
             height: 443px;
             position: absolute;

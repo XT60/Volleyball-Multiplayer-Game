@@ -24,8 +24,9 @@
             <label for="playerCheckbox">player</label>
             <input id="spectatorCheckbox" type="checkbox"> 
             <label for="spectatorCheckbox">spectator</label>
+            
+            <p class="errorMsg"></p>
              
-
             <input type="submit" value="Done">
         </form>
         <p>Error: that game does not exist! </p>
@@ -34,22 +35,22 @@
     
     <div id="keyOutWindow">
         <p> this is your key ... longer instruction </p>
-        <h5> ...gameKey...</h5>
+        <h5 id="keyOut"> ...gameKey...</h5>
         <button>Return</button>
     </div> 
     
     <div id="gameFindWindow">
         <p> wait screen</p>
-        <!-- <p> this is your key ... longer instruction </p>
-        <h5> ...gameKey...</h5>
-        <button>Return</button> -->
+        <p> this is your key ... longer instruction </p>
+        <button>Return</button>
     </div> 
 
 
     <span id="gameArea">
+        <button id="startGameBtn">Start Game</button>
+        <button id="returnBtn">Return to main Menu</button>
+        <p id="readyMsg"> your oponnent is ready </p>
         <div id="court">
-            <button id="startGame">Start Game</button>
-            <button id="return">Return to main Menu</button>
             <canvas width="1201" height="443"></canvas>
             <img id="courtImg" src="../images/court.png" alt="valleyball court">
     

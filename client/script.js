@@ -6,78 +6,160 @@ const ballElement = document.getElementById("ball");
 const leftPlayerElement = document.getElementById('leftPlayer');
 const rightPlayerElement = document.getElementById('rightPlayer');
 
+const leftPlayerScoreElement = document.getElementById('leftPlayerScore');
+const rightPlayerScoreElement = document.getElementById('rightPlayerScore');
+
 const gameIndicatorElement = document.getElementById("gameIndicator");
 const leftIndicatorElement = document.getElementById("leftIndicator");
 const rightIndicatorElement = document.getElementById("rightIndicator");
 
 const optionsWindowElement = document.getElementById('optionsWindow');
-const keyInWindow = document.getElementById('keyInWindow');
-const keyOutWindow = document.getElementById('keyOutWindow');
+const keyInWindowElement = document.getElementById('keyInWindow');
+const keyOutWindowElement = document.getElementById('keyOutWindow');
 const gameFindWindowElement = document.getElementById('gameFindWindow');
 const gameElement = document.getElementById('gameArea');
 
-const leftPlayerScoreElement = document.getElementById('leftPlayerScore');
-const rightPlayerScoreElement = document.getElementById('rightPlayerScore');
+const readyMsgElement = document.getElementById('readyMsg');
 
-let prevGameState, myPlayer, scaleTicks, scaleMulti, a, b;
+let prevGameState, myPlayer, scaleTicks, scaleMulti, a, b, myRoomId;
 const indicatorWidth = 2;
 gameIndicatorElement.style.setProperty('width', cssPercent(indicatorWidth));
-// const keys = {
-//     'optionsWindow': {
-//         'newGame': document.getElementById('newGame'),
-//         'joinGame': document.getElementById('joinGame'),
-//         'findGame': document.getElementById('findGame'),
-//     },
-//     'keyInWindow': {
-//         'return': document.querySelector('#keyInWindow button')
-//     },
-//     'keyOutWindow': {
-//         'return': document.querySelector('#keyOutWindow button')
-//     },
-//     'gameFindWindow': {
-//         'return': document.querySelector('#gameFindWindow button')
-//     },
-//     'court': {
-//         'startGame': document.querySelector('#court #startGame'),
-//         'return': document.querySelector('#court #return')
-//     }
-// };
+const formInputElements = document.querySelectorAll('#keyInWindowElement input'); 
+const spectatorCheckboxElement = document.getElementById('spectatorCheckbox');
+const playerCheckboxElement = document.getElementById("playerCheckbox");
+const keyOutElement = document.getElementById('keyOut');
+const keyInElement = keyInWindowElement.querySelector('form input[type="text"]');
+const formErrorMsgElement = keyInWindowElement.querySelector(".errorMsg");
+playerCheckboxElement.addEventListener('click', () => {
+    spectatorCheckboxElement.checked = false;
+});
+spectatorCheckboxElement.addEventListener('click', () => {
+    playerCheckboxElement.checked = false;
+});
 
-// // optionsWindow keys
-// document.getElementById('newGame').addEventListener('click', () => {
-//     optionsWindowElement.style.setProperty('display', 'none');
-//     keyWindowElement.style.setProperty('display', 'block');
-// })
-
-// // document.getElementById('joinGame').addEventListener('click', () => {
-// //     optionsWindowElement.style.setProperty('display', 'none');
-// //     keyInWindow.style.setProperty('display', 'block');
-// // })
-
-// document.getElementById('findGame').addEventListener('click', () => {
-//     optionsWindowElement.style.setProperty('display', 'none');
-//     gameFindWindowElement.style.setProperty('display', 'block');
-// })
+//events toDo
 
 
+socket.on("connect", () => {
+    console.log('connected');
+    optionsWindowElement.style.setProperty('display', 'block');
+});
+
+
+// optionsWindow
+document.getElementById('newGame').addEventListener('click', () => {
+    optionsWindowElement.style.setProperty('display', 'none');
+    keyOutWindowElement.style.setProperty('display', 'block');
+    socket.emit('createRoom');
+    keyOutElement.innerHTML = socket.id;
+});
+
+document.getElementById('joinGame').addEventListener('click', () => {
+    optionsWindowElement.style.setProperty('display', 'none');
+    keyInWindowElement.style.setProperty('display', 'block');
+    for (let element of formInputElements){
+        element.innerHTML = "";
+    };
+});
+
+document.getElementById('findGame').addEventListener('click', () => {
+    optionsWindowElement.style.setProperty('display', 'none');
+    gameFindWindowElement.style.setProperty('display', 'block');
+});
+
+
+// keyInWindow
+keyInWindowElement.querySelector('button').addEventListener('click', () => {
+    keyInWindowElement.style.setProperty('display', 'none');
+    optionsWindowElement.style.setProperty('display', 'block');
+});
+
+keyInWindowElement.querySelector('form input[type="submit"]').addEventListener('click', (e) => {
+    e.preventDefault();
+    let role;
+    const roomId = keyInElement.innerHTML;
+    if (playerCheckboxElement.getAttribute('checked')){
+        role = 'player';
+    }
+    else if (spectatorCheckboxElement.getAttribute('checked')){
+        role = 'spectator';
+    }
+    else{
+        formErrorMsgElement.innerHTML = 'any of checkboxes is not checked';
+        return;
+    }
+    
+    socket.emit("joinRoomAttempt", roomId, socket, role, (success, errorMsg) => {
+        if (!success){
+            console.log(errorMsg);
+        }
+        else{
+            console.log(`${socket.id} successfully joined room: ${roomId}`)
+            keyInWindowElement.style.setProperty('display', 'none');
+            optionsWindowElement.style.setProperty('display', 'block');
+        }
+    });
+
+});
+
+
+// keyOutWindow
+keyOutWindowElement.querySelector('button').addEventListener('click', () => {
+    keyOutWindowElement.style.setProperty('display', 'none');
+    optionsWindowElement.style.setProperty('display', 'block');
+    socket.emit('leaveRoom');
+});
+
+// gameFindWindow
+gameFindWindowElement.querySelector('button').addEventListener('click', () => {
+    gameFindWindowElement.style.setProperty('display', 'none');
+    optionsWindowElement.style.setProperty('display', 'block');
+});
+
+//court
+document.querySelector('#startGameBtn').addEventListener('click', () => {
+    socket.emit('declareReady');
+});
+// SAME THING BUT WITH UNREADY
+// document.querySelector('#startGameBtn').addEventListener('click', () => {
+//     socket.to(myRoomId).emit('declareUnready');
+// });
+
+
+document.querySelector('#returnBtn').addEventListener('click', () => {
+    // socket.emit('leaveGame');
+    gameElement.style.setProperty('display', 'none');
+    optionsWindowElement.style.setProperty('display', 'block');
+});
+
+
+socket.on("opponentReady", () => {
+    readyMsgElement.style.setProperty('display', 'block');
+});
+
+socket.on("opponentUnready", () => {
+    readyMsgElement.style.setProperty('display', 'none');
+})
 
 socket.on("debugInfo", (debugInfo) => initHitboxes(debugInfo));
 
 
 socket.on("initData", (data) => {
-    //scale
+    const room = data.room;
     scaleTicks = data.scaleTicks;
+    myRoomId = data.roomId;
+    //scale
     a = (scaleTicks - 1) / 2;
     b = Math.pow(a, 3) 
     scaleMulti = (100 - indicatorWidth) / (2 * b);
     console.log(scaleMulti)
     
     //players
-    if (socket.id == data.players.leftPlayer){
+    if (socket.id == room.leftPlayer){
         myPlayer = 'leftPlayer';
         // setup viewport for leftPlayer
     }
-    else if (socket.id == data.players.rightPlayer){
+    else if (socket.id == room.rightPlayer){
         myPlayer = 'rightPlayer';
         // setup viewport for rightPlayer
     }
@@ -85,17 +167,14 @@ socket.on("initData", (data) => {
         myPlayer = null;        // you are in spectator mode
         // setup viewport for spectator
     }
-    prevGameState = data.gameState;
-    updateScore(data.score);
+    prevGameState = room.gameState;
+    updateScore(room.score);
 });
 
 socket.on("scoreUpdate", (newScore) => updateScore(newScore));
 
 
-socket.on("connect", () => {
-    console.log('connected');
-    // optionsWindowElement.style.setProperty('display', 'block');
-});
+
 
 
 socket.on("newGameState", (gameState) => {

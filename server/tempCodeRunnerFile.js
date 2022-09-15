@@ -1,1 +1,1 @@
-initGame
+block
