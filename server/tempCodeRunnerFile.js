@@ -1,1 +1,1 @@
-block
+opponentFound

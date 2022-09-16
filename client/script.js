@@ -37,51 +37,41 @@ spectatorCheckboxElement.addEventListener('click', () => {
     playerCheckboxElement.checked = false;
 });
 
-//events toDo
-
-
-socket.on("connect", () => {
-    console.log('connected');
-    optionsWindowElement.style.setProperty('display', 'block');
-});
+const summaryWindowElement = document.getElementById("gameSummaryWindow");
+const gameEndCauseElement = summaryWindowElement.querySelector("p");
+const summaryHeaderElement = summaryWindowElement.querySelector("h2");
+const rematchInfoElement = document.getElementById("rematchInfo");
 
 
 // optionsWindow
-document.getElementById('newGame').addEventListener('click', () => {
-    optionsWindowElement.style.setProperty('display', 'none');
-    keyOutWindowElement.style.setProperty('display', 'block');
-    socket.emit('createRoom');
-    keyOutElement.innerHTML = socket.id;
-});
+document.getElementById('newGame').addEventListener('click', createRoom);
 
 document.getElementById('joinGame').addEventListener('click', () => {
-    optionsWindowElement.style.setProperty('display', 'none');
-    keyInWindowElement.style.setProperty('display', 'block');
+    changeWindows(optionsWindowElement, keyInWindowElement);
     for (let element of formInputElements){
         element.innerHTML = "";
     };
 });
 
 document.getElementById('findGame').addEventListener('click', () => {
-    optionsWindowElement.style.setProperty('display', 'none');
-    gameFindWindowElement.style.setProperty('display', 'block');
+    changeWindows(optionsWindowElement, gameFindWindowElement);
+    findOpponent();
 });
 
 
 // keyInWindow
 keyInWindowElement.querySelector('button').addEventListener('click', () => {
-    keyInWindowElement.style.setProperty('display', 'none');
-    optionsWindowElement.style.setProperty('display', 'block');
+    changeWindows(keyInWindowElement, optionsWindowElement);
 });
 
 keyInWindowElement.querySelector('form input[type="submit"]').addEventListener('click', (e) => {
     e.preventDefault();
     let role;
-    const roomId = keyInElement.innerHTML;
-    if (playerCheckboxElement.getAttribute('checked')){
+    const roomId = keyInElement.value;
+    if (playerCheckboxElement.checked){
         role = 'player';
     }
-    else if (spectatorCheckboxElement.getAttribute('checked')){
+    else if (spectatorCheckboxElement.checked){
         role = 'spectator';
     }
     else{
@@ -89,36 +79,47 @@ keyInWindowElement.querySelector('form input[type="submit"]').addEventListener('
         return;
     }
     
-    socket.emit("joinRoomAttempt", roomId, socket, role, (success, errorMsg) => {
+    socket.emit("joinRoomAttempt", roomId, role, (success, errorMsg) => {
         if (!success){
             console.log(errorMsg);
         }
         else{
+            myRoomId = roomId;
+            if (role == 'player'){
+                myPlayer = "rightPlayer";
+            }
             console.log(`${socket.id} successfully joined room: ${roomId}`)
-            keyInWindowElement.style.setProperty('display', 'none');
-            optionsWindowElement.style.setProperty('display', 'block');
+            changeWindows(keyInWindowElement, gameElement);
         }
     });
-
 });
-
 
 // keyOutWindow
 keyOutWindowElement.querySelector('button').addEventListener('click', () => {
-    keyOutWindowElement.style.setProperty('display', 'none');
-    optionsWindowElement.style.setProperty('display', 'block');
-    socket.emit('leaveRoom');
+    if (leaveRoom()){
+        changeWindows(keyOutWindowElement, optionsWindowElement)
+    }
 });
 
 // gameFindWindow
 gameFindWindowElement.querySelector('button').addEventListener('click', () => {
-    gameFindWindowElement.style.setProperty('display', 'none');
-    optionsWindowElement.style.setProperty('display', 'block');
+    changeWindows(gameFindWindowElement, optionsWindowElement);
+    socket.emit("cancelSearch");
 });
 
 //court
-document.querySelector('#startGameBtn').addEventListener('click', () => {
-    socket.emit('declareReady');
+document.querySelector('#startGameBtn').addEventListener('mousedown', (e) => {
+    e.preventDefault();
+    socket.emit('declareReady', myRoomId, myPlayer, (success, errorMsg) => {
+        if (!success){
+            console.log(errorMsg);
+        }
+        else{
+            addEventListener('keydown', keyDown);
+            addEventListener('keyup', keyUp);
+            // SET BUTTON TO GLOW OR STH 
+        }
+    });
 });
 // SAME THING BUT WITH UNREADY
 // document.querySelector('#startGameBtn').addEventListener('click', () => {
@@ -126,12 +127,45 @@ document.querySelector('#startGameBtn').addEventListener('click', () => {
 // });
 
 
-document.querySelector('#returnBtn').addEventListener('click', () => {
-    // socket.emit('leaveGame');
-    gameElement.style.setProperty('display', 'none');
-    optionsWindowElement.style.setProperty('display', 'block');
+document.getElementById('returnBtn').addEventListener('click', () => {
+    if (leaveRoom()){
+        changeWindows(gameElement, optionsWindowElement);
+    }
+})
+
+document.getElementById("leaveGameBtn").addEventListener('click', () => {
+    if (leaveRoom()){
+        reset();
+        changeWindows(summaryWindowElement, optionsWindowElement);
+    }
 });
 
+document.getElementById("playAgainBtn").addEventListener('click', () => {
+    socket.emit("declareRematch", myRoomId, myPlayer);
+});
+
+
+document.getElementById("newOpponentBtn").addEventListener('click', () => {
+    changeWindows(summaryWindowElement, gameFindWindowElement);
+    findOpponent();
+});
+
+
+document.getElementById("backToKeyOutBtn").addEventListener('click', () => {
+    if (leaveRoom()){
+        changeWindows(summaryWindowElement, keyOutElement);
+        createRoom();
+    };
+});
+
+socket.on("connect", () => {
+    console.log('connected');
+    reset();
+});
+
+socket.on("someoneJoined", () => {
+    changeWindows(keyOutWindowElement, gameElement);
+});
 
 socket.on("opponentReady", () => {
     readyMsgElement.style.setProperty('display', 'block');
@@ -141,10 +175,20 @@ socket.on("opponentUnready", () => {
     readyMsgElement.style.setProperty('display', 'none');
 })
 
+socket.on("opponentFound", (roomId, role) => {
+    myPlayer = role;
+    myRoomId = roomId;
+    changeWindows(gameFindWindowElement, gameElement);
+});
+
+socket.on("rematchStarted", () => {
+    changeWindows(summaryWindowElement, gameElement);
+})
+
 socket.on("debugInfo", (debugInfo) => initHitboxes(debugInfo));
 
 
-socket.on("initData", (data) => {
+socket.on("initData", (data, recieved) => {
     const room = data.room;
     scaleTicks = data.scaleTicks;
     myRoomId = data.roomId;
@@ -169,12 +213,11 @@ socket.on("initData", (data) => {
     }
     prevGameState = room.gameState;
     updateScore(room.score);
+    recieved(true);
 });
 
+
 socket.on("scoreUpdate", (newScore) => updateScore(newScore));
-
-
-
 
 
 socket.on("newGameState", (gameState) => {
@@ -192,8 +235,76 @@ socket.on("newGameState", (gameState) => {
     prevGameState = gameState;
 });
 
-addEventListener('keydown', (e) => socket.emit("keydown", e.code));
-addEventListener('keyup', (e) => socket.emit("keyup", e.code));
+
+socket.on("opponentLeft", () => {
+    changeWindows(gameElement, keyOutWindowElement);
+    window.alert('your opponent left the game');
+    prevGameState = undefined;
+    myPlayer = 'leftPlayer';
+});
+
+socket.on('gameHasEnded', (cause, score) => {
+    let winnerMsg;
+    if (score.leftPlayer > score.rightPlayer){
+        winnerMsg = "left player won";
+    }
+    else{
+        winnerMsg = "right player won";
+    }
+
+    summaryHeaderElement.innerHTML = winnerMsg + "<br>" + 
+        `left player: ${score.leftPlayer}<br>right player: ${score.rightPlayer}`
+    gameEndCauseElement.innerHTML = cause;
+    rematchInfoElement.style.setProperty('display', 'none');
+    changeWindows(gameElement, summaryWindowElement);
+});
+
+
+socket.on("rematchProposal", () => {
+    rematchInfoElement.style.setProperty('display', 'block');
+});
+
+
+function changeWindows(from, to){
+    from.style.setProperty('display', 'none');
+    to.style.setProperty('display', 'block');
+}
+
+function findOpponent(){
+    socket.emit("findOpponent");
+}
+
+function leaveRoom(){
+    socket.emit('leaveRoom', myRoomId, (s, e) => handleResponse(s, e, () => {
+        console.log(`successfully leaved room: ${myRoomId}`)
+        myRoomId = null;
+        removeEventListener('keydown', keyDown);
+        removeEventListener('keyup', keyUp);
+        return true;
+    }));
+}
+
+function createRoom(){
+    socket.emit('createRoom', (roomId) => {
+        if (!roomId){
+            console.log("did not manage to create a room")
+            return;
+        }
+        myRoomId = roomId;
+        myPlayer = "leftPlayer";
+        changeWindows(optionsWindowElement, keyOutWindowElement);
+        keyOutElement.innerHTML = roomId;
+    });
+}
+
+function keyDown(e){
+    socket.emit("keydown", myRoomId, myPlayer, e.code)
+}
+
+
+function keyUp(e){
+    socket.emit("keyup", myRoomId, myPlayer, e.code)
+}
 
 
 function updatePlayers(gameState){
@@ -261,3 +372,24 @@ function calculateScaleY(x) {
     }
     return Math.pow(x - a, 3) + b;
 };
+
+
+function handleResponse(success, errorMsg, callback){
+    if (!success){
+        console.log(errorMsg);
+        return;
+    }
+    callback();
+}
+
+
+function reset(){
+    prevGameState = undefined;
+    myPlayer = undefined;
+    myRoomId = undefined;
+    const windows = document.querySelectorAll("body > div");
+    for (const element of windows){
+        element.style.setProperty('display', 'none');
+    }
+    optionsWindowElement.style.setProperty('display', 'block');
+}

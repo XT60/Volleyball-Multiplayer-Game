@@ -9,7 +9,7 @@ body{
 
     #keyInWindow{
         // display: block;
-        form input[type="submit"]{
+        form input[type="text"]{
             background-color: red;
         }
         p{
@@ -24,7 +24,12 @@ body{
     // #gameFindWindow{
     //     display: block;
     // }
-
+    #gameSummaryWindow{
+        // display: block;
+        #rematchInfo{
+            display: none;
+        }
+    }
 
     #gameArea{
         display: none;

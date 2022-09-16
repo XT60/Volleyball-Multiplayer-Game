@@ -132,28 +132,15 @@ function getPlayers(){
 }
 
 
-function getPlayerName(playerId){
-    if (playerId == players.leftPlayer){
-        return 'leftPlayer';
-    }
-    else if(playerId == players.rightPlayer){
-        return 'rightPlayer';
-    }
-    else{
-        console.log("unknown playerID");
-    }
-}
-
-function handleKeydown(gameState, socketID, eventCode){
+function handleKeydown(gameState, playerName, eventCode){
     if (gameState){
-        const playerName = getPlayerName(socketID);
         const player = gameState[playerName];
         switch (eventCode){
             case 'ArrowLeft':
                 if (player.action !== 'shooting' &&
                     player.action !== 'blocking'){
                     player.action = 'moving';
-                    console.log("moving")
+                    // console.log("moving")
                     player.vel[0] = -playerVelInterval[0];
                 }
                 break;
@@ -161,7 +148,7 @@ function handleKeydown(gameState, socketID, eventCode){
                 if (player.action !== 'shooting' &&
                     player.action !== 'blocking'){
                     player.action = 'moving';
-                    console.log("moving")
+                    // console.log("moving")
                     player.vel[0] = playerVelInterval[0]
                 }
                 break;
@@ -171,7 +158,7 @@ function handleKeydown(gameState, socketID, eventCode){
                     const playerRect = [...player.pos, ...playerSize];
                     if (rectRectCollision(playerRect, blockZone[playerName])){
                         player.action = 'blocking';
-                        console.log("blocking");
+                        // console.log("blocking");
                         player.vel[1] = playerVelInterval[1];
                         player.vel[0] = 0;
                     }
@@ -180,16 +167,15 @@ function handleKeydown(gameState, socketID, eventCode){
             case 'Space':
                 if (!player.shootValue){
                     player.shootValue = gameState.scale.currTick;
-                    console.log(`${playerName} set shootValue at: ${player.shootValue}`);
+                    // console.log(`${playerName} set shootValue at: ${player.shootValue}`);
                 }
                 break;      
         }    
     }
 }
 
-function handleKeyUp(gameState, socketID, eventCode){
+function handleKeyUp(gameState, playerName, eventCode){
     if (gameState){
-        const playerName = getPlayerName(socketID);
         const player = gameState[playerName];
         switch (eventCode){
             case 'ArrowLeft':
@@ -281,11 +267,11 @@ function shootBall(gameState, playerName){
     const xInt = Math.abs(dest[0] - ball.pos[0])
     const time =  xInt / xBallVel;
     ball.vel[1] = -(gravity * time * 0.5 - xInt / time); 
-    console.log(ball.vel);
+    // // console.log(ball.vel);
     // ball.vel[0] += getRandom(-jinx[0], jinx[0]) * (shootValue - midTick);
     // ball.vel[1] += getRandom(-jinx[1], jinx[1]) * (shootValue - midTick);
-    console.log(ball.vel);
-    // console.log(`${playerName} shot ball with shootValue: ${shootValue}`);
+    // // console.log(ball.vel);
+    // // console.log(`${playerName} shot ball with shootValue: ${shootValue}`);
     gameState[playerName].shootValue = null;
     lastContact = playerName;
 }

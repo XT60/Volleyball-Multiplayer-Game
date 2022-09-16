@@ -6,10 +6,13 @@ body > div {
 body {
   zoom: 0.8;
 }
-body #keyInWindow form input[type=submit] {
+body #keyInWindow form input[type=text] {
   background-color: red;
 }
 body #keyInWindow p {
+  display: none;
+}
+body #gameSummaryWindow #rematchInfo {
   display: none;
 }
 body #gameArea {
