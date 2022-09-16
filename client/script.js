@@ -2,6 +2,10 @@ import { io } from "https://cdn.socket.io/4.3.2/socket.io.esm.min.js";
 import { drawHitboxes, initHitboxes } from "./hitboxes.js";
 const socket = io("http://localhost:3000");
 
+let prevGameState, myPlayer, scaleTicks, scaleMulti, a, b, myRoomId;
+let inGame = false;
+const indicatorWidth = 2;
+
 const ballElement = document.getElementById("ball");
 const leftPlayerElement = document.getElementById('leftPlayer');
 const rightPlayerElement = document.getElementById('rightPlayer');
@@ -13,34 +17,34 @@ const gameIndicatorElement = document.getElementById("gameIndicator");
 const leftIndicatorElement = document.getElementById("leftIndicator");
 const rightIndicatorElement = document.getElementById("rightIndicator");
 
+const canvasElement = document.querySelector("canvas");
 const optionsWindowElement = document.getElementById('optionsWindow');
 const keyInWindowElement = document.getElementById('keyInWindow');
 const keyOutWindowElement = document.getElementById('keyOutWindow');
 const gameFindWindowElement = document.getElementById('gameFindWindow');
 const gameElement = document.getElementById('gameArea');
 
-const readyMsgElement = document.getElementById('readyMsg');
-
-let prevGameState, myPlayer, scaleTicks, scaleMulti, a, b, myRoomId;
-const indicatorWidth = 2;
-gameIndicatorElement.style.setProperty('width', cssPercent(indicatorWidth));
 const formInputElements = document.querySelectorAll('#keyInWindowElement input'); 
 const spectatorCheckboxElement = document.getElementById('spectatorCheckbox');
 const playerCheckboxElement = document.getElementById("playerCheckbox");
-const keyOutElement = document.getElementById('keyOut');
 const keyInElement = keyInWindowElement.querySelector('form input[type="text"]');
 const formErrorMsgElement = keyInWindowElement.querySelector(".errorMsg");
+const keyOutElement = document.getElementById('keyOut');
+const summaryWindowElement = document.getElementById("gameSummaryWindow");
+const gameEndCauseElement = summaryWindowElement.querySelector("p");
+const summaryHeaderElement = summaryWindowElement.querySelector("h2");
+const scoreBoardElement = document.getElementById("scoreBoard");
+const readyMsgElement = document.getElementById('readyMsg');
+const powerMeterElement = document.getElementById("powerMeter");
+const rematchInfoElement = document.getElementById("rematchInfo");
+
+gameIndicatorElement.style.setProperty('width', cssPercent(indicatorWidth));
 playerCheckboxElement.addEventListener('click', () => {
     spectatorCheckboxElement.checked = false;
 });
 spectatorCheckboxElement.addEventListener('click', () => {
     playerCheckboxElement.checked = false;
 });
-
-const summaryWindowElement = document.getElementById("gameSummaryWindow");
-const gameEndCauseElement = summaryWindowElement.querySelector("p");
-const summaryHeaderElement = summaryWindowElement.querySelector("h2");
-const rematchInfoElement = document.getElementById("rematchInfo");
 
 
 // optionsWindow
@@ -57,7 +61,6 @@ document.getElementById('findGame').addEventListener('click', () => {
     changeWindows(optionsWindowElement, gameFindWindowElement);
     findOpponent();
 });
-
 
 // keyInWindow
 keyInWindowElement.querySelector('button').addEventListener('click', () => {
@@ -96,15 +99,16 @@ keyInWindowElement.querySelector('form input[type="submit"]').addEventListener('
 
 // keyOutWindow
 keyOutWindowElement.querySelector('button').addEventListener('click', () => {
-    if (leaveRoom()){
-        changeWindows(keyOutWindowElement, optionsWindowElement)
-    }
+    leaveRoom(() => {
+        changeWindows(keyOutWindowElement, optionsWindowElement);   
+    })
 });
 
 // gameFindWindow
 gameFindWindowElement.querySelector('button').addEventListener('click', () => {
-    changeWindows(gameFindWindowElement, optionsWindowElement);
-    socket.emit("cancelSearch");
+    socket.emit("cancelSearch", (s, e) => handleResponse(s, e, () => {
+        changeWindows(gameFindWindowElement, optionsWindowElement);
+    })); 
 });
 
 //court
@@ -117,69 +121,69 @@ document.querySelector('#startGameBtn').addEventListener('mousedown', (e) => {
         else{
             addEventListener('keydown', keyDown);
             addEventListener('keyup', keyUp);
-            // SET BUTTON TO GLOW OR STH 
         }
     });
 });
-// SAME THING BUT WITH UNREADY
-// document.querySelector('#startGameBtn').addEventListener('click', () => {
-//     socket.to(myRoomId).emit('declareUnready');
-// });
-
 
 document.getElementById('returnBtn').addEventListener('click', () => {
-    if (leaveRoom()){
+    leaveRoom(() => {
         changeWindows(gameElement, optionsWindowElement);
-    }
-})
+    })
+});
 
+//gameSummaryWindow
 document.getElementById("leaveGameBtn").addEventListener('click', () => {
-    if (leaveRoom()){
+    leaveRoom(() => {
         reset();
         changeWindows(summaryWindowElement, optionsWindowElement);
-    }
+    })
 });
 
 document.getElementById("playAgainBtn").addEventListener('click', () => {
     socket.emit("declareRematch", myRoomId, myPlayer);
 });
 
-
 document.getElementById("newOpponentBtn").addEventListener('click', () => {
     changeWindows(summaryWindowElement, gameFindWindowElement);
     findOpponent();
 });
 
-
 document.getElementById("backToKeyOutBtn").addEventListener('click', () => {
-    if (leaveRoom()){
+    leaveRoom(() => {
         changeWindows(summaryWindowElement, keyOutElement);
-        createRoom();
-    };
+            createRoom();
+    })
 });
+
+
 
 socket.on("connect", () => {
     console.log('connected');
     reset();
 });
 
+
 socket.on("someoneJoined", () => {
     changeWindows(keyOutWindowElement, gameElement);
 });
+
 
 socket.on("opponentReady", () => {
     readyMsgElement.style.setProperty('display', 'block');
 });
 
+
 socket.on("opponentUnready", () => {
     readyMsgElement.style.setProperty('display', 'none');
 })
+
 
 socket.on("opponentFound", (roomId, role) => {
     myPlayer = role;
     myRoomId = roomId;
     changeWindows(gameFindWindowElement, gameElement);
 });
+
 
 socket.on("rematchStarted", () => {
     changeWindows(summaryWindowElement, gameElement);
@@ -217,10 +221,21 @@ socket.on("initData", (data, recieved) => {
 });
 
 
+// Socket.io Events
 socket.on("scoreUpdate", (newScore) => updateScore(newScore));
 
 
 socket.on("newGameState", (gameState) => {
+    if (!inGame){
+        inGame = true;
+        scoreBoardElement.style.setProperty('display', 'block');
+        readyMsgElement.style.setProperty('display', 'block');
+        leftPlayerElement.style.setProperty('display', 'block');
+        rightPlayerElement.style.setProperty('display', 'block');
+        ballElement.style.setProperty('display', 'block');
+        powerMeterElement.style.setProperty('display', 'block');
+        canvasElement.style.setProperty('display', 'block');
+    }
     // console.log('got new gameState');
     updatePosition(ballElement, gameState.ball.pos);
     updatePlayers(gameState)
@@ -237,11 +252,12 @@ socket.on("newGameState", (gameState) => {
 
 
 socket.on("opponentLeft", () => {
-    changeWindows(gameElement, keyOutWindowElement);
+    changeWindows(gameElement, summaryWindowElement);
     window.alert('your opponent left the game');
-    prevGameState = undefined;
-    myPlayer = 'leftPlayer';
+    // prevGameState = undefined;
+    // myPlayer = 'leftPlayer';
 });
+
 
 socket.on('gameHasEnded', (cause, score) => {
     let winnerMsg;
@@ -265,24 +281,29 @@ socket.on("rematchProposal", () => {
 });
 
 
+// Helper Fucntions
 function changeWindows(from, to){
     from.style.setProperty('display', 'none');
     to.style.setProperty('display', 'block');
+    if (to === gameElement)     resetGameElement();
 }
+
 
 function findOpponent(){
     socket.emit("findOpponent");
 }
 
-function leaveRoom(){
+
+async function leaveRoom(response){
     socket.emit('leaveRoom', myRoomId, (s, e) => handleResponse(s, e, () => {
-        console.log(`successfully leaved room: ${myRoomId}`)
+        console.log(`successfully left room: ${myRoomId}`)
         myRoomId = null;
         removeEventListener('keydown', keyDown);
         removeEventListener('keyup', keyUp);
-        return true;
+        response()
     }));
 }
+
 
 function createRoom(){
     socket.emit('createRoom', (roomId) => {
@@ -296,6 +317,7 @@ function createRoom(){
         keyOutElement.innerHTML = roomId;
     });
 }
+
 
 function keyDown(e){
     socket.emit("keydown", myRoomId, myPlayer, e.code)
@@ -371,7 +393,7 @@ function calculateScaleY(x) {
         return -1;
     }
     return Math.pow(x - a, 3) + b;
-};
+}
 
 
 function handleResponse(success, errorMsg, callback){
@@ -391,5 +413,21 @@ function reset(){
     for (const element of windows){
         element.style.setProperty('display', 'none');
     }
+    gameElement.style.setProperty('display', 'none');
     optionsWindowElement.style.setProperty('display', 'block');
+}
+
+
+function resetGameElement(){
+    inGame = false;
+    leftPlayerScoreElement.innerHTML = '0';
+    rightPlayerScoreElement.innerHTML = '0';
+    
+    scoreBoardElement.style.setProperty('display', 'none');
+    readyMsgElement.style.setProperty('display', 'none');
+    leftPlayerElement.style.setProperty('display', 'none');
+    rightPlayerElement.style.setProperty('display', 'none');
+    ballElement.style.setProperty('display', 'none');
+    powerMeterElement.style.setProperty('display', 'none');
+    canvasElement.style.setProperty('display', 'none');
 }

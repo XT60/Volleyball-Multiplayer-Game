@@ -19,13 +19,11 @@ const loopInterval = 1000 / 45;
 let lastFrame = 0;
 const startDelay = 1000;
 const maxInterval = 100; 
-const winnerScore = 10;
+const winnerScore = 2;
 const restartDelay = 1000;
-
 
 // events toDo: 
 // cut down sent data by init event to must haves
-
 
 
 io.on("connection", (socket) => {
@@ -39,9 +37,8 @@ io.on("connection", (socket) => {
     });
     socket.on('leaveRoom', (roomId, callback) => leaveRoom(socket, roomId, callback));
     socket.on('declareReady', (roomId, playerRole, callback) => declareReady(roomId, socket, playerRole, callback));
-    // socket.on('declareUnready')
     socket.on('joinRoomAttempt', (roomId, role, callback) => joinRoom(roomId, socket, role, callback))
-    socket.on("cancleSearch", () => removeFromWaitingRoom(socket.id));
+    socket.on("cancelSearch", (callback) => removeFromWaitingRoom(socket.id, callback));
     socket.on("findOpponent", () => {
         if (waitingRoom.length === 0){
             waitingRoom.push(socket);
@@ -76,14 +73,12 @@ io.on("connection", (socket) => {
             leftPlayer: false,
             rightPlayer: false
         };
-        room.declareReady = {
+        room.playerReady = {
             leftPlayer: false,
             rightPlayer: false
         };
         io.emit("rematchStarted");
- 
     });
-
 
     socket.on("keydown", (roomId, role, eventCode) => {
         if (!isDataValid(roomId, socket.id, role)){
@@ -100,11 +95,16 @@ io.on("connection", (socket) => {
     });
 }); 
 
-function removeFromWaitingRoom(socketId){
-    const i = waitingRoom.indexOf(socketId);
+
+function removeFromWaitingRoom(socketId, callback){
+    // console.log(waitingRoom);
+    // console.log('recieved cancleSearch Event');
+    const i = waitingRoom.findIndex(x => x.id == socketId);
     if (i != -1){
         waitingRoom.splice(i, 1);
+        callback(true);
     }
+    callback(false, `there is not a socket in waiting room with given ID: ${socketId}`);
 }
 
 
@@ -164,10 +164,6 @@ function joinRoom(roomId, socket, role, callback){
         leftPlayer: false,
         rightPlayer: false            
     };
-    room.score = {
-        leftPlayer: 0,
-        rightPlayer: 0
-    };
 
     io.to(room.leftPlayer).emit('someoneJoined');
     console.log(`player ${socket.id} successfully joined room ${roomId}`);
@@ -203,25 +199,35 @@ function leaveRoom(socket, roomId, callback){
             leftPlayer: false,
             rightPlayer: false
         };
-        io.to(roomId).emit('opponentLeft');
+        room.status = 'waitingForPlayer';
+        io.to(roomId).emit('gameHasEnded', "your opponent left the game", room.score);
     }
+    console.log(`${socket.id} successfully leaved room: ${roomId}`);
     callback(true);
 }
 
+
 function declareReady(roomId, socket, playerRole, callback){
+    console.log("got declare ready event from" + `${socket.id}`);
     const room = rooms[roomId];
     if (!room){
+        console.log(1)
         callback(false, "room with given roomId doesn't exist");
         return;
     }
+    console.log(room);
     if (room[playerRole] != socket.id){
+        console.log(2)
         callback(false, "you do not have permissions for for that player "+
         "or that role does not exist");
         return;
     }
     if (room.playerReady[playerRole]){
-        return (false, 'player has already declared ready');
+        console.log(3)
+        callback(false, 'player has already declared ready');
+        return 
     }
+    console.log(4)
     room.playerReady[playerRole] = true;
     const other = otherPlayer(playerRole);
     if (!room.playerReady[other]){
@@ -239,6 +245,10 @@ function declareReady(roomId, socket, playerRole, callback){
 function startGame(roomId){
     const room = rooms[roomId];
     room.gameState = initGame();
+    room.score = {
+        leftPlayer: 0,
+        rightPlayer: 0
+    };
     io.to(roomId).emit("debugInfo", {
         playerShootArea, 
         netRect, 
@@ -257,7 +267,6 @@ function startGame(roomId){
             room.status = "inGame";
         }
     });
-
 }
 
 
@@ -286,7 +295,8 @@ const myInterval = setInterval(() => {
 
             if (winner){
                 room.score[winner] += 1;
-                if (room.score[winner] > winnerScore){
+                if (room.score[winner] >= winnerScore){
+                    room.status = 'full';
                     io.emit("gameHasEnded", 'one of the players exceeded winnerScore', room.score);
                 }
                 else{
@@ -323,5 +333,6 @@ function isDataValid(roomId, socketId, role){
     }
     return true
 }
+
 
 http.listen(3000);
