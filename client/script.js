@@ -98,7 +98,7 @@ keyInWindowElement.querySelector('form input[type="submit"]').addEventListener('
 });
 
 // keyOutWindow
-keyOutWindowElement.querySelector('button').addEventListener('click', () => {
+keyOutWindowElement.querySelector('.returnBtn').addEventListener('click', () => {
     leaveRoom(() => {
         changeWindows(keyOutWindowElement, optionsWindowElement);   
     })
