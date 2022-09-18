@@ -1,10 +1,23 @@
+*,
+*::before,
+*::after {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 62.5%;
+}
+
 body > div {
   position: absolute;
   display: none;
 }
 
 body {
-  zoom: 0.8;
+  font-family: "Josefin Sans", sans-serif;
+  font-size: 1.6rem;
 }
 body #keyInWindow p {
   display: none;
@@ -98,3 +111,171 @@ body #gameArea #scoreBoard {
   left: 50%;
   top: 0;
 }
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  text-align: center;
+  background-image: linear-gradient(45deg, rgba(1, 35, 86, 0.8), rgba(0, 29, 61, 0.8)), url("../images/beach-mini.jpg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  color: rgb(255, 255, 255);
+}
+.container .headerTextBig {
+  font-family: "Playball", cursive;
+  font-size: 4.5rem;
+  letter-spacing: 0.5rem;
+  margin: -1rem 0.5em 1rem;
+}
+.container .headerTextSmall {
+  font-size: 1.75rem;
+  margin: 0 2rem 1.5rem 2rem;
+}
+
+.btn {
+  position: relative;
+  font-size: 1.9rem;
+  padding: 0.95em;
+  margin: 0.5em 0;
+  border-radius: 25px;
+  text-transform: uppercase;
+  letter-spacing: -2px;
+  font-family: "Josefin Sans", sans-serif;
+  font-weight: bold;
+  background-image: linear-gradient(35deg, rgb(253, 177, 0), rgb(255, 214, 10));
+  background-color: #fff;
+  color: #000814;
+  border: 2px solid #000814;
+  cursor: pointer;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.btn1::after {
+  content: "";
+  background-image: linear-gradient(35deg, rgba(253, 177, 0, 0.65), rgba(255, 214, 10, 0.65)), url("../images/beach-volley-mini.jpg");
+  background-repeat: no-repeat;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: -100px;
+  right: 0;
+  bottom: 0;
+  z-index: -10;
+  transition: 0.15s;
+}
+
+.btn2::after {
+  content: "";
+  background-image: linear-gradient(35deg, rgba(253, 177, 0, 0.65), rgba(255, 214, 10, 0.65)), url("../images/volleyball-team-mini.jpg");
+  background-repeat: no-repeat;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: -100px;
+  right: 0;
+  bottom: 0;
+  z-index: -10;
+  transition: 0.15s;
+}
+
+.btn3::after {
+  content: "";
+  background-image: linear-gradient(35deg, rgba(253, 177, 0, 0.65), rgba(255, 214, 10, 0.65)), url("../images/volleyball-alone-mini.jpg");
+  background-repeat: no-repeat;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: -100px;
+  right: 0;
+  bottom: 0;
+  z-index: -10;
+  transition: 0.15s;
+}
+
+.btn:hover::after {
+  opacity: 1;
+  left: 0;
+}
+
+@media (min-width: 375px) {
+  .container .headerTextBig {
+    font-size: 5rem;
+  }
+  .container .headerTextSmall {
+    font-size: 1.85rem;
+  }
+  .btn {
+    font-size: 2rem;
+    padding: 1em;
+    margin: 0.75em 0;
+    border-radius: 35px;
+  }
+}
+@media (min-width: 576px) {
+  .container {
+    background-image: linear-gradient(45deg, rgba(1, 35, 86, 0.8), rgba(0, 29, 61, 0.8)), url("../images/beach-big.jpg");
+  }
+  .container .headerTextBig {
+    font-size: 5.2rem;
+  }
+  .container .headerTextSmall {
+    font-size: 2rem;
+    margin: 0 6em 1.8em;
+  }
+  .btn {
+    font-size: 2.4rem;
+    padding: 1.1em;
+    margin: 0.75em 0;
+  }
+}
+@media (min-width: 768px) {
+  .container .headerTextBig {
+    font-size: 6rem;
+    margin: -1rem 1.6em 1rem;
+  }
+  .container .headerTextSmall {
+    font-size: 2.2rem;
+    margin: 0 6em 1.8em;
+  }
+  .btn {
+    font-size: 2.8rem;
+    padding: 1.1em 2em;
+    margin: 0.75em 0;
+  }
+}
+@media (min-width: 992px) {
+  .container .headerTextBig {
+    font-size: 6.5rem;
+    margin: -1rem 1.6em 1rem;
+  }
+  .container .headerTextSmall {
+    font-size: 2.4rem;
+    margin: 0 6em 1.8em;
+  }
+  .btn {
+    font-size: 2.8rem;
+    padding: 1.1em 3em;
+    margin: 0.75em 0;
+  }
+}
+@media (min-width: 1200px) {
+  .container .headerTextBig {
+    font-size: 7rem;
+    margin: -1rem 1.6em 1rem;
+  }
+  .container .headerTextSmall {
+    font-size: 2.7rem;
+    margin: 0 6em 1.2em;
+  }
+  .btn {
+    font-size: 2.8rem;
+    padding: 1.1em 5em;
+    margin: 0.75em 0;
+  }
+}/*# sourceMappingURL=styles.css.map */

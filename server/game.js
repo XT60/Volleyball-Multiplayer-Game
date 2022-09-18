@@ -1,5 +1,3 @@
-const { ja } = require("faker/lib/locales");
-
 //actions: standing moving shooting blocking
 const gravity = 0.02;
 const courtSize = [1201, 443];

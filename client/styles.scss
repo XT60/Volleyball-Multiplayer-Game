@@ -1,126 +1,365 @@
-
-body > div{
-    position: absolute;
-    display: none
+*,
+*::before,
+*::after {
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
 }
 
-body{
-    zoom: 0.8;
+html {
+	font-size: 62.5%; //font size = 10px ;)
+}
 
-    #keyInWindow{
-        // display: block;
-        p{
-            display: none;
-        }
-    }
+body > div {
+	position: absolute;
+	display: none;
+}
 
-    // #keyOutWindow{
-    //     display: block;
-    // }
+body {
+	// zoom: 0.8;
+	font-family: 'Josefin Sans', sans-serif;
+	font-size: 1.6rem;
 
-    // #gameFindWindow{
-    //     display: block;
-    // }
-    #gameSummaryWindow{
-        // display: block;
-        #rematchInfo{
-            display: none;
-        }
-    }
+	#keyInWindow {
+		// display: block;
+		p {
+			display: none;
+		}
+	}
 
-    #gameArea{
-        display: none;
-        
-        #readyMsg{
-            display: none;
-            position: absolute;
-            left: 0;
-            top: 0;
-        }
+	// #keyOutWindow{
+	//     display: block;
+	// }
 
-        #court{
-            width: 1201px;
-            height: 443px;
-            position: absolute;
-            left: 50%;
-            transform: translate(-50%, 0);
-            
-            #courtImg{
-                position: absolute;
-                top: 0;
-                left: 0;
-            }
-            canvas{
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                opacity: 0.8;
-                z-index: 1000;
-            }
-        
-            #ball{
-                left: 50px;
-                top: 50px;
-                position: absolute;
-                width: 42px;
-                height: 42px;
-            }
-        
-            #leftPlayer{
-                left: 100px;
-                top: 100px;
-                position: absolute;
-                width: 69px;
-                height: 175px;
-            }
-        
-            #rightPlayer{
-                position: absolute;
-                transform: scaleX(-1);
-                left: 400px;
-                top: 100px;
-                width: 69px;
-                height: 175px;
-            }
-        }
+	// #gameFindWindow{
+	//     display: block;
+	// }
+	#gameSummaryWindow {
+		// display: block;
+		#rematchInfo {
+			display: none;
+		}
+	}
 
-        #powerMeter{
-            position: absolute;
-            width: 557px;
-            height: 117px;
-            bottom: 0;
+	#gameArea {
+		display: none;
 
-            .indicator{
-                position: absolute;
-                
-                height: 100%;
-                width: 2%;
-                left: 0;
-                top:0;
-                transition: left 0.19s linear;
-            }
-            #gameIndicator{
-                background-color: gold;
-            }
-            #leftIndicator{
-                background-color: green;
-                opacity: 0.7;
-                display: none;
-                z-index: 100;
-            }
-            #rightIndicator{
-                background-color: blue;
-                opacity: 0.7;
-                display: none;
-                z-index: 100;
-            }
-        }
-        #scoreBoard{
-            position: absolute;
-            left: 50%;
-            top: 0;
-        }
-    }
+		#readyMsg {
+			display: none;
+			position: absolute;
+			left: 0;
+			top: 0;
+		}
+
+		#court {
+			width: 1201px;
+			height: 443px;
+			position: absolute;
+			left: 50%;
+			transform: translate(-50%, 0);
+
+			#courtImg {
+				position: absolute;
+				top: 0;
+				left: 0;
+			}
+			canvas {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				opacity: 0.8;
+				z-index: 1000;
+			}
+
+			#ball {
+				left: 50px;
+				top: 50px;
+				position: absolute;
+				width: 42px;
+				height: 42px;
+			}
+
+			#leftPlayer {
+				left: 100px;
+				top: 100px;
+				position: absolute;
+				width: 69px;
+				height: 175px;
+			}
+
+			#rightPlayer {
+				position: absolute;
+				transform: scaleX(-1);
+				left: 400px;
+				top: 100px;
+				width: 69px;
+				height: 175px;
+			}
+		}
+
+		#powerMeter {
+			position: absolute;
+			width: 557px;
+			height: 117px;
+			bottom: 0;
+
+			.indicator {
+				position: absolute;
+				height: 100%;
+				width: 2%;
+				left: 0;
+				top: 0;
+				transition: left 0.19s linear;
+			}
+			#gameIndicator {
+				background-color: gold;
+			}
+			#leftIndicator {
+				background-color: green;
+				opacity: 0.7;
+				display: none;
+				z-index: 100;
+			}
+			#rightIndicator {
+				background-color: blue;
+				opacity: 0.7;
+				display: none;
+				z-index: 100;
+			}
+		}
+		#scoreBoard {
+			position: absolute;
+			left: 50%;
+			top: 0;
+		}
+	}
+}
+
+.container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	width: 100vw;
+	text-align: center;
+	background-image: linear-gradient(
+			45deg,
+			rgba(1, 35, 86, 0.8),
+			rgba(0, 29, 61, 0.8)
+		),
+		url('../images/beach-mini.jpg');
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: cover;
+	color: rgb(255, 255, 255);
+
+	.headerTextBig {
+		font-family: 'Playball', cursive;
+		font-size: 4.5rem;
+		letter-spacing: 0.5rem;
+		margin: -1rem 0.5em 1rem;
+	}
+
+	.headerTextSmall {
+		font-size: 1.75rem;
+		margin: 0 2rem 1.5rem 2rem;
+	}
+}
+
+.btn {
+    position: relative;
+	font-size: 1.9rem;
+	padding: 0.95em;
+	margin: 0.5em 0;
+	border-radius: 25px;
+	text-transform: uppercase;
+	letter-spacing: -2px;
+	font-family: 'Josefin Sans', sans-serif;
+	font-weight: bold;
+	background-image: linear-gradient(35deg, rgb(253, 177, 0), rgb(255, 214, 10));
+	background-color: #fff;
+	color: #000814;
+	border: 2px solid #000814;
+	cursor: pointer;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.btn1::after {
+	content: "";
+	background-image: linear-gradient(
+			35deg,
+			rgba(253, 177, 0, 0.65),
+			rgba(255, 214, 10, 0.65)
+		),
+		url('../images/beach-volley-mini.jpg');
+    background-repeat: no-repeat;
+	opacity: 0;
+	position: absolute;
+	top: 0;
+	left: -100px;
+    right: 0;
+    bottom: 0;
+    z-index: -10;
+    transition: .15s;
+}
+
+.btn2::after {
+	content: "";
+	background-image: linear-gradient(
+			35deg,
+			rgba(253, 177, 0, 0.65),
+			rgba(255, 214, 10, 0.65)
+		),
+		url('../images/volleyball-team-mini.jpg');
+    background-repeat: no-repeat;
+	opacity: 0;
+	position: absolute;
+	top: 0;
+	left: -100px;
+    right: 0;
+    bottom: 0;
+    z-index: -10;
+    transition: .15s;
+}
+
+.btn3::after {
+	content: "";
+	background-image: linear-gradient(
+			35deg,
+			rgba(253, 177, 0, 0.65),
+			rgba(255, 214, 10, 0.65)
+		),
+		url('../images/volleyball-alone-mini.jpg');
+    background-repeat: no-repeat;
+	opacity: 0;
+	position: absolute;
+	top: 0;
+	left: -100px;
+    right: 0;
+    bottom: 0;
+    z-index: -10;
+    transition: .15s;
+}
+
+.btn:hover::after {
+	opacity: 1;
+    left: 0;
+}
+
+// .btn:hover {
+// 	background-image: linear-gradient(
+// 			35deg,
+// 			rgba(253, 177, 0, 0.65),
+// 			rgba(255, 214, 10, 0.65)
+// 		),
+// 		url('../images/beach-volley-mini.jpg');
+// }
+
+@media (min-width: 375px) {
+	.container {
+		.headerTextBig {
+			font-size: 5rem;
+		}
+
+		.headerTextSmall {
+			font-size: 1.85rem;
+		}
+	}
+
+	.btn {
+		font-size: 2rem;
+		padding: 1em;
+		margin: 0.75em 0;
+		border-radius: 35px;
+	}
+}
+
+@media (min-width: 576px) {
+	.container {
+		background-image: linear-gradient(
+				45deg,
+				rgba(1, 35, 86, 0.8),
+				rgba(0, 29, 61, 0.8)
+			),
+			url('../images/beach-big.jpg');
+
+		.headerTextBig {
+			font-size: 5.2rem;
+		}
+
+		.headerTextSmall {
+			font-size: 2rem;
+			margin: 0 6em 1.8em;
+		}
+	}
+
+	.btn {
+		font-size: 2.4rem;
+		padding: 1.1em;
+		margin: 0.75em 0;
+	}
+}
+
+@media (min-width: 768px) {
+	.container {
+		.headerTextBig {
+			font-size: 6rem;
+			margin: -1rem 1.6em 1rem;
+		}
+
+		.headerTextSmall {
+			font-size: 2.2rem;
+			margin: 0 6em 1.8em;
+		}
+	}
+
+	.btn {
+		font-size: 2.8rem;
+		padding: 1.1em 2em;
+		margin: 0.75em 0;
+	}
+}
+
+@media (min-width: 992px) {
+	.container {
+		.headerTextBig {
+			font-size: 6.5rem;
+			margin: -1rem 1.6em 1rem;
+		}
+
+		.headerTextSmall {
+			font-size: 2.4rem;
+			margin: 0 6em 1.8em;
+		}
+	}
+
+	.btn {
+		font-size: 2.8rem;
+		padding: 1.1em 3em;
+		margin: 0.75em 0;
+	}
+}
+
+@media (min-width: 1200px) {
+	.container {
+		.headerTextBig {
+			font-size: 7rem;
+			margin: -1rem 1.6em 1rem;
+		}
+
+		.headerTextSmall {
+			font-size: 2.7rem;
+			margin: 0 6em 1.2em;
+		}
+	}
+
+	.btn {
+		font-size: 2.8rem;
+		padding: 1.1em 5em;
+		margin: 0.75em 0;
+	}
 }
