@@ -148,6 +148,14 @@ body #gameArea #scoreBoard {
 .container .returnBtn {
   padding: 0.95em 3.6em;
 }
+.container .form {
+  display: flex;
+  flex-direction: column;
+  text-transform: uppercase;
+}
+.container .form .modeCheckbox {
+  margin: 1em 0;
+}
 
 .btn {
   position: relative;
