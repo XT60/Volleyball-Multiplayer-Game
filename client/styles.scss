@@ -187,10 +187,41 @@ body {
         display: flex;
         flex-direction: column;
         text-transform: uppercase;
+		font-size: 1.9rem;
 
         .modeCheckbox{
             margin: 1em 0;
+			display: flex;
+			flex-direction: column;
+
+			.playerCheckArea{
+				display: flex;
+				justify-content: space-around;
+				margin-bottom: 1em;
+				padding: .5em 1em;
+				border-radius: 25px;
+				background-color: #001D3D;
+			}
+
+			.spectatorCheckArea{
+				padding: .6em 1em;
+				border-radius: 25px;
+				background-color: #001D3D;
+			}
+
+			.playerLabel{
+				padding-right: 3em;
+			}
+			.spectatorLabel{
+				padding-right: .6em;
+			}
+			
+			.gameKeyInput{
+				margin-top: 12em;
+			}
+			
         }
+
     }
 }
 
