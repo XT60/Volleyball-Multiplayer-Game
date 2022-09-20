@@ -26,13 +26,27 @@ body #gameSummaryWindow #rematchInfo {
   display: none;
 }
 body #gameArea {
-  display: none;
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+body #gameArea .gameContainer {
+  height: 100vh;
+  background-image: linear-gradient(45deg, rgba(0, 65, 163, 0.7), rgba(0, 29, 61, 0.7)), url("../images/beach3-big.jpg");
+  background-repeat: no-repeat;
+  background-position: bottom;
+  background-size: cover;
+}
+body #gameArea .gameContainer .buttons {
+  text-align: center;
 }
 body #gameArea #readyMsg {
   display: none;
-  position: absolute;
-  left: 0;
-  top: 0;
+  color: white;
+  text-transform: uppercase;
+  font-size: 3.5rem;
+  font-weight: bold;
+  margin-top: 0.5em;
 }
 body #gameArea #court {
   width: 1201px;
@@ -81,7 +95,9 @@ body #gameArea #powerMeter {
   position: absolute;
   width: 557px;
   height: 117px;
-  bottom: 0;
+  top: 650px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 body #gameArea #powerMeter .indicator {
   position: absolute;
@@ -109,7 +125,14 @@ body #gameArea #powerMeter #rightIndicator {
 body #gameArea #scoreBoard {
   position: absolute;
   left: 50%;
-  top: 0;
+  transform: translateX(-50%);
+  top: 200px;
+  color: white;
+  display: flex;
+  flex-direction: row;
+}
+body #gameArea #scoreBoard .leftPlay {
+  padding-right: 150px;
 }
 
 .container {
@@ -161,7 +184,7 @@ body #gameArea #scoreBoard {
 }
 .container .form .gameKeyInput {
   height: 3em;
-  border: 3px solid #001D3D;
+  border: 3px solid #001d3d;
   background: rgba(0, 29, 61, 0.4);
   color: #fff;
   padding: 0.5em;
@@ -184,7 +207,7 @@ body #gameArea #scoreBoard {
   margin-bottom: 1em;
   padding: 0.5em 1em;
   border-radius: 25px;
-  background-color: #001D3D;
+  background-color: #001d3d;
 }
 .container .form .modeCheckbox .playerCheckArea #playerCheckbox {
   cursor: pointer;
@@ -195,7 +218,7 @@ body #gameArea #scoreBoard {
   width: 100%;
   padding: 0.6em 1em;
   border-radius: 25px;
-  background-color: #001D3D;
+  background-color: #001d3d;
 }
 .container .form .modeCheckbox .spectatorCheckArea #spectatorCheckbox {
   cursor: pointer;
@@ -289,6 +312,34 @@ body #gameArea #scoreBoard {
   font-size: 2rem;
 }
 
+.startGameBtn {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.gameResult {
+  font-size: 2.5rem;
+  margin: 0 1em;
+  text-transform: uppercase;
+}
+
+.explanation {
+  margin: 1.5em 0.7em;
+  font-size: 2.5rem;
+}
+
+.endButtons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin: 0 5%;
+}
+.endButtons .btn {
+  width: 100%;
+}
+
 @media (min-width: 375px) {
   .container .headerTextBig {
     font-size: 5rem;
@@ -365,6 +416,14 @@ body #gameArea #scoreBoard {
   .waitKey {
     font-size: 2.4rem;
   }
+  .explanation {
+    font-size: 2.8rem;
+  }
+  .gameResult {
+    font-size: 3.8rem;
+    margin: 0 1em;
+    text-transform: uppercase;
+  }
 }
 @media (min-width: 992px) {
   .container .headerTextBig {
@@ -433,5 +492,13 @@ body #gameArea #scoreBoard {
   }
   .waitKey {
     font-size: 3rem;
+  }
+  .explanation {
+    font-size: 2.8rem;
+    margin-bottom: 0;
+  }
+  .gameResult {
+    font-size: 4.3rem;
+    margin: 0 1em -0.2em;
   }
 }/*# sourceMappingURL=styles.css.map */

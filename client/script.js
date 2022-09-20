@@ -228,7 +228,7 @@ socket.on("scoreUpdate", (newScore) => updateScore(newScore));
 socket.on("newGameState", (gameState) => {
     if (!inGame){
         inGame = true;
-        scoreBoardElement.style.setProperty('display', 'block');
+        scoreBoardElement.style.setProperty('display', 'flex');
         readyMsgElement.style.setProperty('display', 'block');
         leftPlayerElement.style.setProperty('display', 'block');
         rightPlayerElement.style.setProperty('display', 'block');
