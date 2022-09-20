@@ -157,6 +157,7 @@ body #gameArea #scoreBoard {
 .container .form .gameKeyLabel {
   margin-bottom: 0.7em;
   font-size: 2.4rem;
+  font-weight: bold;
 }
 .container .form .gameKeyInput {
   height: 3em;
@@ -274,6 +275,18 @@ body #gameArea #scoreBoard {
 .btn:hover::after {
   opacity: 1;
   left: 0;
+}
+
+.waitMessage {
+  font-size: 2.5rem;
+  margin: 0.8em 2em;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.waitKey {
+  margin: 0 1em 0.7em;
+  font-size: 2rem;
 }
 
 @media (min-width: 375px) {
