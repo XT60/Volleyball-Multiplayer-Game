@@ -182,6 +182,81 @@ body {
     .returnBtn{
         padding: 0.95em 3.6em;
     }
+
+    .form{
+        display: flex;
+        flex-direction: column;
+        text-transform: uppercase;
+		font-size: 2rem;
+
+		.gameKeyLabel{
+			margin-bottom: .7em;
+			font-size: 2.4rem;
+		}
+
+		.gameKeyInput{
+			height: 3em;
+			border: 3px solid #001D3D;
+			background: rgba($color: #001D3D, $alpha: .4);
+			color: #fff;
+			padding: .5em;
+			// border-radius: 25px;
+		}
+
+		.gameKeyInput:focus{
+			outline: none;
+			border: 3px solid rgb(253, 177, 0);
+		}
+
+        .modeCheckbox{
+            margin: 1em 0;
+			display: flex;
+			flex-direction: column;
+			width: 100%;
+
+			.playerCheckArea{
+				display: flex;
+				justify-content: space-around;
+				align-content: center;
+				width: 100%;
+				margin-bottom: 1em;
+				padding: .5em 1em;
+				border-radius: 25px;
+				background-color: #001D3D;
+
+				#playerCheckbox{
+					cursor: pointer;
+				}
+			}
+
+			.spectatorCheckArea{
+				display: flex;
+				justify-content: space-around;
+				width: 100%;
+				padding: .6em 1em;
+				border-radius: 25px;
+				background-color: #001D3D;
+
+				#spectatorCheckbox{
+					cursor: pointer;
+				}
+			}
+
+			.playerLabel{
+				padding-right: 3em;
+				padding-top: 0.1em;
+			}
+			.spectatorLabel{
+				padding-right: .6em;
+			}
+			
+			.gameKeyInput{
+				margin-top: 12em;
+			}
+			
+        }
+
+    }
 }
 
 .btn {
@@ -330,6 +405,11 @@ body {
 		padding: 1.1em;
 		margin: 0.75em 0;
 	}
+
+	.form{
+		width: 35%;
+		
+	}
 }
 
 @media (min-width: 768px) {
@@ -357,13 +437,20 @@ body {
         .returnBtn{
             padding: 0.95em 4.9em;
         }
+
+		.form{
+			.gameKeyLabel{
+				font-size: 3rem;
+			}
+		}
 	}
 
 	.btn {
 		font-size: 2.8rem;
-		padding: 1.1em 2em;
+		padding: 0.8em 2em;
 		margin: 0.75em 0;
 	}
+
 }
 
 @media (min-width: 992px) {
@@ -389,12 +476,33 @@ body {
         .returnBtn{
             padding: 0.95em 5.9em;
         }
+
+		.form{
+			.gameKeyLabel{
+				font-size: 3.8rem;
+			}
+		}
 	}
 
 	.btn {
 		font-size: 2.8rem;
-		padding: 1.1em 3em;
+		padding: 0.9em 3em;
 		margin: 0.75em 0;
+	}
+}
+
+@media (min-width:1100px){
+	.container{
+		.form{
+			.modeCheckbox{
+				flex-direction: row;
+
+				.playerCheckArea{
+					margin-bottom: 0;
+					margin-right: 1em;
+				}
+			}
+		}
 	}
 }
 
@@ -421,11 +529,17 @@ body {
         .returnBtn{
             padding: 0.95em 7.9em;
         }
+
+		.form{
+			.gameKeyLabel{
+				font-size: 4.65rem;
+			}
+		}
 	}
 
 	.btn {
 		font-size: 2.8rem;
-		padding: 1.1em 5em;
+		padding: 1em 5em;
 		margin: 0.75em 0;
 	}
 }

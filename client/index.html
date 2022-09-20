@@ -26,22 +26,29 @@
 
 
     <div id="keyInWindow">
-        <form>
-            <label name="key">Input game key: </label>
-            <input name="key" type="text">
+        <section class="container">
+            <form class="form">
+                <label name="key" class="gameKeyLabel">Input game key: </label>
+                <input name="key" type="text" class="gameKeyInput" placeholder="Your key...">
+                <p>Join as:</p>
+                <span class="modeCheckbox">
+                    <span class="playerCheckArea">
+                        <label for="playerCheckbox" class="playerLabel">player</label>
+                        <input name="playerCheckbox" id="playerCheckbox" type="checkbox" checked>
+                    </span>
+                    <span class="spectatorCheckArea">
+                        <label for="spectatorCheckbox" class="spectatorLabel">spectator</label>
+                        <input id="spectatorCheckbox" type="checkbox">
+                    </span>
+                </span>
 
-            <p>Join as:</p>
-            <input name="playerCheckbox" id="playerCheckbox" type="checkbox" checked>
-            <label for="playerCheckbox">player</label>
-            <input id="spectatorCheckbox" type="checkbox">
-            <label for="spectatorCheckbox">spectator</label>
+                <p class="errorMsg"></p>
 
-            <p class="errorMsg"></p>
-
-            <input type="submit" value="Done">
-        </form>
-        <p>Error: that game does not exist! </p>
-        <button>Return</button>
+                <input type="submit" value="Enter" class="btn">
+                <p>Error: that game does not exist! </p>
+                <button class="btn">Return</button>
+            </form>
+        </section>
     </div>
 
     <div id="keyOutWindow">
