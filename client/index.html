@@ -62,51 +62,62 @@
     </div>
 
     <div id="gameFindWindow">
-        <p> wait screen</p>
-        <p> this is your key ... longer instruction </p>
-        <button>Return</button>
+        <section class="container">
+            <p class="waitMessage"> Waiting for other player to join the game...</p>
+            <p class="waitKey"> this is your key ... longer instruction </p>
+            <button class="btn">Return</button>
+        </section>
     </div>
 
     <div id="gameSummaryWindow">
-        <h2>game result</h1>
-            <p>optional explanation why game has ended</p>
-            <button id="leaveGameBtn">return to main menu</button>
-            <button id="playAgainBtn">play again </button>
-            <p id="rematchInfo"> your opponent wants to play again</p>
-            <button id="newOpponentBtn">find new oponenet</button>
-            <button id="backToKeyOutBtn">play with another friend </button>
+        <section class="container">
+            <h2 class="gameResult">game result</h2>
+                <p class="explanation">optional explanation why game has ended</p>
+                <div class="endButtons">
+                    <button id="leaveGameBtn" class="btn">return to main menu</button>
+                    <button id="playAgainBtn" class="btn">play again </button>
+                    <p id="rematchInfo"> your opponent wants to play again</p>
+                    <button id="newOpponentBtn" class="btn">find new oponenet</button>
+                    <button id="backToKeyOutBtn" class="btn">play with another friend </button>
+                </div>
+        </section>
     </div>
 
     <span id="gameArea">
-        <button id="startGameBtn">Start Game</button>
-        <button id="returnBtn">Return to main Menu</button>
-        <p id="readyMsg"> your oponnent is ready </p>
-        <div id="court">
-            <canvas width="1201" height="443"></canvas>
-            <img id="courtImg" src="../images/court.png" alt="valleyball court">
+        <section class="gameContainer">
+            <div class="buttons">
+                <button id="startGameBtn" class="btn">Start Game</button>
+                <button id="returnBtn" class="btn">Return to main Menu</button>
+                <p id="readyMsg"> your oponnent is ready </p>
+            </div>
+            <div id="court">
+                <canvas width="1201" height="443"></canvas>
+                <img id="courtImg" src="../images/court.png" alt="valleyball court">
 
-            <img id="ball" src="../images/ball.png" alt="ball image">
+                <img id="ball" src="../images/ball.png" alt="ball image">
 
-            <div id="leftPlayer">
-                <img src="../images/stickman.png" alt="stickman">
+                <div id="leftPlayer">
+                    <img src="../images/stickman.png" alt="stickman">
+                </div>
+
+                <div id="rightPlayer">
+                    <img src="../images/stickman.png" alt="stickman">
+                </div>
             </div>
 
-            <div id="rightPlayer">
-                <img src="../images/stickman.png" alt="stickman">
+
+            <div id="powerMeter">
+                <img id="scale" src="../images/scale.png" alt="scale">
+                <div id="gameIndicator" class="indicator"></div>
+                <div id="leftIndicator" class="indicator"></div>
+                <div id="rightIndicator" class="indicator"></div>
             </div>
-        </div>
 
-        <div id="powerMeter">
-            <img id="scale" src="../images/scale.png" alt="scale">
-            <div id="gameIndicator" class="indicator"></div>
-            <div id="leftIndicator" class="indicator"></div>
-            <div id="rightIndicator" class="indicator"></div>
-        </div>
-
-        <div id="scoreBoard">
-            <p>leftPlayer: <span id="leftPlayerScore">0</span></p>
-            <p>rightPlayer: <span id="rightPlayerScore">0</span></p>
-        </div>
+            <div id="scoreBoard">
+                <p class="leftPlay">leftPlayer: <span id="leftPlayerScore">0</span></p>
+                <p class="rightPlay">rightPlayer: <span id="rightPlayerScore">0</span></p>
+            </div>
+        </section>
     </span>
     <script type="module" src="script.js"></script>
 </body>
