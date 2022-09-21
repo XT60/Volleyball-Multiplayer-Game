@@ -64,7 +64,8 @@ document.getElementById('findGame').addEventListener('click', () => {
 });
 
 // keyInWindow
-keyInWindowElement.querySelector('button').addEventListener('click', () => {
+keyInWindowElement.querySelector('button').addEventListener('click', (e) => {
+    e.preventDefault();
     changeWindows(keyInWindowElement, optionsWindowElement);
 });
 
@@ -85,6 +86,7 @@ keyInWindowElement.querySelector('form input[type="submit"]').addEventListener('
     
     socket.emit("joinRoomAttempt", roomId, role, (success, errorMsg) => {
         if (!success){
+            window.alert(errorMsg);
             console.log(errorMsg);
         }
         else{
@@ -239,7 +241,7 @@ socket.on("newGameState", (gameState) => {
         powerMeterElement.style.setProperty('display', 'block');
         canvasElement.style.setProperty('display', 'block');
         readyMsgElement.style.setProperty('display', 'none');
-        startGameBtnElement.setProperty('display', 'none');
+        startGameBtnElement.style.setProperty('display', 'none');
 
         myInterval = setInterval(() => {
             updateScaleTick(prevGameState, new Date());
@@ -447,5 +449,5 @@ function resetGameElement(){
     ballElement.style.setProperty('display', 'none');
     powerMeterElement.style.setProperty('display', 'none');
     canvasElement.style.setProperty('display', 'none');
-    startGameBtnElement.setProperty('display', 'block');
+    startGameBtnElement.style.setProperty('display', 'block');
 }
