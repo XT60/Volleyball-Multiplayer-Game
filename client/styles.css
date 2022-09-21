@@ -10,7 +10,7 @@ html {
   font-size: 62.5%;
 }
 
-body > div {
+body > div, #gameArea {
   position: absolute;
   display: none;
 }
@@ -27,7 +27,6 @@ body #gameSummaryWindow #rematchInfo {
 }
 body #gameArea {
   position: relative;
-  display: flex;
   justify-content: center;
 }
 body #gameArea .gameContainer {
@@ -500,4 +499,4 @@ body #gameArea #scoreBoard .leftPlay {
     font-size: 4.3rem;
     margin: 0 1em -0.2em;
   }
-}/*# sourceMappingURL=styles.css.map */
+}

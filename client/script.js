@@ -305,8 +305,12 @@ socket.on("rematchProposal", () => {
 // Helper Fucntions
 function changeWindows(from, to){
     from.style.setProperty('display', 'none');
+    if (to === gameElement){
+        resetGameElement()
+        to.style.setProperty('display', 'flex');
+        return;
+    }
     to.style.setProperty('display', 'block');
-    if (to === gameElement)     resetGameElement();
 }
 
 
