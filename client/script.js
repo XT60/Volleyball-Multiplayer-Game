@@ -453,5 +453,5 @@ function resetGameElement(){
     ballElement.style.setProperty('display', 'none');
     powerMeterElement.style.setProperty('display', 'none');
     canvasElement.style.setProperty('display', 'none');
-    startGameBtnElement.style.setProperty('display', 'block');
+    startGameBtnElement.style.setProperty('display', 'inline');
 }

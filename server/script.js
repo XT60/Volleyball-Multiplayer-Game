@@ -186,8 +186,8 @@ io.on("connection", (socket) => {
         }
         const opponent = waitingRoom.pop();
         const roomId = createRoom();
-        opponent.join(roomId);
-        socket.join(roomId);
+        joinRoom(roomId, opponent, 'player');
+        joinRoom(roomId, socket, 'player');
         io.to(socket.id).emit("opponentFound", roomId, 'leftPlayer');
         io.to(opponent.id).emit("opponentFound", roomId, 'rightPlayer');
         const room = rooms[roomId];
