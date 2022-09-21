@@ -1,12 +1,35 @@
-//actions: standing moving shooting blocking
 const gravity = 0.02;
 const courtSize = [1201, 443];
 const midCourt = 601;
-const playerSize = [69, 175];
-const ballRadius = 25; 
 const groundLevel = 409;
-const netRect = [599, 191, 8, 220];
 
+const playerSize = [69, 175];
+const playerVelInterval = [0.8, -2];
+let lastContact = null;
+
+const ballRadius = 25; 
+const xBallVel = 0.4;
+const ballGMultiplier = 0.02;
+const ballDefaultVel = [xBallVel, 0];
+const ballDefaultPos = [midCourt - ballRadius, 20];
+
+const scaleTicks = 11;
+const midTick = (scaleTicks - 1) / 2;
+const jinx = [0.2 / midTick, 5 / midTick];
+const scaleTickTime = 120;
+
+const netRect = [599, 191, 8, 220];
+const blockZoneSize = [50, 20]
+const playerTerritory = {
+    leftPlayer: [0, midCourt - playerSize[0]],
+    rightPlayer: [midCourt, 1201 - playerSize[0]]
+};
+const blockZone = {
+    leftPlayer: [midCourt - blockZoneSize[0], 
+    groundLevel - blockZoneSize[1], blockZoneSize[0], blockZoneSize[1]],
+    rightPlayer: [midCourt, groundLevel - blockZoneSize[1],
+    blockZoneSize[0], blockZoneSize[1]]
+};
 const playerShootArea = {
     leftPlayer: [42, 15, 65, 70],
     rightPlayer: [-31, 15, 65, 70]
@@ -15,58 +38,27 @@ const blockRect = {
     leftPlayer: [39, 0, 30, 88],
     rightPlayer: [0, 0, 30, 88]
 };
-
-const players = {
-    leftPlayer: null,
-    rightPlayer: null
-};
 const playerDefaultPos = {
     leftPlayer: [300 - playerSize[0], groundLevel - playerSize[1]],
     rightPlayer: [900, groundLevel - playerSize[1]]
 };
-const ballDefaultPos = [midCourt - ballRadius, 20];
-const xBallVel = 0.4;
-const ballDefaultVel = [xBallVel, 0];
-const ballGMultiplier = 0.02;
-let lastContact = null;
-const playerVelInterval = [0.8, -2];
-const playerTerritory = {
-    leftPlayer: [0, midCourt - playerSize[0]],
-    rightPlayer: [midCourt, 1201 - playerSize[0]]
-}
-const blockZoneSize = [50, 20]
-const blockZone = {
-    leftPlayer: [midCourt - blockZoneSize[0], 
-    groundLevel - blockZoneSize[1], blockZoneSize[0], blockZoneSize[1]],
-    rightPlayer: [midCourt, groundLevel - blockZoneSize[1],
-    blockZoneSize[0], blockZoneSize[1]]
-}
-
- 
-const scaleTicks = 11;
-const midTick = (scaleTicks - 1) / 2;
-const jinx = [0.2 / midTick, 5 / midTick];
-const scaleTickTime = 200;
 
 const intDev = (x, y) => Math.floor(x / y);
 
 function updateScale(gameState, currTime){
     const scale = gameState.scale
     if (scale.nextTick > currTime)    return false;
-    if (scale.nextTick < currTime && scale.nextTick + scaleTickTime > currTime){
+    // console.log(currTime - lastTime);
+    // lastTime = currTime;
+    if (scale.nextTick < currTime && currTime < scale.nextTick + scaleTickTime){
         if (scale.currTick + scale.trend >= scaleTicks || scale.currTick + scale.trend < 0){
             scale.trend *= -1;
         } 
-        // console.log({
-        //     currTick: scale.nextTick,
-        //     currTime,
-        //     nextTick: scale.nextTick + scaleTickTime,
-        // })
         scale.nextTick = scale.nextTick + scaleTickTime;
         scale.currTick += scale.trend;
         return true;
     }
-    const missedTicks = intDev((currTime - scale.nextTick), scaleTickTime);
+    const missedTicks = intDev(currTime - scale.nextTick, scaleTickTime);
     const missedTrends = intDev(missedTicks + scale.currTick, scaleTicks);
     if (missedTrends % 2 === 1){
         scale.trend *= -1;
@@ -103,32 +95,13 @@ function initGame(){
             nextTick: scaleTickTime,
             trend: 1
         }
-    }
+    };
     lastContact = null;
-
     if (Math.random() >= 0){
         gameState.ball.vel[0] *= -1;
     }
     return gameState;
 }
-
-
-
-function addPlayer(socketID) {
-    if (!players['leftPlayer']){
-        players['leftPlayer'] = socketID;
-        return false;
-    }
-    else{
-        players['rightPlayer'] = socketID;
-        return true;
-    }
-}
-
-function getPlayers(){
-    return players;
-}
-
 
 function handleKeydown(gameState, playerName, eventCode){
     if (gameState){
@@ -163,9 +136,9 @@ function handleKeydown(gameState, playerName, eventCode){
                 }
                 break;
             case 'Space':
+                const scale = gameState.scale;
                 if (!player.shootValue){
-                    player.shootValue = gameState.scale.currTick;
-                    // console.log(`${playerName} set shootValue at: ${player.shootValue}`);
+                    player.shootValue = scale.currTick;
                 }
                 break;      
         }    
@@ -180,7 +153,6 @@ function handleKeyUp(gameState, playerName, eventCode){
                 if (player.action === 'moving'){
                     player.action = 'standing';
                     player.vel[0] = 0;
-                    console.log("movement left stopped")
                 }
                 break;
             case 'ArrowRight':
@@ -192,7 +164,6 @@ function handleKeyUp(gameState, playerName, eventCode){
         }    
     }
 }
-
 
 function updatePlayer(gameState, playerName, timeInterval){
     const player = gameState[playerName];
@@ -233,7 +204,6 @@ function updatePlayer(gameState, playerName, timeInterval){
     player.vel[1] += gravity * timeInterval;
 
     // shooting a ball
-    // if (player.action === 'shooting'){
     const area = playerShootArea[playerName];
     const shootArea = [player.pos[0] + area[0], player.pos[1] + area[1], area[2], area[3]];
     const ballPos = [gameState.ball.pos[0] + ballRadius, gameState.ball.pos[1] + ballRadius];
@@ -245,7 +215,6 @@ function updatePlayer(gameState, playerName, timeInterval){
         player.action = 'moving';
     }
 }
-
 
 function shootBall(gameState, playerName){
     let shootValue = gameState[playerName].shootValue;
@@ -274,21 +243,22 @@ function shootBall(gameState, playerName){
     lastContact = playerName;
 }
 
-
 function updateBall(gameState, timeInterval){
+    
     // position
     const ball = gameState['ball'];
     ball.pos[0] += ball.vel[0] * timeInterval;
     ball.pos[1] += ball.vel[1] * timeInterval * ballGMultiplier;
+
     // velocity
     ball.vel[1] += gravity * timeInterval;
-    if (ball.pos[0] < 0 || ball.pos[0] > courtSize[0] || ball.pos[1] < 0){
+    if (ball.pos[0] < 0 || ball.pos[0] > courtSize[0] - 2 * ballRadius){
         return otherPlayer(lastContact);
     }
 
-    if (ball.pos[1] > groundLevel){
+    if (ball.pos[1] > groundLevel - 2 * ballRadius){
         if (lastContact === 'rightPlayer'){
-            if (ball.pos[0] < netRect[0] - ballRadius){
+            if (ball.pos[0] < netRect[0] - ballRadius/2){
                 return 'rightPlayer';
             }
             return 'leftPlayer';
@@ -299,10 +269,10 @@ function updateBall(gameState, timeInterval){
         return 'leftPlayer';
     }
         
-    if (rectCircleCollision(netRect, ball.pos, ballRadius)){
+    const ballPos = [ball.pos[0] + ballRadius, ball.pos[1] + ballRadius]
+    if (rectCircleCollision(netRect, ballPos, ballRadius)){
         return otherPlayer(lastContact);
     }
-
     return null;
 }
 
@@ -324,12 +294,11 @@ function rectCircleCollision(rect, cPos, cRadius){
 
     // rest except the rect edges
     if ((-rect[2] - cRadius < xDiff && xDiff < cRadius &&  -rect[3] < yDiff && yDiff < 0) || (
-        -rect[3] -cRadius < yDiff && yDiff < cRadius && -rect[2] < xDiff && xDiff < 0)){
+        -rect[3] - cRadius < yDiff && yDiff < cRadius && -rect[2] < xDiff && xDiff < 0)){
             return true;
         }
         
     // rect edges
-    if (xDiff )
     if (yDiff <= -rect[3]){
         yDiff += rect[3];
     }
@@ -363,14 +332,13 @@ module.exports = {
     updatePlayer,
     updateBall,
     initGame,
-    addPlayer,
     handleKeyUp,
     updateScale,
-    getPlayers,
 
     playerShootArea,
     netRect,
     blockZone,
     scaleTicks,
+    scaleTickTime,
     blockRect
-}
+};

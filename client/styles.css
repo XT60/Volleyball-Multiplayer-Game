@@ -105,7 +105,6 @@ body #gameArea #powerMeter .indicator {
   width: 2%;
   left: 0;
   top: 0;
-  transition: left 0.19s linear;
 }
 body #gameArea #powerMeter #gameIndicator {
   background-color: gold;

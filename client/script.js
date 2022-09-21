@@ -2,7 +2,7 @@ import { io } from "https://cdn.socket.io/4.3.2/socket.io.esm.min.js";
 import { drawHitboxes, initHitboxes } from "./hitboxes.js";
 const socket = io("http://localhost:3000");
 
-let prevGameState, myPlayer, scaleTicks, scaleMulti, a, b, myRoomId;
+let prevGameState, myPlayer, scaleTicks, scaleMulti, a, b, myRoomId, scaleTickTime, myInterval;
 let inGame = false;
 const indicatorWidth = 2;
 
@@ -37,6 +37,7 @@ const scoreBoardElement = document.getElementById("scoreBoard");
 const readyMsgElement = document.getElementById('readyMsg');
 const powerMeterElement = document.getElementById("powerMeter");
 const rematchInfoElement = document.getElementById("rematchInfo");
+const startGameBtnElement = document.querySelector('#startGameBtn');
 
 gameIndicatorElement.style.setProperty('width', cssPercent(indicatorWidth));
 playerCheckboxElement.addEventListener('click', () => {
@@ -112,7 +113,7 @@ gameFindWindowElement.querySelector('button').addEventListener('click', () => {
 });
 
 //court
-document.querySelector('#startGameBtn').addEventListener('mousedown', (e) => {
+startGameBtnElement.addEventListener('mousedown', (e) => {
     e.preventDefault();
     socket.emit('declareReady', myRoomId, myPlayer, (success, errorMsg) => {
         if (!success){
@@ -192,15 +193,18 @@ socket.on("rematchStarted", () => {
 socket.on("debugInfo", (debugInfo) => initHitboxes(debugInfo));
 
 
-socket.on("initData", (data, recieved) => {
+socket.on("initData", (data) => {
     const room = data.room;
     scaleTicks = data.scaleTicks;
+    scaleTickTime = data.scaleTickTime;
     myRoomId = data.roomId;
     //scale
-    a = (scaleTicks - 1) / 2;
-    b = Math.pow(a, 3) 
-    scaleMulti = (100 - indicatorWidth) / (2 * b);
-    console.log(scaleMulti)
+
+    // a = (scaleTicks - 1) / 2;
+    // b = Math.pow(a, 3) 
+    // scaleMulti = (100 - indicatorWidth) / (2 * b);
+    // console.log(scaleMulti)
+    scaleMulti = (100 - indicatorWidth) / (scaleTicks - 1);
     
     //players
     if (socket.id == room.leftPlayer){
@@ -217,14 +221,13 @@ socket.on("initData", (data, recieved) => {
     }
     prevGameState = room.gameState;
     updateScore(room.score);
-    recieved(true);
 });
 
 
 // Socket.io Events
 socket.on("scoreUpdate", (newScore) => updateScore(newScore));
 
-
+// let lastTime, currTime;
 socket.on("newGameState", (gameState) => {
     if (!inGame){
         inGame = true;
@@ -235,27 +238,44 @@ socket.on("newGameState", (gameState) => {
         ballElement.style.setProperty('display', 'block');
         powerMeterElement.style.setProperty('display', 'block');
         canvasElement.style.setProperty('display', 'block');
+        readyMsgElement.style.setProperty('display', 'none');
+        startGameBtnElement.setProperty('display', 'none');
+
+        myInterval = setInterval(() => {
+            updateScaleTick(prevGameState, new Date());
+        }, 30);
     }
-    // console.log('got new gameState');
     updatePosition(ballElement, gameState.ball.pos);
-    updatePlayers(gameState)
+    updatePlayers(gameState);
     if (prevGameState.scale.currTick != gameState.scale.currTick){
         updateIndicatorPos(gameIndicatorElement, gameState.scale.currTick);
-        // console.log(gameState.scale.currTick);
     }
+
     drawHitboxes(gameState)
-    // console.log(gameState.scale.currTick)
 
     //action handling, sprites etc
     prevGameState = gameState;
 });
 
 
+
+function updateScaleTick(gameState, currTime){
+    const scale = gameState.scale
+    if (currTime > scale.nextTick){
+        if (scale.currTick + scale.trend >= scaleTicks || scale.currTick + scale.trend < 0){
+            scale.trend *= -1;
+        } 
+        scale.nextTick = scale.nextTick + scaleTickTime;
+        scale.currTick += scale.trend;
+        updateIndicatorPos(gameIndicatorElement, scale.currTick);
+    }
+}
+
+
 socket.on("opponentLeft", () => {
     changeWindows(gameElement, summaryWindowElement);
-    window.alert('your opponent left the game');
-    // prevGameState = undefined;
-    // myPlayer = 'leftPlayer';
+    gameEndCauseElement.innerHTML = "Your opponent left the game";
+    summaryHeaderElement.innerHTML = "Game was not finished";
 });
 
 
@@ -267,7 +287,6 @@ socket.on('gameHasEnded', (cause, score) => {
     else{
         winnerMsg = "right player won";
     }
-
     summaryHeaderElement.innerHTML = winnerMsg + "<br>" + 
         `left player: ${score.leftPlayer}<br>right player: ${score.rightPlayer}`
     gameEndCauseElement.innerHTML = cause;
@@ -363,10 +382,6 @@ function updatePlayers(gameState){
 function updateIndicatorPos(indicator, tick){
     const newPos = calculateScaleY(tick) * scaleMulti;
     indicator.style.setProperty('left', cssPercent(newPos));
-    // console.log({
-    //     newPos,
-    //     currTick: gameState.scale.currTick,
-    // })
 }
 
 
@@ -392,7 +407,8 @@ function calculateScaleY(x) {
         console.log(`wrong scale X argument: ${x}`);
         return -1;
     }
-    return Math.pow(x - a, 3) + b;
+    return x
+    // return Math.pow(x - a, 3) + b;
 }
 
 
@@ -420,6 +436,7 @@ function reset(){
 
 function resetGameElement(){
     inGame = false;
+    clearInterval(myInterval);
     leftPlayerScoreElement.innerHTML = '0';
     rightPlayerScoreElement.innerHTML = '0';
     
@@ -430,4 +447,5 @@ function resetGameElement(){
     ballElement.style.setProperty('display', 'none');
     powerMeterElement.style.setProperty('display', 'none');
     canvasElement.style.setProperty('display', 'none');
+    startGameBtnElement.setProperty('display', 'block');
 }
