@@ -254,6 +254,8 @@ body #gameArea #scoreBoard .leftPlay {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding-right: 1px;
+  padding-bottom: 2px;
   color: #000814;
 }
 
