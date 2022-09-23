@@ -1,3 +1,6 @@
+// to run command: 
+//     npm run loik  (in ./server directory)
+
 const { v4 } = require('uuid');
 const { createServer } = require("http");
 const http = createServer(); 

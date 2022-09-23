@@ -1,0 +1,32 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "server side of multiplayer volleyball game",
+  "main": "script.js",
+  "scripts": {
+    "loik": "nodemon scirpt.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/XT60/volleyball.git"
+  },
+  "keywords": [
+    "volleyball",
+    "multiplayer",
+    "socket.io"
+  ],
+  "contributors ": [
+    "Jakub Wos <jakub.wos0@gmail.com>", 
+    "Konrad Nizinski"
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/XT60/volleyball/issues"
+  },
+  "homepage": "https://github.com/XT60/volleyball#readme",
+  "dependencies": {
+    "nodemon": "^2.0.20",
+    "socket.io": "^4.5.2",
+    "uuid": "^9.0.0"
+  }
+}
