@@ -34,7 +34,6 @@ body {
 
 	#gameArea {
 		position: relative;
-		// display: flex;
 		justify-content: center;
 
 		.gameContainer {
@@ -49,23 +48,14 @@ body {
 			background-repeat: no-repeat;
 			background-position: bottom;
 			background-size: cover;
-			// display: flex;
-			// justify-content: center;
 
 			.buttons {
 				text-align: center;
-
-				// #returnBtn{
-				// 	padding: 0.9em;
-				// }
 			}
 		}
 
 		#readyMsg {
 			display: none;
-			// position: absolute;
-			// left: 0;
-			// top: 0;
 			color: white;
 			text-transform: uppercase;
 			font-size: 3.5rem;
@@ -260,9 +250,6 @@ body {
 
 			.playerCheckArea {
 				margin-bottom: 1em;
-				// input[type="checkbox"]{
-
-				// }
 			}
 
 			.checkboxes {
@@ -273,20 +260,16 @@ body {
 			}
 
 			.playerLabel {
-				// padding-right: 3em;
 				padding-top: 0.15em;
 			}
 
 			.spectatorLabel {
-				// padding-right: 0.6em;
 				padding-top: 0.15em;
 			}
 
 			.labels {
 				cursor: pointer;
 				display: flex;
-
-				// flex-direction: row-reverse;
 			}
 
 			.labels::before {
@@ -574,12 +557,11 @@ body {
 				font-size: 1.9rem;
 			}
 
-			
-				.modeCheckbox{
-					.modeCheckboxBtn {
-						padding-left: 3.7em;
-					}
+			.modeCheckbox {
+				.modeCheckboxBtn {
+					padding-left: 3.7em;
 				}
+			}
 		}
 	}
 
@@ -609,10 +591,10 @@ body {
 	}
 }
 
-@media (min-width: 915px){
-	.container{
-		.form{
-			.modeCheckbox{
+@media (min-width: 915px) {
+	.container {
+		.form {
+			.modeCheckbox {
 				.modeCheckboxBtn {
 					padding-left: 4.8em;
 				}
@@ -678,13 +660,9 @@ body {
 					margin-right: 1em;
 				}
 
-		
-							.modeCheckboxBtn {
-								padding-left: 1.2em;
-							}
-						
-					
-				
+				.modeCheckboxBtn {
+					padding-left: 1.2em;
+				}
 			}
 
 			.gameKeyInput {
