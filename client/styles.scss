@@ -226,11 +226,13 @@ body {
 		}
 
 		.gameKeyInput {
+			font-size: 1.6rem;
 			height: 3em;
 			border: 3px solid #001d3d;
 			background: rgba($color: #001d3d, $alpha: 0.4);
 			color: #fff;
 			padding: 0.5em;
+			margin-bottom: .5em;
 		}
 
 		.gameKeyInput:focus {
@@ -274,10 +276,6 @@ body {
 			.spectatorLabel {
 				padding-right: 0.6em;
 				padding-top: 0.15em;
-			}
-
-			.gameKeyInput {
-				margin-top: 12em;
 			}
 		}
 	}
@@ -479,6 +477,14 @@ body {
 			margin: 1.5em 1em;
 			font-size: 2rem;
 		}
+
+		.form{
+			.gameKeyInput{
+				font-size: 1.8rem;
+			}
+		}
+
+		
 	}
 
 	.btn {
@@ -523,7 +529,12 @@ body {
 			.gameKeyLabel {
 				font-size: 3rem;
 			}
+
+			.gameKeyInput{
+				font-size: 1.9rem;
+			}
 		}
+		
 	}
 
 	.btn {
@@ -576,6 +587,9 @@ body {
 			.gameKeyLabel {
 				font-size: 3.8rem;
 			}
+			.gameKeyInput{
+				font-size: 2rem;
+			}
 		}
 	}
 
@@ -606,6 +620,10 @@ body {
 					margin-right: 1em;
 				}
 			}
+
+			.gameKeyInput{
+				font-size: 2.1rem;
+			}
 		}
 	}
 }
@@ -633,6 +651,10 @@ body {
 		.form {
 			.gameKeyLabel {
 				font-size: 4.65rem;
+			}
+
+			.gameKeyInput{
+				font-size: 2.35rem;
 			}
 		}
 	}
