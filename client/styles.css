@@ -198,36 +198,30 @@ body #gameArea #scoreBoard .leftPlay {
   flex-direction: column;
   width: 100%;
 }
-.container .form .modeCheckbox .playerCheckArea {
+.container .form .modeCheckbox .modeCheckboxBtn {
   display: flex;
   justify-content: space-around;
-  align-content: center;
-  width: 100%;
-  margin-bottom: 1em;
-  padding: 0.5em 1em;
   border-radius: 25px;
   background-color: #001d3d;
+  width: 100%;
+  padding: 0.95em;
+}
+.container .form .modeCheckbox .playerCheckArea {
+  margin-bottom: 1em;
 }
 .container .form .modeCheckbox .playerCheckArea #playerCheckbox {
   cursor: pointer;
-}
-.container .form .modeCheckbox .spectatorCheckArea {
-  display: flex;
-  justify-content: space-around;
-  width: 100%;
-  padding: 0.6em 1em;
-  border-radius: 25px;
-  background-color: #001d3d;
 }
 .container .form .modeCheckbox .spectatorCheckArea #spectatorCheckbox {
   cursor: pointer;
 }
 .container .form .modeCheckbox .playerLabel {
   padding-right: 3em;
-  padding-top: 0.1em;
+  padding-top: 0.15em;
 }
 .container .form .modeCheckbox .spectatorLabel {
   padding-right: 0.6em;
+  padding-top: 0.15em;
 }
 .container .form .modeCheckbox .gameKeyInput {
   margin-top: 12em;
@@ -237,6 +231,7 @@ body #gameArea #scoreBoard .leftPlay {
   position: relative;
   font-size: 1.9rem;
   padding: 0.95em;
+  padding-top: 1em;
   margin: 0.5em 0;
   border-radius: 25px;
   text-transform: uppercase;
@@ -349,6 +344,7 @@ body #gameArea #scoreBoard .leftPlay {
   .btn {
     font-size: 2rem;
     padding: 1em;
+    padding-top: 1.2em;
     margin: 0.75em 0;
     border-radius: 35px;
   }
@@ -375,6 +371,7 @@ body #gameArea #scoreBoard .leftPlay {
   .btn {
     font-size: 2.4rem;
     padding: 0.9em 1.5em;
+    padding-top: 1em;
     margin: 0.75em 0;
   }
   .form {
@@ -407,6 +404,7 @@ body #gameArea #scoreBoard .leftPlay {
   .btn {
     font-size: 2.8rem;
     padding: 0.8em 2em;
+    padding-top: 0.85em;
     margin: 0.75em 0;
   }
   .waitMessage {
@@ -445,6 +443,7 @@ body #gameArea #scoreBoard .leftPlay {
   .btn {
     font-size: 2.8rem;
     padding: 0.9em 3em;
+    padding-top: 1em;
     margin: 0.75em 0;
   }
   .waitMessage {
@@ -484,6 +483,7 @@ body #gameArea #scoreBoard .leftPlay {
   .btn {
     font-size: 2.8rem;
     padding: 1em 5em;
+    padding-top: 1.1em;
     margin: 0.75em 0;
   }
   .waitMessage {
