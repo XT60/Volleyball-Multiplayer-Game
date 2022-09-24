@@ -63,7 +63,6 @@ io.on("connection", (socket) => {
     function createAndJoinRoom(callback){
         const roomId = createRoom();
         joinRoom(roomId, socket, 'player');
-        console.log('.');
         callback(roomId);
     }
 
