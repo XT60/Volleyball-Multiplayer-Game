@@ -5,6 +5,10 @@ const socket = io("http://localhost:3000");
 let prevGameState, myPlayer, scaleTicks, scaleMulti, a, b, myRoomId, scaleTickTime, myInterval;
 let inGame = false;
 const indicatorWidth = 2;
+let currScale = 1;
+const gameAreaSize = [1201, 443];
+const maxCourtfill = 0.9;
+
 
 const ballElement = document.getElementById("ball");
 const leftPlayerElement = document.getElementById('leftPlayer');
@@ -24,6 +28,7 @@ const keyOutWindowElement = document.getElementById('keyOutWindow');
 const gameFindWindowElement = document.getElementById('gameFindWindow');
 const gameElement = document.getElementById('gameArea');
 
+const courtElement = document.getElementById('court');
 const formInputElements = document.querySelectorAll('#keyInWindowElement input'); 
 const spectatorCheckboxElement = document.getElementById('spectatorCheckbox');
 const playerCheckboxElement = document.getElementById("playerCheckbox");
@@ -39,13 +44,17 @@ const powerMeterElement = document.getElementById("powerMeter");
 const rematchInfoElement = document.getElementById("rematchInfo");
 const startGameBtnElement = document.querySelector('#startGameBtn');
 
+
 gameIndicatorElement.style.setProperty('width', cssPercent(indicatorWidth));
 playerCheckboxElement.addEventListener('click', () => {
     spectatorCheckboxElement.checked = false;
 });
+
 spectatorCheckboxElement.addEventListener('click', () => {
     playerCheckboxElement.checked = false;
 });
+
+window.addEventListener("resize", resize);
 
 
 // optionsWindow
@@ -229,7 +238,7 @@ socket.on("initData", (data) => {
 // Socket.io Events
 socket.on("scoreUpdate", (newScore) => updateScore(newScore));
 
-// let lastTime, currTime;
+
 socket.on("newGameState", (gameState) => {
     if (!inGame){
         inGame = true;
@@ -247,8 +256,9 @@ socket.on("newGameState", (gameState) => {
             updateScaleTick(prevGameState, new Date());
         }, 30);
     }
-    updatePosition(ballElement, gameState.ball.pos);
-    updatePlayers(gameState);
+    updateAllPositions(gameState);
+    updateLeftPlayerIndicator(gameState);
+    updateRightPlayerIndicator(gameState);
     if (prevGameState.scale.currTick != gameState.scale.currTick){
         updateIndicatorPos(gameIndicatorElement, gameState.scale.currTick);
     }
@@ -258,20 +268,6 @@ socket.on("newGameState", (gameState) => {
     //action handling, sprites etc
     prevGameState = gameState;
 });
-
-
-
-function updateScaleTick(gameState, currTime){
-    const scale = gameState.scale
-    if (currTime > scale.nextTick){
-        if (scale.currTick + scale.trend >= scaleTicks || scale.currTick + scale.trend < 0){
-            scale.trend *= -1;
-        } 
-        scale.nextTick = scale.nextTick + scaleTickTime;
-        scale.currTick += scale.trend;
-        updateIndicatorPos(gameIndicatorElement, scale.currTick);
-    }
-}
 
 
 socket.on("opponentLeft", () => {
@@ -311,6 +307,19 @@ function changeWindows(from, to){
         return;
     }
     to.style.setProperty('display', 'block');
+}
+
+
+function updateScaleTick(gameState, currTime){
+    const scale = gameState.scale
+    if (currTime > scale.nextTick){
+        if (scale.currTick + scale.trend >= scaleTicks || scale.currTick + scale.trend < 0){
+            scale.trend *= -1;
+        } 
+        scale.nextTick = scale.nextTick + scaleTickTime;
+        scale.currTick += scale.trend;
+        updateIndicatorPos(gameIndicatorElement, scale.currTick);
+    }
 }
 
 
@@ -354,8 +363,7 @@ function keyUp(e){
 }
 
 
-function updatePlayers(gameState){
-    // leftPlayer
+function updateLeftPlayerIndicator(gameState){
     updatePosition(leftPlayerElement, gameState.leftPlayer.pos);
     if (prevGameState.leftPlayer.shootValue != gameState.leftPlayer.shootValue){
         if(gameState.leftPlayer.shootValue === null){
@@ -369,7 +377,10 @@ function updatePlayers(gameState){
         }
 
     } 
-    // rightPlayer
+}
+
+
+function updateRightPlayerIndicator(gameState){
     updatePosition(rightPlayerElement, gameState.rightPlayer.pos);
     if (prevGameState.rightPlayer.shootValue != gameState.rightPlayer.shootValue){
         if(gameState.rightPlayer.shootValue === null){
@@ -382,6 +393,13 @@ function updatePlayers(gameState){
             updateIndicatorPos(rightIndicatorElement, gameState.rightPlayer.shootValue);
         }
     } 
+}
+
+
+function updateAllPositions(gameState){
+    updatePosition(ballElement, gameState.ball.pos);
+    updatePosition(leftPlayerElement, gameState.leftPlayer.pos);
+    updatePosition(rightPlayerElement, gameState.rightPlayer.pos);
 }
 
 
@@ -398,10 +416,14 @@ function updateScore(newScore){
 
 
 function updatePosition(element, pos){
-    element.style.setProperty('left', `${pos[0]}px`);
-    element.style.setProperty('top', `${pos[1]}px`);
+    element.style.setProperty('left', `${pos[0] * currScale}px`);
+    element.style.setProperty('top', `${pos[1] * currScale}px`);
 }
 
+function updateElementSize(element, width, height){
+    element.style.setProperty("width", `${width}px`);
+    element.style.setProperty("height", `${height}px`);
+}
 
 function cssPercent(number){
     return `${number}%`
@@ -426,6 +448,15 @@ function handleResponse(success, errorMsg, callback){
     callback();
 }
 
+function resize(){
+    currScale = Math.min(maxCourtfill * window.innerWidth / gameAreaSize[0],
+    maxCourtfill * window.innerHeight / gameAreaSize[1]); 
+    const newWidth = currScale * gameAreaSize[0];
+    const newHeight = currScale * gameAreaSize[1];
+    updateElementSize(courtElement, newWidth, newHeight);
+    updateElementSize(canvasElement, newWidth, newHeight);
+    updateAllPositions(prevGameState);
+}
 
 function reset(){
     prevGameState = undefined;
@@ -445,6 +476,7 @@ function resetGameElement(){
     clearInterval(myInterval);
     leftPlayerScoreElement.innerHTML = '0';
     rightPlayerScoreElement.innerHTML = '0';
+    resize();
     
     scoreBoardElement.style.setProperty('display', 'none');
     readyMsgElement.style.setProperty('display', 'none');
@@ -455,3 +487,4 @@ function resetGameElement(){
     canvasElement.style.setProperty('display', 'none');
     startGameBtnElement.style.setProperty('display', 'inline');
 }
+

@@ -1,14 +1,14 @@
-const gravity = 0.02;
-const courtSize = [1201, 443];
-const midCourt = 601;
-const groundLevel = 409;
+const gravity = 0.02;                   // 0.00451
+const courtSize = [1201, 443];          // 100, 100
+const midCourt = 601;                   // 50
+const groundLevel = 409;                // 92.325
 
-const playerSize = [69, 175];
-const playerVelInterval = [0.8, -2];
+const playerSize = [69, 175];           // 5.745
+const playerVelInterval = [0.8, -2];    // 0.166
 let lastContact = null;
 
-const ballRadius = 25; 
-const xBallVel = 0.4;
+const ballRadius = 25;                  // 2.081
+const xBallVel = 0.4;                   //...       <-- values in %, but they won't work since % unit isn't universal between x and y axis
 const ballGMultiplier = 0.02;
 const ballDefaultVel = [xBallVel, 0];
 const ballDefaultPos = [midCourt - ballRadius, 20];
