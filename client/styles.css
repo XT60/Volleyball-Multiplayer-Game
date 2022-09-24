@@ -105,11 +105,15 @@ body #gameArea #court #rightPlayer img {
 }
 body #gameArea #powerMeter {
   position: absolute;
-  width: 557px;
+  width: 200px;
   height: 117px;
   top: 650px;
   left: 50%;
   transform: translateX(-50%);
+}
+body #gameArea #powerMeter img {
+  width: 100%;
+  height: 100%;
 }
 body #gameArea #powerMeter .indicator {
   position: absolute;
