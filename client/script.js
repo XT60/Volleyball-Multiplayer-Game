@@ -43,6 +43,8 @@ const readyMsgElement = document.getElementById('readyMsg');
 const powerMeterElement = document.getElementById("powerMeter");
 const rematchInfoElement = document.getElementById("rematchInfo");
 const startGameBtnElement = document.querySelector('#startGameBtn');
+const courtImgElement = document.querySelector('#courtImg');
+const gameContainerElement = document.querySelector('.gameContainer')
 
 
 gameIndicatorElement.style.setProperty('width', cssPercent(indicatorWidth));
@@ -251,6 +253,8 @@ socket.on("newGameState", (gameState) => {
         canvasElement.style.setProperty('display', 'block');
         readyMsgElement.style.setProperty('display', 'none');
         startGameBtnElement.style.setProperty('display', 'none');
+        courtImgElement.style.setProperty('display','block');
+        gameContainerElement.classList.remove('centerClass');
 
         myInterval = setInterval(() => {
             updateScaleTick(prevGameState, new Date());
@@ -486,5 +490,7 @@ function resetGameElement(){
     powerMeterElement.style.setProperty('display', 'none');
     canvasElement.style.setProperty('display', 'none');
     startGameBtnElement.style.setProperty('display', 'inline');
+    courtImgElement.style.setProperty('display','none');
+    gameContainerElement.classList.add('centerClass');
 }
 

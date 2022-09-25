@@ -31,6 +31,11 @@ body #gameArea {
   position: relative;
   justify-content: center;
 }
+body #gameArea .centerClass {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 body #gameArea .gameContainer {
   width: 100vw;
   height: 100vh;
@@ -41,6 +46,13 @@ body #gameArea .gameContainer {
 }
 body #gameArea .gameContainer .buttons {
   text-align: center;
+  z-index: 10;
+  padding: 0 1em;
+}
+body #gameArea .gameContainer .buttons .startGameBtnClass {
+  padding-left: 3.65em;
+  padding-right: 3.65em;
+  margin-top: 1.2em;
 }
 body #gameArea #readyMsg {
   display: none;
@@ -63,6 +75,7 @@ body #gameArea #court #courtImg {
   position: absolute;
   top: 0;
   left: 0;
+  display: none;
 }
 body #gameArea #court canvas {
   position: absolute;
@@ -398,6 +411,9 @@ body #gameArea #scoreBoard .leftPlay {
     margin: 0.75em 0;
     border-radius: 35px;
   }
+  .buttons {
+    margin: 0 2em;
+  }
 }
 @media (min-width: 576px) {
   .container {
@@ -420,6 +436,10 @@ body #gameArea #scoreBoard .leftPlay {
   }
   .container .form .gameKeyInput {
     font-size: 1.8rem;
+  }
+  body #gameArea .gameContainer .buttons .startGameBtnClass {
+    padding-left: 4.15em;
+    padding-right: 4.15em;
   }
   .btn {
     font-size: 2.4rem;
@@ -480,6 +500,13 @@ body #gameArea #scoreBoard .leftPlay {
     margin: 0 1em;
     text-transform: uppercase;
   }
+  .buttons {
+    margin: 0 4em;
+  }
+  body #gameArea .gameContainer .buttons .startGameBtnClass {
+    padding-left: 4.8em;
+    padding-right: 4.8em;
+  }
 }
 @media (min-width: 915px) {
   .container .form .modeCheckbox .modeCheckboxBtn {
@@ -519,6 +546,10 @@ body #gameArea #scoreBoard .leftPlay {
   .waitKey {
     font-size: 2.7rem;
   }
+  body #gameArea .gameContainer .buttons .startGameBtnClass {
+    padding-left: 5.8em;
+    padding-right: 5.8em;
+  }
 }
 @media (min-width: 1100px) {
   .container .form .modeCheckbox {
@@ -533,6 +564,9 @@ body #gameArea #scoreBoard .leftPlay {
   }
   .container .form .gameKeyInput {
     font-size: 2.1rem;
+  }
+  .buttons {
+    margin: 0 10em;
   }
   .playerText {
     padding-left: 0.3em;
@@ -579,4 +613,21 @@ body #gameArea #scoreBoard .leftPlay {
     font-size: 4.3rem;
     margin: 0 1em -0.2em;
   }
+  body #gameArea .gameContainer .buttons .startGameBtnClass {
+    padding-left: 7.8em;
+    padding-right: 7.8em;
+  }
+  .buttons {
+    margin: 0 15em;
+  }
 }
+@media (min-width: 1400px) {
+  .buttons {
+    margin: 0 22em;
+  }
+}
+@media (min-width: 1800px) {
+  .buttons {
+    margin: 0 30em;
+  }
+}/*# sourceMappingURL=styles.css.map */

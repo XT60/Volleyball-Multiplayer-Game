@@ -36,6 +36,12 @@ body {
 		position: relative;
 		justify-content: center;
 
+		.centerClass{
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
 		.gameContainer {
 			width: 100vw;
 			height: 100vh;
@@ -51,6 +57,14 @@ body {
 
 			.buttons {
 				text-align: center;
+				z-index: 10;
+				padding: 0 1em;
+
+				.startGameBtnClass{
+					padding-left: 3.65em;
+					padding-right: 3.65em;
+					margin-top: 1.2em;
+				}
 			}
 		}
 
@@ -76,6 +90,7 @@ body {
 				position: absolute;
 				top: 0;
 				left: 0;
+				display: none;
 			}
 			canvas {
 				position: absolute;
@@ -490,7 +505,13 @@ body {
 		margin: 0.75em 0;
 		border-radius: 35px;
 	}
+
+	.buttons{
+		margin: 0 2em;
+	}
 }
+
+
 
 @media (min-width: 576px) {
 	.container {
@@ -523,6 +544,19 @@ body {
 		.form {
 			.gameKeyInput {
 				font-size: 1.8rem;
+			}
+		}
+	}
+
+	body{
+		#gameArea{
+			.gameContainer {
+				.buttons {
+					.startGameBtnClass{
+						padding-left: 4.15em;
+						padding-right: 4.15em;
+					}
+				}
 			}
 		}
 	}
@@ -606,6 +640,23 @@ body {
 		margin: 0 1em;
 		text-transform: uppercase;
 	}
+
+	.buttons{
+		margin: 0 4em;
+	}
+
+	body{
+		#gameArea{
+			.gameContainer {
+				.buttons {
+					.startGameBtnClass{
+						padding-left: 4.8em;
+						padding-right: 4.8em;
+					}
+				}
+			}
+		}
+	}
 }
 
 @media (min-width: 915px) {
@@ -664,6 +715,19 @@ body {
 	.waitKey {
 		font-size: 2.7rem;
 	}
+
+	body{
+		#gameArea{
+			.gameContainer {
+				.buttons {
+					.startGameBtnClass{
+						padding-left: 5.8em;
+						padding-right: 5.8em;
+					}
+				}
+			}
+		}
+	}
 }
 
 @media (min-width: 1100px) {
@@ -686,6 +750,12 @@ body {
 				font-size: 2.1rem;
 			}
 		}
+
+		
+	}
+
+	.buttons{
+		margin: 0 10em;
 	}
 
 	.playerText {
@@ -747,5 +817,34 @@ body {
 	.gameResult {
 		font-size: 4.3rem;
 		margin: 0 1em -0.2em;
+	}
+
+	body{
+		#gameArea{
+			.gameContainer {
+				.buttons {
+					.startGameBtnClass{
+						padding-left: 7.8em;
+						padding-right: 7.8em;
+					}
+				}
+			}
+		}
+	}
+
+	.buttons{
+		margin: 0 15em;
+	}
+}
+
+@media (min-width:1400px){
+	.buttons{
+		margin: 0 22em;
+	}
+}
+
+@media (min-width:1800px){
+	.buttons{
+		margin: 0 30em;
 	}
 }
