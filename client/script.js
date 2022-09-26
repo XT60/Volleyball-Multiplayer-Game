@@ -459,7 +459,7 @@ function resize(){
     const newHeight = currScale * gameAreaSize[1];
     updateElementSize(courtElement, newWidth, newHeight);
     updateElementSize(canvasElement, newWidth, newHeight);
-    updateAllPositions(prevGameState);
+    if (inGame) updateAllPositions(prevGameState);
 }
 
 function reset(){
