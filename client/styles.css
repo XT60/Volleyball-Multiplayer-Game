@@ -48,7 +48,7 @@ body #gameArea .gameContainer .buttons {
   position: relative;
   text-align: center;
   z-index: 10;
-  padding: 0 1em;
+  padding: 0 1em 2em;
 }
 body #gameArea .gameContainer .buttons .startGameBtnClass {
   padding-left: 3.65em;
@@ -118,10 +118,10 @@ body #gameArea #court #rightPlayer img {
   height: 100%;
 }
 body #gameArea #powerMeter {
-  position: absolute;
-  width: 200px;
-  height: 117px;
-  top: 650px;
+  position: relative;
+  width: 150px;
+  height: 40px;
+  top: 9.5em;
   left: 50%;
   transform: translateX(-50%);
 }
@@ -154,14 +154,30 @@ body #gameArea #powerMeter #rightIndicator {
 body #gameArea #scoreBoard {
   position: relative;
   display: flex;
-  text-transform: uppercase;
   padding: 1em 1em 0;
   width: 100%;
   justify-content: space-between;
-  top: 0px;
+  align-items: center;
+  top: -1em;
   color: white;
-  display: flex;
   flex-direction: row;
+}
+body #gameArea #scoreBoard .playersScore {
+  padding: 0.6em;
+  border-radius: 10px;
+  background-color: #000f26;
+}
+body #gameArea #scoreBoard .playersScore #leftPlayerScore {
+  margin-right: 1em;
+  padding-left: 0.4em;
+}
+body #gameArea #scoreBoard .playersScore #rightPlayerScore {
+  padding-right: 0.4em;
+}
+body #gameArea #scoreBoard .playerName {
+  padding: 0.6em;
+  border-radius: 10px;
+  background-color: #001d3d;
 }
 
 .container {
@@ -398,13 +414,36 @@ body #gameArea #scoreBoard {
   width: 100%;
 }
 
+.allGameItemsContainer {
+  margin-top: 1em;
+}
+
 #returnBtnSmall {
   display: none;
-  padding: 0.1em 0.15em 0 0.05em;
+  padding: 0.1em 0.5em 0 0.4em;
   border-radius: 10px;
   position: relative;
-  top: 0;
+  top: 0.3em;
   left: 0;
+}
+
+.movementButttons {
+  margin-top: 12em;
+  display: flex;
+  justify-content: center;
+}
+.movementButttons .moveBtn:nth-child(odd) {
+  padding: 1em 1.6em;
+}
+.movementButttons .moveBtn:nth-child(even) {
+  padding: 1em 1.5em;
+}
+.movementButttons .btn {
+  margin: 0.2em;
+}
+.movementButttons .btn img {
+  margin-top: 0.15em;
+  transform: scale(1.3);
 }
 
 @media (min-width: 375px) {
@@ -423,6 +462,24 @@ body #gameArea #scoreBoard {
   }
   .buttons {
     margin: 0 2em;
+  }
+  .buttons #returnBtnSmall {
+    margin: 0.5em -1.5em;
+    padding: 0.4em 0.8em 0.2em;
+  }
+  .allGameItemsContainer {
+    margin-top: 4em;
+  }
+}
+@media (min-width: 440px) {
+  body #gameArea #powerMeter {
+    top: 12.2em;
+  }
+  body .allGameItemsContainer {
+    margin-top: 4em;
+  }
+  body .movementButttons {
+    margin-top: 14.5em;
   }
 }
 @media (min-width: 576px) {
@@ -450,6 +507,15 @@ body #gameArea #scoreBoard {
   body #gameArea .gameContainer .buttons .startGameBtnClass {
     padding-left: 4.15em;
     padding-right: 4.15em;
+  }
+  body #gameArea #powerMeter {
+    top: 16em;
+  }
+  body #gameArea .allGameItemsContainer {
+    margin-top: 4em;
+  }
+  body #gameArea .movementButttons {
+    margin-top: 17em;
   }
   .btn {
     font-size: 2.4rem;
@@ -517,10 +583,28 @@ body #gameArea #scoreBoard {
     padding-left: 4.8em;
     padding-right: 4.8em;
   }
+  body #gameArea #powerMeter {
+    top: 19em;
+  }
+  body #gameArea .allGameItemsContainer {
+    margin-top: 6em;
+  }
+  body #gameArea .movementButttons {
+    margin-top: 21em;
+  }
 }
 @media (min-width: 915px) {
   .container .form .modeCheckbox .modeCheckboxBtn {
     padding-left: 4.8em;
+  }
+  body #gameArea #powerMeter {
+    top: 22em;
+  }
+  body #gameArea .allGameItemsContainer {
+    margin-top: 7em;
+  }
+  body #gameArea .movementButttons {
+    margin-top: 24em;
   }
 }
 @media (min-width: 992px) {
@@ -560,6 +644,15 @@ body #gameArea #scoreBoard {
     padding-left: 5.8em;
     padding-right: 5.8em;
   }
+  body #gameArea #powerMeter {
+    top: 26em;
+  }
+  body #gameArea .allGameItemsContainer {
+    margin-top: 6em;
+  }
+  body #gameArea .movementButttons {
+    display: none !important;
+  }
 }
 @media (min-width: 1100px) {
   .container .form .modeCheckbox {
@@ -574,6 +667,15 @@ body #gameArea #scoreBoard {
   }
   .container .form .gameKeyInput {
     font-size: 2.1rem;
+  }
+  body #gameArea #powerMeter {
+    top: 26em;
+  }
+  body #gameArea .allGameItemsContainer {
+    margin-top: 6em;
+  }
+  body #gameArea .buttons {
+    margin: 0 5em;
   }
   .buttons {
     margin: 0 10em;
@@ -623,17 +725,36 @@ body #gameArea #scoreBoard {
     font-size: 4.3rem;
     margin: 0 1em -0.2em;
   }
-  body #gameArea .gameContainer .buttons .startGameBtnClass {
-    padding-left: 7.8em;
-    padding-right: 7.8em;
+  body #gameArea #powerMeter {
+    top: 28em;
+  }
+  body #gameArea .allGameItemsContainer {
+    margin-top: 2em;
   }
   .buttons {
     margin: 0 15em;
   }
 }
+@media (min-width: 1300px) {
+  .buttons {
+    margin: 0 22em;
+  }
+  body #gameArea #powerMeter {
+    top: 31em;
+  }
+  body #gameArea .allGameItemsContainer {
+    margin-top: 1em;
+  }
+}
 @media (min-width: 1400px) {
   .buttons {
     margin: 0 22em;
+  }
+  body #gameArea #powerMeter {
+    top: 34em;
+  }
+  body #gameArea .allGameItemsContainer {
+    margin-top: 0;
   }
 }
 @media (min-width: 1800px) {

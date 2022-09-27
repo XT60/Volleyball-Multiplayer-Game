@@ -47,6 +47,7 @@ const courtImgElement = document.querySelector('#courtImg');
 const gameContainerElement = document.querySelector('.gameContainer');
 const returnBtnElement = document.querySelector('#returnBtn');
 const returnBtnSmallElement = document.querySelector('#returnBtnSmall');
+const movementButttonsElement = document.querySelector('.movementButttons');
 
 
 gameIndicatorElement.style.setProperty('width', cssPercent(indicatorWidth));
@@ -265,6 +266,7 @@ socket.on("newGameState", (gameState) => {
         gameContainerElement.classList.remove('centerClass');
         returnBtnElement.style.setProperty('display', 'none');
         returnBtnSmallElement.style.setProperty('display', 'block');
+        movementButttonsElement.style.setProperty('display', 'flex');
 
         myInterval = setInterval(() => {
             updateScaleTick(prevGameState, new Date());
@@ -504,5 +506,6 @@ function resetGameElement(){
     gameContainerElement.classList.add('centerClass');
     returnBtnElement.style.setProperty('display', 'block');
     returnBtnSmallElement.style.setProperty('display', 'none');
+    movementButttonsElement.style.setProperty('display', 'none')
 }
 
