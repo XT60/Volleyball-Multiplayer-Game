@@ -45,6 +45,7 @@ body #gameArea .gameContainer {
   background-size: cover;
 }
 body #gameArea .gameContainer .buttons {
+  position: relative;
   text-align: center;
   z-index: 10;
   padding: 0 1em;
@@ -151,16 +152,16 @@ body #gameArea #powerMeter #rightIndicator {
   z-index: 100;
 }
 body #gameArea #scoreBoard {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  top: 200px;
+  position: relative;
+  display: flex;
+  text-transform: uppercase;
+  padding: 1em 1em 0;
+  width: 100%;
+  justify-content: space-between;
+  top: 0px;
   color: white;
   display: flex;
   flex-direction: row;
-}
-body #gameArea #scoreBoard .leftPlay {
-  padding-right: 150px;
 }
 
 .container {
@@ -395,6 +396,15 @@ body #gameArea #scoreBoard .leftPlay {
 }
 .endButtons .btn {
   width: 100%;
+}
+
+#returnBtnSmall {
+  display: none;
+  padding: 0.1em 0.15em 0 0.05em;
+  border-radius: 10px;
+  position: relative;
+  top: 0;
+  left: 0;
 }
 
 @media (min-width: 375px) {

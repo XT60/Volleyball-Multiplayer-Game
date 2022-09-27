@@ -44,7 +44,9 @@ const powerMeterElement = document.getElementById("powerMeter");
 const rematchInfoElement = document.getElementById("rematchInfo");
 const startGameBtnElement = document.querySelector('#startGameBtn');
 const courtImgElement = document.querySelector('#courtImg');
-const gameContainerElement = document.querySelector('.gameContainer')
+const gameContainerElement = document.querySelector('.gameContainer');
+const returnBtnElement = document.querySelector('#returnBtn');
+const returnBtnSmallElement = document.querySelector('#returnBtnSmall');
 
 
 gameIndicatorElement.style.setProperty('width', cssPercent(indicatorWidth));
@@ -140,6 +142,12 @@ startGameBtnElement.addEventListener('mousedown', (e) => {
 });
 
 document.getElementById('returnBtn').addEventListener('click', () => {
+    leaveRoom(() => {
+        changeWindows(gameElement, optionsWindowElement);
+    })
+});
+
+returnBtnSmallElement.addEventListener('click', () => {
     leaveRoom(() => {
         changeWindows(gameElement, optionsWindowElement);
     })
@@ -255,6 +263,8 @@ socket.on("newGameState", (gameState) => {
         startGameBtnElement.style.setProperty('display', 'none');
         courtImgElement.style.setProperty('display','block');
         gameContainerElement.classList.remove('centerClass');
+        returnBtnElement.style.setProperty('display', 'none');
+        returnBtnSmallElement.style.setProperty('display', 'block');
 
         myInterval = setInterval(() => {
             updateScaleTick(prevGameState, new Date());
@@ -492,5 +502,7 @@ function resetGameElement(){
     startGameBtnElement.style.setProperty('display', 'inline');
     courtImgElement.style.setProperty('display','none');
     gameContainerElement.classList.add('centerClass');
+    returnBtnElement.style.setProperty('display', 'block');
+    returnBtnSmallElement.style.setProperty('display', 'none');
 }
 
