@@ -39,7 +39,7 @@ body #gameArea .centerClass {
 body #gameArea .gameContainer {
   width: 100vw;
   height: 100vh;
-  background-image: linear-gradient(45deg, rgba(0, 65, 163, 0.7), rgba(0, 29, 61, 0.7)), url("../images/beach3-big.jpg");
+  background-image: linear-gradient(45deg, rgba(0, 65, 163, 0.7), rgba(0, 29, 61, 0.7)), url("../images/beach6-big.jpg");
   background-repeat: no-repeat;
   background-position: bottom;
   background-size: cover;
@@ -473,6 +473,26 @@ body #gameArea #scoreBoard .playerName {
 @media (min-width: 440px) {
   body #gameArea #powerMeter {
     top: 12.2em;
+    width: 180px;
+    height: 45px;
+  }
+  body #gameArea #scoreBoard {
+    width: 90%;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  body #gameArea #scoreBoard .playersScore {
+    padding: 0.6em;
+  }
+  body #gameArea #scoreBoard .playersScore #leftPlayerScore {
+    margin-right: 2em;
+    padding-left: 0.4em;
+  }
+  body #gameArea #scoreBoard .playersScore #rightPlayerScore {
+    padding-right: 0.4em;
+  }
+  body #gameArea #scoreBoard .playerName {
+    padding: 0.6em;
   }
   body .allGameItemsContainer {
     margin-top: 4em;
@@ -509,12 +529,32 @@ body #gameArea #scoreBoard .playerName {
   }
   body #gameArea #powerMeter {
     top: 16em;
+    width: 200px;
+    height: 50px;
+  }
+  body #gameArea #scoreBoard {
+    width: 90%;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  body #gameArea #scoreBoard .playersScore {
+    padding: 0.6em;
+  }
+  body #gameArea #scoreBoard .playersScore #leftPlayerScore {
+    margin-right: 4em;
+    padding-left: 0.4em;
+  }
+  body #gameArea #scoreBoard .playersScore #rightPlayerScore {
+    padding-right: 0.4em;
+  }
+  body #gameArea #scoreBoard .playerName {
+    padding: 0.6em;
   }
   body #gameArea .allGameItemsContainer {
     margin-top: 4em;
   }
   body #gameArea .movementButttons {
-    margin-top: 17em;
+    margin-top: 18em;
   }
   .btn {
     font-size: 2.4rem;
@@ -584,12 +624,31 @@ body #gameArea #scoreBoard .playerName {
   }
   body #gameArea #powerMeter {
     top: 19em;
+    width: 230px;
+    height: 55px;
+  }
+  body #gameArea #scoreBoard {
+    width: 85%;
+    font-size: 1.8rem;
+  }
+  body #gameArea #scoreBoard .playersScore {
+    padding: 0.6em;
+  }
+  body #gameArea #scoreBoard .playersScore #leftPlayerScore {
+    margin-right: 4.5em;
+    padding-left: 0.4em;
+  }
+  body #gameArea #scoreBoard .playersScore #rightPlayerScore {
+    padding-right: 0.4em;
+  }
+  body #gameArea #scoreBoard .playerName {
+    padding: 0.6em;
   }
   body #gameArea .allGameItemsContainer {
     margin-top: 6em;
   }
   body #gameArea .movementButttons {
-    margin-top: 21em;
+    margin-top: 22em;
   }
 }
 @media (min-width: 915px) {
@@ -598,6 +657,25 @@ body #gameArea #scoreBoard .playerName {
   }
   body #gameArea #powerMeter {
     top: 22em;
+    width: 230px;
+    height: 55px;
+  }
+  body #gameArea #scoreBoard {
+    width: 85%;
+    font-size: 2.1rem;
+  }
+  body #gameArea #scoreBoard .playersScore {
+    padding: 0.6em;
+  }
+  body #gameArea #scoreBoard .playersScore #leftPlayerScore {
+    margin-right: 4.5em;
+    padding-left: 0.4em;
+  }
+  body #gameArea #scoreBoard .playersScore #rightPlayerScore {
+    padding-right: 0.4em;
+  }
+  body #gameArea #scoreBoard .playerName {
+    padding: 0.6em;
   }
   body #gameArea .allGameItemsContainer {
     margin-top: 7em;
@@ -639,12 +717,17 @@ body #gameArea #scoreBoard .playerName {
   .waitKey {
     font-size: 2.7rem;
   }
+  body #gameArea .gameContainer {
+    background-image: linear-gradient(45deg, rgba(0, 65, 163, 0.7), rgba(0, 29, 61, 0.7)), url("../images/beach8-big.jpg");
+  }
   body #gameArea .gameContainer .buttons .startGameBtnClass {
     padding-left: 5.8em;
     padding-right: 5.8em;
   }
   body #gameArea #powerMeter {
     top: 26em;
+    width: 250px;
+    height: 60px;
   }
   body #gameArea .allGameItemsContainer {
     margin-top: 6em;
@@ -669,6 +752,8 @@ body #gameArea #scoreBoard .playerName {
   }
   body #gameArea #powerMeter {
     top: 26em;
+    width: 250px;
+    height: 66px;
   }
   body #gameArea .allGameItemsContainer {
     margin-top: 6em;
@@ -740,6 +825,8 @@ body #gameArea #scoreBoard .playerName {
   }
   body #gameArea #powerMeter {
     top: 31em;
+    width: 265px;
+    height: 70px;
   }
   body #gameArea .allGameItemsContainer {
     margin-top: 1em;
@@ -751,6 +838,8 @@ body #gameArea #scoreBoard .playerName {
   }
   body #gameArea #powerMeter {
     top: 34em;
+    width: 280px;
+    height: 72px;
   }
   body #gameArea .allGameItemsContainer {
     margin-top: 0;
