@@ -57,6 +57,10 @@ body {
 
 			.buttons {
 				position: relative;
+				display: flex;
+				justify-content: center;
+				flex-direction: column;
+				// align-items: center;
 				text-align: center;
 				z-index: 10;
 				padding: 0 1em 2em;
@@ -492,8 +496,8 @@ body {
 	padding: 0.1em 0.5em 0 0.4em;
 	border-radius: 10px;
 	position: relative;
-	top: 0.3em;
-	left: 0;
+	top: -1em;
+	left: 1em;
 }
 
 .movementButttons {
@@ -563,13 +567,8 @@ body {
 
 	.buttons {
 		margin: 0 2em;
-
-		#returnBtnSmall {
-			margin: 0.5em -1.5em;
-			padding: 0.4em 0.8em 0.2em;
-		}
 	}
-
+	
 	.allGameItemsContainer {
 		margin-top: 4em;
 	}
