@@ -210,11 +210,27 @@ body #gameArea #scoreBoard .playerName {
 .container .keyText {
   font-size: 2.5rem;
   text-transform: uppercase;
+  font-weight: bold;
   margin: 0 1.5em;
+  margin-bottom: -0.6em;
 }
 .container .yourKey {
   margin: 1.5em 1em;
   font-size: 1.5rem;
+  padding: 1.1em;
+  border-radius: 25px;
+  background-color: #001d3d;
+  border: 1px solid #000814;
+}
+.container .jumpingArrowDown {
+  height: 4em;
+  width: 4em;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url("../images/icons/chevron-down.svg");
+  -webkit-animation: bounceDown 2s infinite;
+          animation: bounceDown 2s infinite;
 }
 .container .returnBtn {
   padding: 0.95em 3.6em;
@@ -449,6 +465,29 @@ body #gameArea #scoreBoard .playerName {
   transform: scale(1.3);
 }
 
+@-webkit-keyframes bounceDown {
+  0%, 25%, 50%, 90%, 100% {
+    transform: translateY(0.8em);
+  }
+  40% {
+    transform: translateY(1.7em);
+  }
+  70% {
+    transform: translateY(1.7em);
+  }
+}
+
+@keyframes bounceDown {
+  0%, 25%, 50%, 90%, 100% {
+    transform: translateY(0.8em);
+  }
+  40% {
+    transform: translateY(1.7em);
+  }
+  70% {
+    transform: translateY(1.7em);
+  }
+}
 @media (min-width: 375px) {
   .container .headerTextBig {
     font-size: 5rem;

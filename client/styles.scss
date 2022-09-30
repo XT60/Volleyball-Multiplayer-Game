@@ -246,12 +246,28 @@ body {
 	.keyText {
 		font-size: 2.5rem;
 		text-transform: uppercase;
+		font-weight: bold;
 		margin: 0 1.5em;
+		margin-bottom: -.6em;
 	}
 
 	.yourKey {
 		margin: 1.5em 1em;
 		font-size: 1.5rem;
+		padding: 1.1em;
+		border-radius: 25px;
+		background-color: #001d3d;
+		border: 1px solid #000814;
+	}
+
+	.jumpingArrowDown {
+		height: 4em;
+		width: 4em;
+		background-size: contain;
+		background-position: center;
+		background-repeat: no-repeat;
+		background-image: url('../images/icons/chevron-down.svg');
+		animation: bounceDown 2s infinite;
 	}
 
 	.returnBtn {
@@ -543,6 +559,23 @@ body {
 // }
 
 //--------------------------------------------
+//                 ANIMATIONS
+//--------------------------------------------
+
+@keyframes bounceDown{
+	0%, 25%, 50%, 90%, 100% {
+		transform: translateY(0.8em);
+	  }
+	  40% {
+		transform: translateY(1.7em);
+	  }
+	  70% {
+		transform: translateY(1.7em);
+	  }
+}
+
+
+//--------------------------------------------
 //              MEDIA  QUERIES  <3
 //--------------------------------------------
 
@@ -587,10 +620,10 @@ body {
 				width: 90%;
 				left: 50%;
 				transform: translateX(-50%);
-	
+
 				.playersScore {
 					padding: 0.6em;
-	
+
 					#leftPlayerScore {
 						margin-right: 2em;
 						padding-left: 0.4em;
@@ -599,7 +632,7 @@ body {
 						padding-right: 0.4em;
 					}
 				}
-	
+
 				.playerName {
 					padding: 0.6em;
 				}
@@ -671,10 +704,10 @@ body {
 				width: 90%;
 				left: 50%;
 				transform: translateX(-50%);
-	
+
 				.playersScore {
 					padding: 0.6em;
-	
+
 					#leftPlayerScore {
 						margin-right: 4em;
 						padding-left: 0.4em;
@@ -683,7 +716,7 @@ body {
 						padding-right: 0.4em;
 					}
 				}
-	
+
 				.playerName {
 					padding: 0.6em;
 				}
@@ -802,10 +835,10 @@ body {
 			#scoreBoard {
 				width: 85%;
 				font-size: 1.8rem;
-	
+
 				.playersScore {
 					padding: 0.6em;
-	
+
 					#leftPlayerScore {
 						margin-right: 4.5em;
 						padding-left: 0.4em;
@@ -814,7 +847,7 @@ body {
 						padding-right: 0.4em;
 					}
 				}
-	
+
 				.playerName {
 					padding: 0.6em;
 				}
@@ -852,10 +885,10 @@ body {
 			#scoreBoard {
 				width: 85%;
 				font-size: 2.1rem;
-	
+
 				.playersScore {
 					padding: 0.6em;
-	
+
 					#leftPlayerScore {
 						margin-right: 4.5em;
 						padding-left: 0.4em;
@@ -864,7 +897,7 @@ body {
 						padding-right: 0.4em;
 					}
 				}
-	
+
 				.playerName {
 					padding: 0.6em;
 				}
@@ -929,11 +962,11 @@ body {
 		#gameArea {
 			.gameContainer {
 				background-image: linear-gradient(
-					45deg,
-					rgba(0, 65, 163, 0.7),
-					rgba(0, 29, 61, 0.7)
-				),
-				url('../images/beach8-big.jpg');
+						45deg,
+						rgba(0, 65, 163, 0.7),
+						rgba(0, 29, 61, 0.7)
+					),
+					url('../images/beach8-big.jpg');
 
 				.buttons {
 					.startGameBtnClass {
@@ -942,7 +975,6 @@ body {
 					}
 				}
 			}
-
 
 			#powerMeter {
 				top: 26em;
