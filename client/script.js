@@ -48,7 +48,7 @@ const gameContainerElement = document.querySelector('.gameContainer');
 const returnBtnElement = document.querySelector('#returnBtn');
 const returnBtnSmallElement = document.querySelector('#returnBtnSmall');
 const movementButttonsElement = document.querySelector('.movementButttons');
-
+const copyBtnElement = document.querySelector('.copyBtn');
 
 gameIndicatorElement.style.setProperty('width', cssPercent(indicatorWidth));
 playerCheckboxElement.addEventListener('click', () => {
@@ -365,6 +365,10 @@ function createRoom(){
         myPlayer = "leftPlayer";
         changeWindows(optionsWindowElement, keyOutWindowElement);
         keyOutElement.innerHTML = roomId;
+
+        copyBtnElement.addEventListener('click', () => {
+            navigator.clipboard.writeText(roomId)
+        })
     });
 }
 
