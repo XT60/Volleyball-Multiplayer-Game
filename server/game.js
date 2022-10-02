@@ -263,11 +263,9 @@ function shootBall(gameState, playerName, blocking = false){
     if (blocking) {
         ball.vel[0] /= 3;
     }  
-    // // console.log(ball.vel);
-    // ball.vel[0] += getRandom(-jinx[0], jinx[0]) * (shootValue - midTick);
-    // ball.vel[1] += getRandom(-jinx[1], jinx[1]) * (shootValue - midTick);
-    // // console.log(ball.vel);
-    // // console.log(`${playerName} shot ball with shootValue: ${shootValue}`);
+    // console.log(ball.vel);
+    ball.vel[0] += getRandom(-jinx[0], jinx[0]) * (shootValue - midTick);
+    ball.vel[1] += getRandom(-jinx[1], jinx[1]) * (shootValue - midTick);
     gameState[playerName].shootValue = null;
     lastContact = playerName;
 }
