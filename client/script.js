@@ -331,7 +331,7 @@ socket.on("newGameState", (gameState) => {
         updateIndicatorPos(gameIndicatorElement, gameState.scale.currTick);
     }
 
-    drawHitboxes(gameState)
+    // drawHitboxes(gameState)
 
     //action handling, sprites etc
     prevGameState = gameState;
