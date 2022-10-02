@@ -31,17 +31,24 @@ const blockZone = {
     blockZoneSize[0], blockZoneSize[1]]
 };
 const playerShootArea = {
-    leftPlayer: [42, 15, 65, 70],
-    rightPlayer: [-31, 15, 65, 70]
+    leftPlayer: [42, -65, 150, 150],
+    rightPlayer: [-116, -65, 150, 150]
+};
+const playerShootAnimationArea = {
+    leftPlayer: [52, 35, 35, 40],
+    rightPlayer: [-11, 35, 35, 40]
 };
 const blockRect = {
     leftPlayer: [39, 0, 30, 88],
     rightPlayer: [0, 0, 30, 88]
 };
+
+
 const playerDefaultPos = {
     leftPlayer: [300 - playerSize[0], groundLevel - playerSize[1]],
     rightPlayer: [900, groundLevel - playerSize[1]]
 };
+const shootLock = 450;
 
 const intDev = (x, y) => Math.floor(x / y);
 
@@ -76,15 +83,17 @@ function initGame(){
     const gameState = {
         leftPlayer: {
             pos: [...playerDefaultPos['leftPlayer']],
-            action: 'standing',
+            animationName: 'standing',
             vel: [0, 0],
-            shootValue: null
+            shootValue: null,
+            shootLock: 0
         },
         rightPlayer: {
             pos: [...playerDefaultPos['rightPlayer']],
-            action: 'standing',
+            animationName: 'standing',
             vel: [0, 0],
-            shootValue: null
+            shootValue: null,
+            shootLock: 0
         },
         ball: {
             pos: [...ballDefaultPos],
@@ -108,28 +117,25 @@ function handleKeydown(gameState, playerName, eventCode){
         const player = gameState[playerName];
         switch (eventCode){
             case 'ArrowLeft':
-                if (player.action !== 'shooting' &&
-                    player.action !== 'blocking'){
-                    player.action = 'moving';
-                    // console.log("moving")
+                if (player.animationName !== 'shooting' &&
+                    player.animationName !== 'blocking'){
+                    // console.log("walking")
                     player.vel[0] = -playerVelInterval[0];
                 }
                 break;
             case 'ArrowRight':
-                if (player.action !== 'shooting' &&
-                    player.action !== 'blocking'){
-                    player.action = 'moving';
-                    // console.log("moving")
+                if (player.animationName !== 'shooting' &&
+                    player.animationName !== 'blocking'){
+                    // console.log("walking")
                     player.vel[0] = playerVelInterval[0]
                 }
                 break;
             case 'ArrowUp':
-                if (player.action !== 'shooting' &&
-                    player.action !== 'blocking'){
+                if (player.animationName !== 'shooting' &&
+                    player.animationName !== 'blocking'){
                     const playerRect = [...player.pos, ...playerSize];
                     if (rectRectCollision(playerRect, blockZone[playerName])){
-                        player.action = 'blocking';
-                        // console.log("blocking");
+                        player.animationName = 'blocking';
                         player.vel[1] = playerVelInterval[1];
                         player.vel[0] = 0;
                     }
@@ -150,16 +156,10 @@ function handleKeyUp(gameState, playerName, eventCode){
         const player = gameState[playerName];
         switch (eventCode){
             case 'ArrowLeft':
-                if (player.action === 'moving'){
-                    player.action = 'standing';
-                    player.vel[0] = 0;
-                }
+                player.vel[0] = 0;
                 break;
             case 'ArrowRight':
-                if (player.action === 'moving'){
-                    player.action = 'standing';
-                    player.vel[0] = 0;
-                }
+                player.vel[0] = 0;
                 break;
         }    
     }
@@ -168,55 +168,81 @@ function handleKeyUp(gameState, playerName, eventCode){
 function updatePlayer(gameState, playerName, timeInterval){
     const player = gameState[playerName];
     const territory = playerTerritory[playerName];
+    let moved = false;
+    player.shootLock -= timeInterval;
 
     //position X
-    let newX = player.pos[0] + player.vel[0] * timeInterval;
-    if (newX < territory[0]){
-        newX = territory[0];
-        player.vel[0] = 0;
-        player.action = 'standing';
+    if (player.shootLock <= 0){
+        let newX = player.pos[0] + player.vel[0] * timeInterval;
+        if (newX < territory[0]){
+            newX = territory[0];
+            player.vel[0] = 0;
+        }
+        else if(newX > territory[1]){
+            newX = territory[1];
+            player.vel[0] = 0;
+        }
+        if (player.pos[0] != newX){
+            moved = true;
+            player.pos[0] = newX;
+        }
     }
-    else if(newX > territory[1]){
-        newX = territory[1];
-        player.vel[0] = 0;
-        player.action = 'standing';
-    }
-    player.pos[0] = newX;
+
 
     //position Y
     let newY = player.pos[1] + player.vel[1] * timeInterval;
     if(newY > groundLevel - playerSize[1]){
         newY = groundLevel - playerSize[1];
-        if (player.action === 'blocking'){
+        if (player.animationName === 'blocking'){
             player.pos[1] = groundLevel - playerSize[1];
             if (player.vel[0] != 0) {
-                player.action = 'moving';
+                player.animationName = 'walking';
             }
             else{
-                player.action = 'standing';
+                player.animationName = 'standing';
             }
         }
         player.vel[1] = 0;
     }
-    player.pos[1] = newY;
+    if (player.pos[1] != newY){
+        moved = true;
+        player.pos[1] = newY;
+    }
 
-    //velocity
+    // Y velocity
     player.vel[1] += gravity * timeInterval;
 
     // shooting a ball
-    const area = playerShootArea[playerName];
-    const shootArea = [player.pos[0] + area[0], player.pos[1] + area[1], area[2], area[3]];
+    const animArea = getWolrdRect(player.pos, playerShootAnimationArea[playerName]);
     const ballPos = [gameState.ball.pos[0] + ballRadius, gameState.ball.pos[1] + ballRadius];
-    // console.log( `${shootArea}, ${gameState.ball.pos}, ${ballPos}`)
-    if (rectCircleCollision(shootArea, ballPos, ballRadius)){
-        shootBall(gameState, playerName);
+    if (rectCircleCollision(animArea, ballPos, ballRadius)){
+        const shootArea = getWolrdRect(player.pos, playerShootArea[playerName]);
+        if (rectCircleCollision(shootArea, ballPos, ballRadius)){
+            shootBall(gameState, playerName, player.animationName === 'blocking');
+        }
+        if (player.animationName !== 'blocking'){
+            player.animationName = 'shooting';
+            player.shootLock = shootLock;
+        }
     }
     else{
-        player.action = 'moving';
+        if (player.animationName !== 'blocking' && player.shootLock < 0){
+            if (moved){
+                player.animationName = 'walking';
+            }
+            else{
+                player.animationName = 'standing';
+            }
+        }
     }
 }
 
-function shootBall(gameState, playerName){
+function getWolrdRect(pos, relRect){
+    return [pos[0] + relRect[0], pos[1] + relRect[1], relRect[2], relRect[3]];
+}
+
+
+function shootBall(gameState, playerName, blocking = false){
     let shootValue = gameState[playerName].shootValue;
     if (shootValue === null){
         shootValue = 0;
@@ -234,11 +260,12 @@ function shootBall(gameState, playerName){
     const xInt = Math.abs(dest[0] - ball.pos[0])
     const time =  xInt / xBallVel;
     ball.vel[1] = -(gravity * time * 0.5 - xInt / time); 
-    // // console.log(ball.vel);
-    // ball.vel[0] += getRandom(-jinx[0], jinx[0]) * (shootValue - midTick);
-    // ball.vel[1] += getRandom(-jinx[1], jinx[1]) * (shootValue - midTick);
-    // // console.log(ball.vel);
-    // // console.log(`${playerName} shot ball with shootValue: ${shootValue}`);
+    if (blocking) {
+        ball.vel[0] /= 3;
+    }  
+    // console.log(ball.vel);
+    ball.vel[0] += getRandom(-jinx[0], jinx[0]) * (shootValue - midTick);
+    ball.vel[1] += getRandom(-jinx[1], jinx[1]) * (shootValue - midTick);
     gameState[playerName].shootValue = null;
     lastContact = playerName;
 }
@@ -336,6 +363,7 @@ module.exports = {
     updateScale,
 
     playerShootArea,
+    playerShootAnimationArea,
     netRect,
     blockZone,
     scaleTicks,

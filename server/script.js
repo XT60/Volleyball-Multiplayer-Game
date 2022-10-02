@@ -8,7 +8,7 @@ const { handleKeyUp, handleKeydown, updatePlayer, updateBall,
     initGame, updateScale} = require("./game");
 
 const { playerShootArea, netRect, blockZone, scaleTicks, 
-    scaleTickTime, blockRect} = require("../server/game.js");
+    scaleTickTime, blockRect, playerShootAnimationArea} = require("../server/game.js");
 
 const io = require("socket.io")(http, {
     cors: {
@@ -31,6 +31,7 @@ io.on("connection", (socket) => {
     console.log(`${socket.id}:\t connected`);
     io.to(socket.id).emit("debugInfo", {
         playerShootArea, 
+        playerShootAnimationArea,
         netRect, 
         blockZone,
         blockRect
@@ -63,13 +64,13 @@ io.on("connection", (socket) => {
     function createAndJoinRoom(callback){
         const roomId = createRoom();
         joinRoom(roomId, socket, 'player');
-        console.log('.');
         callback(roomId);
     }
 
     function disconnecting(socket){
         console.log(`${socket.id}:\t disconnected`);
-        socket.rooms.forEach(room => io.to(room).emit('opponentLeft'));
+        // socket.rooms.forEach(room => io.to(room).emit('opponentLeft'));
+        socket.rooms.forEach(room => leaveRoom(socket, room, () => {}));
     }
 
     function createRoom (){
@@ -152,7 +153,7 @@ io.on("connection", (socket) => {
         const room = rooms[roomId];
         if (!room){
             // console.log(rooms);
-            const errorMsg = `${roomId}:\t room doesn't exist (you want to leave)`;
+            const errorMsg = `${roomId}:\t room doesn't exist (doesn't exist in our room structure)(you want to leave)`;
             callback(false, errorMsg);
             console.log(errorMsg);
             return;
