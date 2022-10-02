@@ -7,6 +7,7 @@ let inGame = false;
 const indicatorWidth = 2;
 let currScale = 1;
 const gameAreaSize = [1201, 443];
+const maxScale = 1500 / gameAreaSize[0];
 const maxCourtfill = 0.9;
 
 
@@ -449,8 +450,18 @@ function handleResponse(success, errorMsg, callback){
 }
 
 function resize(){
-    currScale = Math.min(maxCourtfill * window.innerWidth / gameAreaSize[0],
+    const tmp = Math.min(maxCourtfill * window.innerWidth / gameAreaSize[0],
     maxCourtfill * window.innerHeight / gameAreaSize[1]); 
+    if (tmp >= maxScale){
+        if (currScale === maxScale){
+            return;
+        }
+        currScale = maxScale;
+    }
+    else{
+        currScale = tmp;
+    }
+    console.log(currScale);
     const newWidth = currScale * gameAreaSize[0];
     const newHeight = currScale * gameAreaSize[1];
     updateElementSize(courtElement, newWidth, newHeight);
