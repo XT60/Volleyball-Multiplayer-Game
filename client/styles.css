@@ -100,23 +100,40 @@ body #gameArea #court #ball {
 body #gameArea #court #leftPlayer {
   left: 100px;
   top: 100px;
+  overflow: hidden;
   position: absolute;
   width: 5.745%;
   height: 39.503%;
 }
-body #gameArea #court #leftPlayer img {
-  width: 100%;
-  height: 100%;
-}
 body #gameArea #court #rightPlayer {
+  overflow: hidden;
   position: absolute;
-  transform: scaleX(-1);
   left: 400px;
   top: 100px;
   width: 5.745%;
   height: 39.503%;
 }
-body #gameArea #court #rightPlayer img {
+body #gameArea #court .walkAnimation {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: block;
+  width: 400%;
+  height: 100%;
+}
+body #gameArea #court .shootAnimation {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: none;
+  width: 200%;
+  height: 100%;
+}
+body #gameArea #court .jumpAnimation {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: none;
   width: 100%;
   height: 100%;
 }
@@ -910,4 +927,4 @@ body #gameArea #scoreBoard .playerName {
   .buttons {
     margin: 0 30em;
   }
-}/*# sourceMappingURL=styles.css.map */
+}

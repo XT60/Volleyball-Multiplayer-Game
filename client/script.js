@@ -2,53 +2,95 @@ import { io } from "https://cdn.socket.io/4.3.2/socket.io.esm.min.js";
 import { drawHitboxes, initHitboxes } from "./hitboxes.js";
 const socket = io("http://localhost:3000");
 
-let prevGameState, myPlayer, scaleTicks, scaleMulti, a, b, myRoomId, scaleTickTime, myInterval;
-let inGame = false;
-const indicatorWidth = 2;
-let currScale = 1;
-const gameAreaSize = [1201, 443];
-const maxCourtfill = 0.9;
+
+const indicatorWidth = 2,
+gameAreaSize = [1201, 443],
+maxCourtfill = 0.9,
+animationFrameSpan = 150,
+
+currAnimation = {
+    leftPlayer: {
+        name: 'walking',
+        trend: 1,
+        frame: 0,
+    },
+    rightPlayer: {
+        name: 'walking',
+        trend: 1,
+        frame: 0,
+    } 
+},
+
+animationFrameCount = {
+    standing: 1,
+    walking: 4,
+    jumping: 1,
+    shooting: 2
+};
+
+    
+let prevGameState, myPlayer, scaleTicks, scaleMulti, a, b, myRoomId, scaleTickTime, myInterval, prevTime,
+    inGame = false,
+    currScale = 1,
+    nextAnimationFrame = animationFrameSpan;
 
 
-const ballElement = document.getElementById("ball");
-const leftPlayerElement = document.getElementById('leftPlayer');
-const rightPlayerElement = document.getElementById('rightPlayer');
+const ballElement = document.getElementById("ball"),
+playerElements = {
+    left: document.getElementById('leftPlayer'),
+    right: document.getElementById('rightPlayer')
+},
 
-const leftPlayerScoreElement = document.getElementById('leftPlayerScore');
-const rightPlayerScoreElement = document.getElementById('rightPlayerScore');
+animationElements = {
+    leftPlayer: { 
+        "standing": document.querySelector('#leftPlayer .walkAnimation'), 
+        "walking": document.querySelector('#leftPlayer .walkAnimation'),
+        "shooting": document.querySelector('#leftPlayer .shootAnimation'),
+        "jumping": document.querySelector('#leftPlayer .jumpAnimation')
+    },
+    rightPlayer: { 
+        "standing": document.querySelector('#rightPlayer .walkAnimation'),
+        "walking": document.querySelector('#rightPlayer .walkAnimation'),
+        "shooting": document.querySelector('#rightPlayer .shootAnimation'),
+        "jumping": document.querySelector('#rightPlayer .jumpAnimation')
+    }
+},
 
-const gameIndicatorElement = document.getElementById("gameIndicator");
-const leftIndicatorElement = document.getElementById("leftIndicator");
-const rightIndicatorElement = document.getElementById("rightIndicator");
+leftPlayerScoreElement = document.getElementById('leftPlayerScore'),
+rightPlayerScoreElement = document.getElementById('rightPlayerScore'),
 
-const canvasElement = document.querySelector("canvas");
-const optionsWindowElement = document.getElementById('optionsWindow');
-const keyInWindowElement = document.getElementById('keyInWindow');
-const keyOutWindowElement = document.getElementById('keyOutWindow');
-const gameFindWindowElement = document.getElementById('gameFindWindow');
-const gameElement = document.getElementById('gameArea');
+gameIndicatorElement = document.getElementById("gameIndicator"),
+leftIndicatorElement = document.getElementById("leftIndicator"),
+rightIndicatorElement = document.getElementById("rightIndicator"),
 
-const courtElement = document.getElementById('court');
-const formInputElements = document.querySelectorAll('#keyInWindowElement input'); 
-const spectatorCheckboxElement = document.getElementById('spectatorCheckbox');
-const playerCheckboxElement = document.getElementById("playerCheckbox");
-const keyInElement = keyInWindowElement.querySelector('form input[type="text"]');
-const formErrorMsgElement = keyInWindowElement.querySelector(".errorMsg");
-const keyOutElement = document.getElementById('keyOut');
-const summaryWindowElement = document.getElementById("gameSummaryWindow");
-const gameEndCauseElement = summaryWindowElement.querySelector("p");
-const summaryHeaderElement = summaryWindowElement.querySelector("h2");
-const scoreBoardElement = document.getElementById("scoreBoard");
-const readyMsgElement = document.getElementById('readyMsg');
-const powerMeterElement = document.getElementById("powerMeter");
-const rematchInfoElement = document.getElementById("rematchInfo");
-const startGameBtnElement = document.querySelector('#startGameBtn');
-const courtImgElement = document.querySelector('#courtImg');
-const gameContainerElement = document.querySelector('.gameContainer');
-const returnBtnElement = document.querySelector('#returnBtn');
-const returnBtnSmallElement = document.querySelector('#returnBtnSmall');
-const movementButttonsElement = document.querySelector('.movementButttons');
-const copyBtnElement = document.querySelector('.copyBtn');
+canvasElement = document.querySelector("canvas"),
+optionsWindowElement = document.getElementById('optionsWindow'),
+keyInWindowElement = document.getElementById('keyInWindow'),
+keyOutWindowElement = document.getElementById('keyOutWindow'),
+gameFindWindowElement = document.getElementById('gameFindWindow'),
+gameElement = document.getElementById('gameArea'),
+
+courtElement = document.getElementById('court'),
+formInputElements = document.querySelectorAll('#keyInWindowElement input'), 
+spectatorCheckboxElement = document.getElementById('spectatorCheckbox'),
+playerCheckboxElement = document.getElementById("playerCheckbox"),
+keyInElement = keyInWindowElement.querySelector('form input[type="text"]'),
+formErrorMsgElement = keyInWindowElement.querySelector(".errorMsg"),
+keyOutElement = document.getElementById('keyOut'),
+summaryWindowElement = document.getElementById("gameSummaryWindow"),
+gameEndCauseElement = summaryWindowElement.querySelector("p"),
+summaryHeaderElement = summaryWindowElement.querySelector("h2"),
+scoreBoardElement = document.getElementById("scoreBoard"),
+readyMsgElement = document.getElementById('readyMsg'),
+powerMeterElement = document.getElementById("powerMeter"),
+rematchInfoElement = document.getElementById("rematchInfo"),
+startGameBtnElement = document.querySelector('#startGameBtn'),
+courtImgElement = document.querySelector('#courtImg'),
+gameContainerElement = document.querySelector('.gameContainer'),
+returnBtnElement = document.querySelector('#returnBtn'),
+returnBtnSmallElement = document.querySelector('#returnBtnSmall'),
+movementButttonsElement = document.querySelector('.movementButttons'),
+copyBtnElement = document.querySelector('.copyBtn');
 
 gameIndicatorElement.style.setProperty('width', cssPercent(indicatorWidth));
 playerCheckboxElement.addEventListener('click', () => {
@@ -255,8 +297,8 @@ socket.on("newGameState", (gameState) => {
         inGame = true;
         scoreBoardElement.style.setProperty('display', 'flex');
         readyMsgElement.style.setProperty('display', 'block');
-        leftPlayerElement.style.setProperty('display', 'block');
-        rightPlayerElement.style.setProperty('display', 'block');
+        playerElements.left.style.setProperty('display', 'block');
+        playerElements.right.style.setProperty('display', 'block');
         ballElement.style.setProperty('display', 'block');
         powerMeterElement.style.setProperty('display', 'block');
         canvasElement.style.setProperty('display', 'block');
@@ -268,11 +310,21 @@ socket.on("newGameState", (gameState) => {
         returnBtnSmallElement.style.setProperty('display', 'block');
         movementButttonsElement.style.setProperty('display', 'flex');
 
+        prevTime = new Date;
         myInterval = setInterval(() => {
             updateScaleTick(prevGameState, new Date());
         }, 30);
     }
+    const currTime = new Date();
+    const interval = currTime - prevTime;
+    prevTime = currTime;
+
+    nextAnimationFrame -= interval;
+    
     updateAllPositions(gameState);
+    updateAnimation(gameState, 'leftPlayer');
+    updateAnimation(gameState, 'rightPlayer');
+    
     updateLeftPlayerIndicator(gameState);
     updateRightPlayerIndicator(gameState);
     if (prevGameState.scale.currTick != gameState.scale.currTick){
@@ -284,6 +336,41 @@ socket.on("newGameState", (gameState) => {
     //action handling, sprites etc
     prevGameState = gameState;
 });
+
+
+function updateAnimation(gameState, playerName){
+    const animation = currAnimation[playerName];
+    if (nextAnimationFrame > 0)     return
+
+    if (gameState[playerName].animationName === animation.name){
+        if (animationFrameCount[animation.name] === 1)  return
+        const newFrame = animation.frame + animation.trend;
+        if (newFrame >= animationFrameCount[animation.name] || newFrame < 0){
+            animation.trend *= -1;
+        }
+        animation.frame += animation.trend;
+    }
+    else{
+        animation.trend = 1;
+        animation.frame = 0;
+        changeAnimation(playerName, animation.name, gameState[playerName].animationName);
+        animation.name = gameState[playerName].animationName;
+    }
+    updatePlayerElement(playerName);
+    nextAnimationFrame = animationFrameSpan;
+}
+
+
+function changeAnimation(playerName, from, to){
+    animationElements[playerName][from].style.setProperty('display', 'none');
+    animationElements[playerName][to].style.setProperty('display', 'block');
+}
+
+
+function updatePlayerElement(playerName){
+    const animation = currAnimation[playerName];    
+    animationElements[playerName][animation.name].style.setProperty('left', `${-100 * animation.frame}%`);
+}
 
 
 socket.on("opponentLeft", () => {
@@ -384,7 +471,7 @@ function keyUp(e){
 
 
 function updateLeftPlayerIndicator(gameState){
-    updatePosition(leftPlayerElement, gameState.leftPlayer.pos);
+    updatePosition(playerElements.left, gameState.leftPlayer.pos);
     if (prevGameState.leftPlayer.shootValue != gameState.leftPlayer.shootValue){
         if(gameState.leftPlayer.shootValue === null){
             leftIndicatorElement.style.setProperty('display', 'none');
@@ -401,7 +488,7 @@ function updateLeftPlayerIndicator(gameState){
 
 
 function updateRightPlayerIndicator(gameState){
-    updatePosition(rightPlayerElement, gameState.rightPlayer.pos);
+    updatePosition(playerElements.right, gameState.rightPlayer.pos);
     if (prevGameState.rightPlayer.shootValue != gameState.rightPlayer.shootValue){
         if(gameState.rightPlayer.shootValue === null){
             rightIndicatorElement.style.setProperty('display', 'none');
@@ -418,8 +505,8 @@ function updateRightPlayerIndicator(gameState){
 
 function updateAllPositions(gameState){
     updatePosition(ballElement, gameState.ball.pos);
-    updatePosition(leftPlayerElement, gameState.leftPlayer.pos);
-    updatePosition(rightPlayerElement, gameState.rightPlayer.pos);
+    updatePosition(playerElements.left, gameState.leftPlayer.pos);
+    updatePosition(playerElements.right, gameState.rightPlayer.pos);
 }
 
 
@@ -500,8 +587,8 @@ function resetGameElement(){
     
     scoreBoardElement.style.setProperty('display', 'none');
     readyMsgElement.style.setProperty('display', 'none');
-    leftPlayerElement.style.setProperty('display', 'none');
-    rightPlayerElement.style.setProperty('display', 'none');
+    playerElements.left.style.setProperty('display', 'none');
+    playerElements.right.style.setProperty('display', 'none');
     ballElement.style.setProperty('display', 'none');
     powerMeterElement.style.setProperty('display', 'none');
     canvasElement.style.setProperty('display', 'none');
