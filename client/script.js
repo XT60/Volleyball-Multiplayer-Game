@@ -24,7 +24,7 @@ currAnimation = {
 animationFrameCount = {
     standing: 1,
     walking: 4,
-    jumping: 1,
+    blocking: 1,
     shooting: 2
 };
 
@@ -46,13 +46,13 @@ animationElements = {
         "standing": document.querySelector('#leftPlayer .walkAnimation'), 
         "walking": document.querySelector('#leftPlayer .walkAnimation'),
         "shooting": document.querySelector('#leftPlayer .shootAnimation'),
-        "jumping": document.querySelector('#leftPlayer .jumpAnimation')
+        "blocking": document.querySelector('#leftPlayer .jumpAnimation')
     },
     rightPlayer: { 
         "standing": document.querySelector('#rightPlayer .walkAnimation'),
         "walking": document.querySelector('#rightPlayer .walkAnimation'),
         "shooting": document.querySelector('#rightPlayer .shootAnimation'),
-        "jumping": document.querySelector('#rightPlayer .jumpAnimation')
+        "blocking": document.querySelector('#rightPlayer .jumpAnimation')
     }
 },
 

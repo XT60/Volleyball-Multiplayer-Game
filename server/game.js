@@ -136,7 +136,6 @@ function handleKeydown(gameState, playerName, eventCode){
                     const playerRect = [...player.pos, ...playerSize];
                     if (rectRectCollision(playerRect, blockZone[playerName])){
                         player.animationName = 'blocking';
-                        // console.log("blocking");
                         player.vel[1] = playerVelInterval[1];
                         player.vel[0] = 0;
                     }
@@ -219,7 +218,7 @@ function updatePlayer(gameState, playerName, timeInterval){
     if (rectCircleCollision(animArea, ballPos, ballRadius)){
         const shootArea = getWolrdRect(player.pos, playerShootArea[playerName]);
         if (rectCircleCollision(shootArea, ballPos, ballRadius)){
-            shootBall(gameState, playerName);
+            shootBall(gameState, playerName, player.animationName === 'blocking');
         }
         if (player.animationName !== 'blocking'){
             player.animationName = 'shooting';
@@ -227,7 +226,7 @@ function updatePlayer(gameState, playerName, timeInterval){
         }
     }
     else{
-        if (player.shootLock < 0){
+        if (player.animationName !== 'blocking' && player.shootLock < 0){
             if (moved){
                 player.animationName = 'walking';
             }
@@ -243,7 +242,7 @@ function getWolrdRect(pos, relRect){
 }
 
 
-function shootBall(gameState, playerName){
+function shootBall(gameState, playerName, blocking = false){
     let shootValue = gameState[playerName].shootValue;
     if (shootValue === null){
         shootValue = 0;
@@ -261,6 +260,9 @@ function shootBall(gameState, playerName){
     const xInt = Math.abs(dest[0] - ball.pos[0])
     const time =  xInt / xBallVel;
     ball.vel[1] = -(gravity * time * 0.5 - xInt / time); 
+    if (blocking) {
+        ball.vel[0] /= 3;
+    }  
     // // console.log(ball.vel);
     // ball.vel[0] += getRandom(-jinx[0], jinx[0]) * (shootValue - midTick);
     // ball.vel[1] += getRandom(-jinx[1], jinx[1]) * (shootValue - midTick);
