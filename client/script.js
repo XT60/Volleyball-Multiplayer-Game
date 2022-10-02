@@ -36,61 +36,68 @@ let prevGameState, myPlayer, scaleTicks, scaleMulti, a, b, myRoomId, scaleTickTi
 
 
 const ballElement = document.getElementById("ball"),
-playerElements = {
-    left: document.getElementById('leftPlayer'),
-    right: document.getElementById('rightPlayer')
-},
-
-animationElements = {
-    leftPlayer: { 
-        "standing": document.querySelector('#leftPlayer .walkAnimation'), 
-        "walking": document.querySelector('#leftPlayer .walkAnimation'),
-        "shooting": document.querySelector('#leftPlayer .shootAnimation'),
-        "blocking": document.querySelector('#leftPlayer .jumpAnimation')
+    playerElements = {
+        left: document.getElementById('leftPlayer'),
+        right: document.getElementById('rightPlayer')
     },
-    rightPlayer: { 
-        "standing": document.querySelector('#rightPlayer .walkAnimation'),
-        "walking": document.querySelector('#rightPlayer .walkAnimation'),
-        "shooting": document.querySelector('#rightPlayer .shootAnimation'),
-        "blocking": document.querySelector('#rightPlayer .jumpAnimation')
-    }
-},
 
-leftPlayerScoreElement = document.getElementById('leftPlayerScore'),
-rightPlayerScoreElement = document.getElementById('rightPlayerScore'),
+    animationElements = {
+        leftPlayer: { 
+            "standing": document.querySelector('#leftPlayer .walkAnimation'), 
+            "walking": document.querySelector('#leftPlayer .walkAnimation'),
+            "shooting": document.querySelector('#leftPlayer .shootAnimation'),
+            "blocking": document.querySelector('#leftPlayer .jumpAnimation')
+        },
+        rightPlayer: { 
+            "standing": document.querySelector('#rightPlayer .walkAnimation'),
+            "walking": document.querySelector('#rightPlayer .walkAnimation'),
+            "shooting": document.querySelector('#rightPlayer .shootAnimation'),
+            "blocking": document.querySelector('#rightPlayer .jumpAnimation')
+        }
+    },
 
-gameIndicatorElement = document.getElementById("gameIndicator"),
-leftIndicatorElement = document.getElementById("leftIndicator"),
-rightIndicatorElement = document.getElementById("rightIndicator"),
+    mobileButtons = {
+        left: document.querySelector(".leftMoveButton"),
+        right: document.querySelector(".rightMoveButton"),
+        up: document.querySelector(".upMoveButton"),
+        shoot: document.querySelector(".specialActionButton")
+    },
 
-canvasElement = document.querySelector("canvas"),
-optionsWindowElement = document.getElementById('optionsWindow'),
-keyInWindowElement = document.getElementById('keyInWindow'),
-keyOutWindowElement = document.getElementById('keyOutWindow'),
-gameFindWindowElement = document.getElementById('gameFindWindow'),
-gameElement = document.getElementById('gameArea'),
+    leftPlayerScoreElement = document.getElementById('leftPlayerScore'),
+    rightPlayerScoreElement = document.getElementById('rightPlayerScore'),
 
-courtElement = document.getElementById('court'),
-formInputElements = document.querySelectorAll('#keyInWindowElement input'), 
-spectatorCheckboxElement = document.getElementById('spectatorCheckbox'),
-playerCheckboxElement = document.getElementById("playerCheckbox"),
-keyInElement = keyInWindowElement.querySelector('form input[type="text"]'),
-formErrorMsgElement = keyInWindowElement.querySelector(".errorMsg"),
-keyOutElement = document.getElementById('keyOut'),
-summaryWindowElement = document.getElementById("gameSummaryWindow"),
-gameEndCauseElement = summaryWindowElement.querySelector("p"),
-summaryHeaderElement = summaryWindowElement.querySelector("h2"),
-scoreBoardElement = document.getElementById("scoreBoard"),
-readyMsgElement = document.getElementById('readyMsg'),
-powerMeterElement = document.getElementById("powerMeter"),
-rematchInfoElement = document.getElementById("rematchInfo"),
-startGameBtnElement = document.querySelector('#startGameBtn'),
-courtImgElement = document.querySelector('#courtImg'),
-gameContainerElement = document.querySelector('.gameContainer'),
-returnBtnElement = document.querySelector('#returnBtn'),
-returnBtnSmallElement = document.querySelector('#returnBtnSmall'),
-movementButttonsElement = document.querySelector('.movementButttons'),
-copyBtnElement = document.querySelector('.copyBtn');
+    gameIndicatorElement = document.getElementById("gameIndicator"),
+    leftIndicatorElement = document.getElementById("leftIndicator"),
+    rightIndicatorElement = document.getElementById("rightIndicator"),
+
+    canvasElement = document.querySelector("canvas"),
+    optionsWindowElement = document.getElementById('optionsWindow'),
+    keyInWindowElement = document.getElementById('keyInWindow'),
+    keyOutWindowElement = document.getElementById('keyOutWindow'),
+    gameFindWindowElement = document.getElementById('gameFindWindow'),
+    gameElement = document.getElementById('gameArea'),
+
+    courtElement = document.getElementById('court'),
+    formInputElements = document.querySelectorAll('#keyInWindowElement input'), 
+    spectatorCheckboxElement = document.getElementById('spectatorCheckbox'),
+    playerCheckboxElement = document.getElementById("playerCheckbox"),
+    keyInElement = keyInWindowElement.querySelector('form input[type="text"]'),
+    formErrorMsgElement = keyInWindowElement.querySelector(".errorMsg"),
+    keyOutElement = document.getElementById('keyOut'),
+    summaryWindowElement = document.getElementById("gameSummaryWindow"),
+    gameEndCauseElement = summaryWindowElement.querySelector("p"),
+    summaryHeaderElement = summaryWindowElement.querySelector("h2"),
+    scoreBoardElement = document.getElementById("scoreBoard"),
+    readyMsgElement = document.getElementById('readyMsg'),
+    powerMeterElement = document.getElementById("powerMeter"),
+    rematchInfoElement = document.getElementById("rematchInfo"),
+    startGameBtnElement = document.querySelector('#startGameBtn'),
+    courtImgElement = document.querySelector('#courtImg'),
+    gameContainerElement = document.querySelector('.gameContainer'),
+    returnBtnElement = document.querySelector('#returnBtn'),
+    returnBtnSmallElement = document.querySelector('#returnBtnSmall'),
+    movementButttonsElement = document.querySelector('.movementButttons'),
+    copyBtnElement = document.querySelector('.copyBtn');
 
 gameIndicatorElement.style.setProperty('width', cssPercent(indicatorWidth));
 playerCheckboxElement.addEventListener('click', () => {
@@ -180,6 +187,7 @@ startGameBtnElement.addEventListener('mousedown', (e) => {
         else{
             addEventListener('keydown', keyDown);
             addEventListener('keyup', keyUp);
+            addMobileBtnListeners();
         }
     });
 });
@@ -195,6 +203,61 @@ returnBtnSmallElement.addEventListener('click', () => {
         changeWindows(gameElement, optionsWindowElement);
     })
 });
+
+function addMobileBtnListeners(){
+    mobileButtons.left.addEventListener('touchstart', () => {
+        socket.emit("keydown", myRoomId, myPlayer, "ArrowLeft");
+    });
+    mobileButtons.right.addEventListener('touchstart', () => {
+        socket.emit("keydown", myRoomId, myPlayer, "ArrowRight");
+    });
+    mobileButtons.up.addEventListener('touchstart', () => {
+        socket.emit("keydown", myRoomId, myPlayer, "ArrowUp");
+    });
+    mobileButtons.shoot.addEventListener('touchstart', () => {
+        socket.emit("keydown", myRoomId, myPlayer, "Space");
+    });
+    mobileButtons.left.addEventListener('touchend', () => {
+        socket.emit("keyup", myRoomId, myPlayer, "ArrowLeft");
+    });
+    mobileButtons.right.addEventListener('touchend', () => {
+        socket.emit("keyup", myRoomId, myPlayer, "ArrowRight");
+    });
+    mobileButtons.up.addEventListener('touchend', () => {
+        socket.emit("keyup", myRoomId, myPlayer, "ArrowUp");
+    });
+    mobileButtons.shoot.addEventListener('touchend', () => {
+        socket.emit("keyup", myRoomId, myPlayer, "Space");
+    });
+}
+
+function removeMobileBtnListeners(){
+    mobileButtons.left.removeEventListener('touchstart', () => {
+        socket.emit("keydown", myRoomId, myPlayer, "ArrowLeft");
+    });
+    mobileButtons.right.removeEventListener('touchstart', () => {
+        socket.emit("keydown", myRoomId, myPlayer, "ArrowRight");
+    });
+    mobileButtons.up.removeEventListener('touchstart', () => {
+        socket.emit("keydown", myRoomId, myPlayer, "ArrowUp");
+    });
+    mobileButtons.shoot.removeEventListener('touchstart', () => {
+        socket.emit("keydown", myRoomId, myPlayer, "Space");
+    });
+    mobileButtons.left.removeEventListener('touchend', () => {
+        socket.emit("keyup", myRoomId, myPlayer, "ArrowLeft");
+    });
+    mobileButtons.right.removeEventListener('touchend', () => {
+        socket.emit("keyup", myRoomId, myPlayer, "ArrowRight");
+    });
+    mobileButtons.up.removeEventListener('touchend', () => {
+        socket.emit("keyup", myRoomId, myPlayer, "ArrowUp");
+    });
+    mobileButtons.shoot.removeEventListener('touchend', () => {
+        socket.emit("keyup", myRoomId, myPlayer, "Space");
+    });
+}
+
 
 //gameSummaryWindow
 document.getElementById("leaveGameBtn").addEventListener('click', () => {
@@ -437,6 +500,7 @@ async function leaveRoom(response){
         console.log(`successfully left room: ${myRoomId}`)
         myRoomId = null;
         removeEventListener('keydown', keyDown);
+        removeMobileBtnListeners();
         removeEventListener('keyup', keyUp);
         response()
     }));
