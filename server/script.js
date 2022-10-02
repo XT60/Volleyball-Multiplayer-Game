@@ -69,7 +69,8 @@ io.on("connection", (socket) => {
 
     function disconnecting(socket){
         console.log(`${socket.id}:\t disconnected`);
-        socket.rooms.forEach(room => io.to(room).emit('opponentLeft'));
+        // socket.rooms.forEach(room => io.to(room).emit('opponentLeft'));
+        socket.rooms.forEach(room => leaveRoom(socket, room, () => {}));
     }
 
     function createRoom (){
@@ -152,7 +153,7 @@ io.on("connection", (socket) => {
         const room = rooms[roomId];
         if (!room){
             // console.log(rooms);
-            const errorMsg = `${roomId}:\t room doesn't exist (you want to leave)`;
+            const errorMsg = `${roomId}:\t room doesn't exist (doesn't exist in our room structure)(you want to leave)`;
             callback(false, errorMsg);
             console.log(errorMsg);
             return;

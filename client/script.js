@@ -211,6 +211,7 @@ document.getElementById("playAgainBtn").addEventListener('click', () => {
 document.getElementById("newOpponentBtn").addEventListener('click', () => {
     changeWindows(summaryWindowElement, gameFindWindowElement);
     findOpponent();
+    resetGameElement();
 });
 
 document.getElementById("backToKeyOutBtn").addEventListener('click', () => {
