@@ -118,26 +118,43 @@ body {
 			#leftPlayer {
 				left: 100px;
 				top: 100px;
+				overflow: hidden;
 				position: absolute;
 				width: 5.745%;
 				height: 39.503%;
-				img {
-					width: 100%;
-					height: 100%;
-				}
 			}
 
 			#rightPlayer {
+				overflow: hidden;
 				position: absolute;
-				transform: scaleX(-1);
 				left: 400px;
 				top: 100px;
 				width: 5.745%;
 				height: 39.503%;
-				img {
-					width: 100%;
-					height: 100%;
-				}
+			}
+			.walkAnimation{
+				position: absolute;
+				left: 0;
+				top: 0;
+				display: block;
+				width: 400%;
+				height: 100%;
+			}
+			.shootAnimation{
+				position: absolute;
+				left: 0;
+				top: 0;
+				display: none;
+				width: 200%;
+				height: 100%;
+			}
+			.jumpAnimation{
+				position: absolute;
+				left: 0;
+				top: 0;
+				display: none;
+				width: 100%;
+				height: 100%;
 			}
 		}
 
@@ -156,10 +173,10 @@ body {
 
 			.indicator {
 				position: absolute;
-				height: 100%;
+				height: 80%;
 				width: 2%;
 				left: 0;
-				top: 0;
+				top: 10%;
 			}
 			#gameIndicator {
 				background-color: gold;
@@ -636,6 +653,9 @@ body {
 				top: 12.2em;
 				width: 180px;
 				height: 45px;
+			}
+			img{
+				border-radius: 10px;
 			}
 
 			#scoreBoard {
