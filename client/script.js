@@ -6,6 +6,7 @@ const indicatorWidth = 2,
 gameAreaSize = [1201, 443],
 maxCourtfill = 0.9,
 animationFrameSpan = 150,
+maxScale = 1500 / gameAreaSize[0],
 
 currAnimation = {
     leftPlayer: {
@@ -25,7 +26,7 @@ animationFrameCount = {
     walking: 4,
     blocking: 1,
     shooting: 2
-};
+}   ;
 
     
 let prevGameState, myPlayer, scaleTicks, scaleMulti, a, b, myRoomId, scaleTickTime, myInterval, prevTime,
