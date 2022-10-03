@@ -12,7 +12,7 @@ const { playerShootArea, netRect, blockZone, scaleTicks,
 
 const io = require("socket.io")(http, {
     cors: {
-        origin: "http://127.0.0.1:5500"
+        origin: "https://sandball.herokuapp.com/"
     }
 });
 
