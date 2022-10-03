@@ -568,12 +568,13 @@ body {
 	right: 0;
 	bottom: 0;
 	z-index: -10;
-	transition: opacity .3s;
+	transition: opacity 1.5s ease-out;
 	color: #fff;
 	letter-spacing: 2px;
 }
 
 .copyBtn:active::before{
+	transition: opacity 0s;
 	opacity: 1;
 }
 

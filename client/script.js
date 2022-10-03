@@ -6,6 +6,7 @@ const indicatorWidth = 2,
 gameAreaSize = [1201, 443],
 maxCourtfill = 0.9,
 animationFrameSpan = 150,
+maxScale = 1500 / gameAreaSize[0],
 
 currAnimation = {
     leftPlayer: {
@@ -25,7 +26,7 @@ animationFrameCount = {
     walking: 4,
     blocking: 1,
     shooting: 2
-};
+}   ;
 
     
 let prevGameState, myPlayer, scaleTicks, scaleMulti, a, b, myRoomId, scaleTickTime, myInterval, prevTime,
@@ -518,8 +519,8 @@ function createRoom(){
         keyOutElement.innerHTML = roomId;
 
         copyBtnElement.addEventListener('click', () => {
-            navigator.clipboard.writeText(roomId)
-        })
+            navigator.clipboard.writeText(roomId);
+        });
     });
 }
 
@@ -631,7 +632,6 @@ function resize(){
     else{
         currScale = tmp;
     }
-    console.log(currScale);
     const newWidth = currScale * gameAreaSize[0];
     const newHeight = currScale * gameAreaSize[1];
     updateElementSize(courtElement, newWidth, newHeight);
