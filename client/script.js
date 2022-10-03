@@ -519,8 +519,8 @@ function createRoom(){
         keyOutElement.innerHTML = roomId;
 
         copyBtnElement.addEventListener('click', () => {
-            navigator.clipboard.writeText(roomId)
-        })
+            navigator.clipboard.writeText(roomId);
+        });
     });
 }
 
@@ -632,7 +632,6 @@ function resize(){
     else{
         currScale = tmp;
     }
-    console.log(currScale);
     const newWidth = currScale * gameAreaSize[0];
     const newHeight = currScale * gameAreaSize[1];
     updateElementSize(courtElement, newWidth, newHeight);
