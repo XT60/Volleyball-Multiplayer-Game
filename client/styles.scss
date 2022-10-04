@@ -1,0 +1,1204 @@
+*,
+*::before,
+*::after {
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
+}
+
+html {
+	font-size: 62.5%; //font size = 10px ;)
+}
+
+body > div,
+#gameArea {
+	position: absolute;
+	display: none;
+}
+
+body {
+	font-family: 'Josefin Sans', sans-serif;
+	font-size: 1.6rem;
+
+	#keyInWindow {
+		p {
+			display: none;
+		}
+	}
+
+	#gameSummaryWindow {
+		#rematchInfo {
+			display: none;
+		}
+	}
+
+	#gameArea {
+		position: relative;
+		justify-content: center;
+
+		.centerClass {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.gameContainer {
+			width: 100vw;
+			height: 100vh;
+			background-image: linear-gradient(
+					45deg,
+					rgba(0, 65, 163, 0.7),
+					rgba(0, 29, 61, 0.7)
+				),
+				url('../images/beach6-big.jpg');
+			background-repeat: no-repeat;
+			background-position: bottom;
+			background-size: cover;
+
+			.buttons {
+				position: relative;
+				display: flex;
+				justify-content: center;
+				flex-direction: column;
+				// align-items: center;
+				text-align: center;
+				z-index: 10;
+				padding: 0 1em 2em;
+
+				.startGameBtnClass {
+					padding-left: 3.65em;
+					padding-right: 3.65em;
+					margin-top: 1.2em;
+				}
+			}
+		}
+
+		#readyMsg {
+			display: none;
+			color: white;
+			text-transform: uppercase;
+			font-size: 3.5rem;
+			font-weight: bold;
+			margin-top: 0.5em;
+		}
+
+		#court {
+			width: 1201px;
+			height: 443px;
+			position: absolute;
+			left: 50%;
+			transform: translate(-50%, 0);
+
+			#courtImg {
+				width: 100%;
+				height: 100%;
+				position: absolute;
+				top: 0;
+				left: 0;
+				display: none;
+			}
+			canvas {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				opacity: 0.8;
+				z-index: 946;
+			}
+
+			#ball {
+				left: 50px;
+				top: 50px;
+				position: absolute;
+				width: 3.497%;
+				height: 9.48%;
+			}
+
+			#leftPlayer {
+				left: 100px;
+				top: 100px;
+				overflow: hidden;
+				position: absolute;
+				width: 5.745%;
+				height: 39.503%;
+			}
+
+			#rightPlayer {
+				overflow: hidden;
+				position: absolute;
+				left: 400px;
+				top: 100px;
+				width: 5.745%;
+				height: 39.503%;
+			}
+			.walkAnimation{
+				position: absolute;
+				left: 0;
+				top: 0;
+				display: block;
+				width: 400%;
+				height: 100%;
+			}
+			.shootAnimation{
+				position: absolute;
+				left: 0;
+				top: 0;
+				display: none;
+				width: 200%;
+				height: 100%;
+			}
+			.jumpAnimation{
+				position: absolute;
+				left: 0;
+				top: 0;
+				display: none;
+				width: 100%;
+				height: 100%;
+			}
+		}
+
+		#powerMeter {
+			position: relative;
+			width: 150px;
+			height: 40px;
+			top: 9.5em;
+			left: 50%;
+			transform: translateX(-50%);
+
+			img {
+				width: 100%;
+				height: 100%;
+			}
+
+			.indicator {
+				position: absolute;
+				height: 80%;
+				width: 2%;
+				left: 0;
+				top: 10%;
+			}
+			#gameIndicator {
+				background-color: gold;
+			}
+			#leftIndicator {
+				background-color: green;
+				opacity: 0.7;
+				display: none;
+				z-index: 100;
+			}
+			#rightIndicator {
+				background-color: blue;
+				opacity: 0.7;
+				display: none;
+				z-index: 100;
+			}
+		}
+		#scoreBoard {
+			position: relative;
+			display: flex;
+			// text-transform: uppercase;
+			padding: 1em 1em 0;
+			width: 100%;
+			justify-content: space-between;
+			align-items: center;
+			top: -1em;
+			color: white;
+			flex-direction: row;
+
+			.playersScore {
+				padding: 0.6em;
+				border-radius: 10px;
+				background-color: #000f26;
+
+				#leftPlayerScore {
+					margin-right: 1em;
+					padding-left: 0.4em;
+				}
+				#rightPlayerScore {
+					padding-right: 0.4em;
+				}
+			}
+
+			.playerName {
+				padding: 0.6em;
+				border-radius: 10px;
+				background-color: #001d3d;
+			}
+		}
+	}
+}
+
+.container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	width: 100vw;
+	text-align: center;
+	background-image: linear-gradient(
+			45deg,
+			rgba(1, 35, 86, 0.8),
+			rgba(0, 29, 61, 0.8)
+		),
+		url('../images/beach-mini.jpg');
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: cover;
+	color: rgb(255, 255, 255);
+
+	.headerTextBig {
+		font-family: 'Playball', cursive;
+		font-size: 4.5rem;
+		letter-spacing: 0.5rem;
+		margin: -1rem 0.5em 1rem;
+	}
+
+	.headerTextSmall {
+		font-size: 1.75rem;
+		margin: 0 2rem 1.5rem 2rem;
+	}
+
+	.keyText {
+		font-size: 2.5rem;
+		text-transform: uppercase;
+		font-weight: bold;
+		margin: 0 1.5em;
+		margin-bottom: -.6em;
+	}
+
+	.yourKey {
+		margin: 1.5em 1em;
+		font-size: 1.5rem;
+		padding: 1.1em;
+		border-radius: 25px;
+		background-color: #001d3d;
+		border: 1px solid #000814;
+	}
+
+	.jumpingArrowDown {
+		height: 4em;
+		width: 4em;
+		background-size: contain;
+		background-position: center;
+		background-repeat: no-repeat;
+		background-image: url('../images/icons/chevron-down.svg');
+		animation: bounceDown 2s infinite;
+	}
+
+	.returnBtn {
+		padding: 0.95em 3.6em;
+	}
+
+	.form {
+		display: flex;
+		flex-direction: column;
+		text-transform: uppercase;
+		font-size: 2rem;
+
+		.gameKeyLabel {
+			margin-bottom: 0.7em;
+			font-size: 2.4rem;
+			font-weight: bold;
+		}
+
+		.gameKeyInput {
+			font-size: 1.6rem;
+			height: 3em;
+			border: 3px solid #001d3d;
+			background: rgba($color: #001d3d, $alpha: 0.4);
+			color: #fff;
+			padding: 0.5em;
+			margin-bottom: 0.5em;
+		}
+
+		.gameKeyInput:focus {
+			outline: none;
+			border: 3px solid rgb(253, 177, 0);
+		}
+
+		.modeCheckbox {
+			margin: 1em 0;
+			display: flex;
+			flex-direction: column;
+			width: 100%;
+
+			.modeCheckboxBtn {
+				display: flex;
+				justify-content: space-between;
+				border-radius: 25px;
+				background-color: #001d3d;
+				width: 100%;
+				padding: 0.95em;
+				padding-left: 1.7em;
+				position: relative;
+			}
+
+			.playerCheckArea {
+				margin-bottom: 1em;
+			}
+
+			.checkboxes {
+				cursor: pointer;
+				opacity: 0;
+				position: absolute;
+				-webkit-tap-highlight-color: transparent;
+			}
+
+			.playerLabel {
+				padding-top: 0.15em;
+			}
+
+			.spectatorLabel {
+				padding-top: 0.15em;
+			}
+
+			.labels {
+				cursor: pointer;
+				display: flex;
+			}
+
+			.labels::before {
+				content: '';
+				width: 1.1em;
+				height: 1.1em;
+				border: 0.1em solid rgb(253, 177, 0);
+				background-color: rgba(253, 177, 0, 0.15);
+				margin-right: 1em;
+				border-radius: 0.15em;
+				transition: background-color 0.2s;
+			}
+
+			.labels:hover::before,
+			.checkboxes:hover + .labels::before {
+				background-color: rgba(253, 177, 0, 0.35);
+			}
+
+			.checkboxes:focus + .labels::before {
+				box-shadow: 0 0 5px black;
+			}
+
+			.checkboxes:checked + .labels::before {
+				content: '\002714';
+				background-color: rgb(253, 177, 0);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				padding-right: 1px;
+				padding-bottom: 2px;
+				color: #000814;
+			}
+		}
+	}
+}
+
+.labelText {
+	margin-top: 0.15em;
+}
+
+.btn {
+	position: relative;
+	font-size: 1.9rem;
+	padding: 0.95em;
+	padding-top: 1em;
+	margin: 0.5em 0;
+	border-radius: 25px;
+	text-transform: uppercase;
+	letter-spacing: -2px;
+	font-family: 'Josefin Sans', sans-serif;
+	font-weight: bold;
+	background-image: linear-gradient(35deg, rgb(253, 177, 0), rgb(255, 214, 10));
+	background-color: #fff;
+	color: #000814;
+	border: 2px solid #000814;
+	cursor: pointer;
+	overflow: hidden;
+	z-index: 0;
+}
+
+.btn1::after {
+	content: '';
+	background-image: linear-gradient(
+			35deg,
+			rgba(253, 177, 0, 0.65),
+			rgba(255, 214, 10, 0.65)
+		),
+		url('../images/beach-volley-mini.jpg');
+	background-repeat: no-repeat;
+	opacity: 0;
+	position: absolute;
+	top: 0;
+	left: -100px;
+	right: 0;
+	bottom: 0;
+	z-index: -10;
+	transition: 0.15s;
+}
+
+.btn2::after {
+	content: '';
+	background-image: linear-gradient(
+			35deg,
+			rgba(253, 177, 0, 0.65),
+			rgba(255, 214, 10, 0.65)
+		),
+		url('../images/volleyball-team-mini.jpg');
+	background-repeat: no-repeat;
+	opacity: 0;
+	position: absolute;
+	top: 0;
+	left: -100px;
+	right: 0;
+	bottom: 0;
+	z-index: -10;
+	transition: 0.15s;
+}
+
+.btn3::after {
+	content: '';
+	background-image: linear-gradient(
+			35deg,
+			rgba(253, 177, 0, 0.65),
+			rgba(255, 214, 10, 0.65)
+		),
+		url('../images/volleyball-alone-mini.jpg');
+	background-repeat: no-repeat;
+	opacity: 0;
+	position: absolute;
+	top: 0;
+	left: -100px;
+	right: 0;
+	bottom: 0;
+	z-index: -10;
+	transition: 0.15s;
+}
+
+.btn:hover::after {
+	opacity: 1;
+	left: 0;
+}
+
+.waitMessage {
+	font-size: 2.5rem;
+	margin: 0.8em 2em;
+	text-transform: uppercase;
+	font-weight: bold;
+}
+
+.waitKey {
+	margin: 0 1em 0.7em;
+	font-size: 2rem;
+}
+
+.startGameBtn {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.gameResult {
+	font-size: 2.5rem;
+	margin: 0 1em;
+	text-transform: uppercase;
+}
+
+.explanation {
+	margin: 1.5em 0.7em;
+	font-size: 2.5rem;
+}
+
+.endButtons {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	margin: 0 5%;
+
+	.btn {
+		width: 100%;
+	}
+}
+
+.allGameItemsContainer {
+	margin-top: 1em;
+}
+
+#returnBtnSmall {
+	display: none;
+	padding: 0.1em 0.5em 0 0.4em;
+	border-radius: 10px;
+	position: relative;
+	top: -1em;
+	left: 1em;
+}
+
+.movementButttons {
+	margin-top: 12em;
+	display: flex;
+	justify-content: center;
+
+	.moveBtn:nth-child(odd) {
+		padding: 1em 1.6em;
+	}
+	.moveBtn:nth-child(even) {
+		padding: 1em 1.5em;
+	}
+
+	.btn {
+		margin: 0.2em;
+
+		img {
+			margin-top: 0.15em;
+			transform: scale(1.3);
+		}
+	}
+}
+
+.copyBtn{
+	overflow: visible;
+}
+
+.copyBtn::before{
+	content: 'COPIED!';
+	opacity: 0;
+	position: absolute;
+	top: -30px;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: -10;
+	transition: opacity 2.5s ease-out;
+	color: #fff;
+	letter-spacing: 2px;
+}
+
+.copyBtn:active::before{
+	transition: opacity 0s;
+	opacity: 1;
+}
+
+// WAITING DOTS IDEA
+
+// .waitArea{
+// 	display: flex;
+// 	align-items: center;
+
+// 	.dots{
+// 		display: flex;
+// 		margin-top: 13px;
+// 		margin-left: -66px;
+
+// 		.dot{
+// 			width: 6px;
+// 			height: 6px;
+// 			margin-right: 4px;
+// 			background-color: #fff;
+// 		}
+// 	}
+// }
+
+//--------------------------------------------
+//                 ANIMATIONS
+//--------------------------------------------
+
+@keyframes bounceDown{
+	0%, 25%, 50%, 90%, 100% {
+		transform: translateY(0.8em);
+	  }
+	  40% {
+		transform: translateY(1.7em);
+	  }
+	  70% {
+		transform: translateY(1.7em);
+	  }
+}
+
+
+//--------------------------------------------
+//              MEDIA  QUERIES  <3
+//--------------------------------------------
+
+@media (min-width: 375px) {
+	.container {
+		.headerTextBig {
+			font-size: 5rem;
+		}
+
+		.headerTextSmall {
+			font-size: 1.85rem;
+		}
+	}
+
+	.btn {
+		font-size: 2rem;
+		padding: 1em;
+		padding-top: 1.2em;
+		margin: 0.75em 0;
+		border-radius: 35px;
+	}
+
+	.buttons {
+		margin: 0 2em;
+	}
+
+	.allGameItemsContainer {
+		margin-top: 4em;
+	}
+}
+
+@media (min-width: 440px) {
+	body {
+		#gameArea {
+			#powerMeter {
+				top: 12.2em;
+				width: 180px;
+				height: 45px;
+			}
+			img{
+				border-radius: 10px;
+			}
+
+			#scoreBoard {
+				width: 90%;
+				left: 50%;
+				transform: translateX(-50%);
+
+				.playersScore {
+					padding: 0.6em;
+
+					#leftPlayerScore {
+						margin-right: 2em;
+						padding-left: 0.4em;
+					}
+					#rightPlayerScore {
+						padding-right: 0.4em;
+					}
+				}
+
+				.playerName {
+					padding: 0.6em;
+				}
+			}
+		}
+
+		.allGameItemsContainer {
+			margin-top: 4em;
+		}
+		.movementButttons {
+			margin-top: 14.5em;
+		}
+	}
+}
+
+@media (min-width: 576px) {
+	.container {
+		background-image: linear-gradient(
+				45deg,
+				rgba(1, 35, 86, 0.8),
+				rgba(0, 29, 61, 0.8)
+			),
+			url('../images/beach-big.jpg');
+
+		.headerTextBig {
+			font-size: 5.2rem;
+		}
+
+		.headerTextSmall {
+			font-size: 2rem;
+			margin: 0 6em 1.8em;
+		}
+
+		.keyText {
+			font-size: 3.5rem;
+			margin: 0 1.5em;
+		}
+
+		.yourKey {
+			margin: 1.5em 1em;
+			font-size: 2rem;
+		}
+
+		.form {
+			.gameKeyInput {
+				font-size: 1.8rem;
+			}
+		}
+	}
+
+	body {
+		#gameArea {
+			.gameContainer {
+				.buttons {
+					.startGameBtnClass {
+						padding-left: 4.15em;
+						padding-right: 4.15em;
+					}
+				}
+			}
+
+			#powerMeter {
+				top: 16em;
+				width: 200px;
+				height: 50px;
+			}
+
+			#scoreBoard {
+				width: 90%;
+				left: 50%;
+				transform: translateX(-50%);
+
+				.playersScore {
+					padding: 0.6em;
+
+					#leftPlayerScore {
+						margin-right: 4em;
+						padding-left: 0.4em;
+					}
+					#rightPlayerScore {
+						padding-right: 0.4em;
+					}
+				}
+
+				.playerName {
+					padding: 0.6em;
+				}
+			}
+
+			.allGameItemsContainer {
+				margin-top: 4em;
+			}
+			.movementButttons {
+				margin-top: 18em;
+			}
+		}
+	}
+
+	.btn {
+		font-size: 2.4rem;
+		padding: 0.9em 1.5em;
+		padding-top: 1em;
+		margin: 0.75em 0;
+	}
+
+	.form {
+		width: 35%;
+	}
+}
+
+@media (min-width: 768px) {
+	.container {
+		.headerTextBig {
+			font-size: 6rem;
+			margin: -1rem 1.6em 1rem;
+		}
+
+		.headerTextSmall {
+			font-size: 2.2rem;
+			margin: 0 6em 1.8em;
+		}
+
+		.keyText {
+			font-size: 4.5rem;
+			margin: 0 1.5em;
+		}
+
+		.yourKey {
+			margin: 1.5em 1em;
+			font-size: 2.3rem;
+		}
+
+		.returnBtn {
+			padding: 0.95em 4.9em;
+		}
+
+		.form {
+			.gameKeyLabel {
+				font-size: 3rem;
+			}
+
+			.gameKeyInput {
+				font-size: 1.9rem;
+			}
+
+			.modeCheckbox {
+				.modeCheckboxBtn {
+					padding-left: 3.7em;
+				}
+			}
+		}
+	}
+
+	.btn {
+		font-size: 2.8rem;
+		padding: 0.8em 2em;
+		padding-top: 0.85em;
+		margin: 0.75em 0;
+	}
+
+	.waitMessage {
+		font-size: 3rem;
+	}
+
+	.waitKey {
+		font-size: 2.4rem;
+	}
+
+	.explanation {
+		font-size: 2.8rem;
+	}
+
+	.gameResult {
+		font-size: 3.8rem;
+		margin: 0 1em;
+		text-transform: uppercase;
+	}
+
+	.buttons {
+		margin: 0 4em;
+	}
+
+	body {
+		#gameArea {
+			.gameContainer {
+				.buttons {
+					.startGameBtnClass {
+						padding-left: 4.8em;
+						padding-right: 4.8em;
+					}
+				}
+			}
+
+			#powerMeter {
+				top: 19em;
+				width: 230px;
+				height: 55px;
+			}
+
+			#scoreBoard {
+				width: 85%;
+				font-size: 1.8rem;
+
+				.playersScore {
+					padding: 0.6em;
+
+					#leftPlayerScore {
+						margin-right: 4.5em;
+						padding-left: 0.4em;
+					}
+					#rightPlayerScore {
+						padding-right: 0.4em;
+					}
+				}
+
+				.playerName {
+					padding: 0.6em;
+				}
+			}
+
+			.allGameItemsContainer {
+				margin-top: 6em;
+			}
+			.movementButttons {
+				margin-top: 22em;
+			}
+		}
+	}
+}
+
+@media (min-width: 915px) {
+	.container {
+		.form {
+			.modeCheckbox {
+				.modeCheckboxBtn {
+					padding-left: 4.8em;
+				}
+			}
+		}
+	}
+
+	body {
+		#gameArea {
+			#powerMeter {
+				top: 22em;
+				width: 230px;
+				height: 55px;
+			}
+
+			#scoreBoard {
+				width: 85%;
+				font-size: 2.1rem;
+
+				.playersScore {
+					padding: 0.6em;
+
+					#leftPlayerScore {
+						margin-right: 4.5em;
+						padding-left: 0.4em;
+					}
+					#rightPlayerScore {
+						padding-right: 0.4em;
+					}
+				}
+
+				.playerName {
+					padding: 0.6em;
+				}
+			}
+
+			.allGameItemsContainer {
+				margin-top: 7em;
+			}
+			.movementButttons {
+				margin-top: 24em;
+			}
+		}
+	}
+}
+
+@media (min-width: 992px) {
+	.container {
+		.headerTextBig {
+			font-size: 6.5rem;
+			margin: -1rem 1.6em 1rem;
+		}
+
+		.headerTextSmall {
+			font-size: 2.4rem;
+			margin: 0 6em 1.8em;
+		}
+
+		.yourKey {
+			font-size: 2.5rem;
+		}
+
+		.returnBtn {
+			padding: 0.95em 5.9em;
+		}
+
+		.form {
+			.gameKeyLabel {
+				font-size: 3.8rem;
+			}
+			.gameKeyInput {
+				font-size: 2rem;
+			}
+		}
+	}
+
+	.btn {
+		font-size: 2.8rem;
+		padding: 0.9em 3em;
+		padding-top: 1em;
+		margin: 0.75em 0;
+	}
+
+	.waitMessage {
+		font-size: 3.3rem;
+	}
+
+	.waitKey {
+		font-size: 2.7rem;
+	}
+
+	body {
+		#gameArea {
+			.gameContainer {
+				background-image: linear-gradient(
+						45deg,
+						rgba(0, 65, 163, 0.7),
+						rgba(0, 29, 61, 0.7)
+					),
+					url('../images/beach8-big.jpg');
+
+				.buttons {
+					.startGameBtnClass {
+						padding-left: 5.8em;
+						padding-right: 5.8em;
+					}
+				}
+			}
+
+			#powerMeter {
+				top: 26em;
+				width: 250px;
+				height: 60px;
+			}
+
+			.allGameItemsContainer {
+				margin-top: 6em;
+			}
+			.movementButttons {
+				display: none !important;
+			}
+		}
+	}
+}
+
+@media (min-width: 1100px) {
+	.container {
+		.form {
+			.modeCheckbox {
+				flex-direction: row;
+
+				.playerCheckArea {
+					margin-bottom: 0;
+					margin-right: 1em;
+				}
+
+				.modeCheckboxBtn {
+					padding-left: 1.2em;
+				}
+			}
+
+			.gameKeyInput {
+				font-size: 2.1rem;
+			}
+		}
+	}
+
+	body {
+		#gameArea {
+			#powerMeter {
+				top: 26em;
+				width: 250px;
+				height: 66px;
+			}
+
+			.allGameItemsContainer {
+				margin-top: 6em;
+			}
+
+			.buttons {
+				margin: 0 5em;
+			}
+		}
+	}
+
+	.buttons {
+		margin: 0 10em;
+	}
+
+	.playerText {
+		padding-left: 0.3em;
+	}
+}
+
+@media (min-width: 1200px) {
+	.container {
+		.headerTextBig {
+			font-size: 7rem;
+			margin: -1rem 1.6em 1rem;
+		}
+
+		.headerTextSmall {
+			font-size: 2.7rem;
+			margin: 0 6em 1.2em;
+		}
+
+		.yourKey {
+			font-size: 2.7rem;
+		}
+
+		.returnBtn {
+			padding: 0.95em 7.9em;
+		}
+
+		.form {
+			.gameKeyLabel {
+				font-size: 4.65rem;
+			}
+
+			.gameKeyInput {
+				font-size: 2.35rem;
+			}
+		}
+	}
+
+	.btn {
+		font-size: 2.8rem;
+		padding: 1em 5em;
+		padding-top: 1.1em;
+		margin: 0.75em 0;
+	}
+
+	.waitMessage {
+		font-size: 3.5rem;
+	}
+
+	.waitKey {
+		font-size: 3rem;
+	}
+
+	.explanation {
+		font-size: 2.8rem;
+		margin-bottom: 0;
+	}
+
+	.gameResult {
+		font-size: 4.3rem;
+		margin: 0 1em -0.2em;
+	}
+
+	body {
+		#gameArea {
+			#powerMeter {
+				top: 28em;
+			}
+
+			.allGameItemsContainer {
+				margin-top: 2em;
+			}
+		}
+	}
+
+	.buttons {
+		margin: 0 15em;
+	}
+}
+
+@media (min-width: 1300px) {
+	.buttons {
+		margin: 0 22em;
+	}
+
+	body {
+		#gameArea {
+			#powerMeter {
+				top: 31em;
+				width: 265px;
+				height: 70px;
+			}
+
+			.allGameItemsContainer {
+				margin-top: 1em;
+			}
+		}
+	}
+}
+
+@media (min-width: 1400px) {
+	.buttons {
+		margin: 0 22em;
+	}
+
+	body {
+		#gameArea {
+			#powerMeter {
+				top: 34em;
+				width: 280px;
+				height: 72px;
+			}
+
+			.allGameItemsContainer {
+				margin-top: 0;
+			}
+		}
+	}
+}
+
+@media (min-width: 1800px) {
+	.buttons {
+		margin: 0 30em;
+	}
+}
