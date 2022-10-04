@@ -2,7 +2,7 @@
 //     npm run loik  (in ./server directory)
 
 const { v4 } = require('uuid');
-const { createServer } = require("http");
+const { createServer } = require("https");
 const http = createServer(); 
 const { handleKeyUp, handleKeydown, updatePlayer, updateBall, 
     initGame, updateScale} = require("./game");
