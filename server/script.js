@@ -2,19 +2,13 @@
 //     npm run loik  (in ./server directory)
 
 const { v4 } = require('uuid');
-const { createServer } = require("https");
-const http = createServer(); 
 const { handleKeyUp, handleKeydown, updatePlayer, updateBall, 
     initGame, updateScale} = require("./game");
 
 const { playerShootArea, netRect, blockZone, scaleTicks, 
     scaleTickTime, blockRect, playerShootAnimationArea} = require("./game.js");
 
-const io = require("socket.io")(http, {
-    cors: {
-        origin: "*"
-    }
-});
+const io = require("socket.io")();
 
 const rooms = {};
 const waitingRoom = [];
@@ -345,4 +339,4 @@ function isDataValid(roomId, socketId, role){
 }
 
 
-http.listen(process.env.PORT || 3000);
+io.listen(process.env.PORT || 3000);
