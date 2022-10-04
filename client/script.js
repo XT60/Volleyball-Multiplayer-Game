@@ -1,6 +1,8 @@
 import { io } from "https://cdn.socket.io/4.3.2/socket.io.esm.min.js";
 import { drawHitboxes, initHitboxes } from "./hitboxes.js";
-const socket = io("https://sandball.herokuapp.com/");
+const socket = io("https://sandball.herokuapp.com/", {
+    withCredentials: true,
+});
 
 const indicatorWidth = 2,
 gameAreaSize = [1201, 443],
