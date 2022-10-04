@@ -4,7 +4,8 @@
   "description": "server side of multiplayer volleyball game",
   "main": "script.js",
   "scripts": {
-    "loik": "nodemon scirpt.js"
+    "loik": "nodemon scirpt.js",
+    "start": "node script.js"
   },
   "repository": {
     "type": "git",
