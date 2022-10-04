@@ -8,7 +8,7 @@ const { handleKeyUp, handleKeydown, updatePlayer, updateBall,
     initGame, updateScale} = require("./game");
 
 const { playerShootArea, netRect, blockZone, scaleTicks, 
-    scaleTickTime, blockRect, playerShootAnimationArea} = require("../server/game.js");
+    scaleTickTime, blockRect, playerShootAnimationArea} = require("./game.js");
 
 const io = require("socket.io")(http, {
     cors: {
