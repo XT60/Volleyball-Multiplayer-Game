@@ -12,7 +12,7 @@ const { playerShootArea, netRect, blockZone, scaleTicks,
 
 const io = require("socket.io")(http, {
     cors: {
-        origin: "https://dashing-crostata-7e6d78.netlify.app/",
+        origin: "https://dashing-crostata-7e6d78.netlify.app",
         methods: ["GET", "POST"],
         credentials: true
       }
