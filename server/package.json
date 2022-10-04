@@ -5,7 +5,7 @@
   "main": "script.js",
   "scripts": {
     "loik": "nodemon scirpt.js",
-    "start": "node server/script.js"
+    "start": "node script.js"
   },
   "repository": {
     "type": "git",
