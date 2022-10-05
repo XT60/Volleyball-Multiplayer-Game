@@ -1,6 +1,6 @@
 import { io } from "https://cdn.socket.io/4.3.2/socket.io.esm.min.js";
 import { drawHitboxes, initHitboxes } from "./hitboxes.js";
-const socket = io("https://sandball.herokuapp.com/", {
+const socket = io("http://127.0.0.1:3000", {
     withCredentials: true,
 });
 
