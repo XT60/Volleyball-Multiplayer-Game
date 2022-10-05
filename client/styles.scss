@@ -132,7 +132,7 @@ body {
 				width: 5.745%;
 				height: 39.503%;
 			}
-			.walkAnimation{
+			.walkAnimation {
 				position: absolute;
 				left: 0;
 				top: 0;
@@ -140,7 +140,7 @@ body {
 				width: 400%;
 				height: 100%;
 			}
-			.shootAnimation{
+			.shootAnimation {
 				position: absolute;
 				left: 0;
 				top: 0;
@@ -148,7 +148,7 @@ body {
 				width: 200%;
 				height: 100%;
 			}
-			.jumpAnimation{
+			.jumpAnimation {
 				position: absolute;
 				left: 0;
 				top: 0;
@@ -265,7 +265,7 @@ body {
 		text-transform: uppercase;
 		font-weight: bold;
 		margin: 0 1.5em;
-		margin-bottom: -.6em;
+		margin-bottom: -0.6em;
 	}
 
 	.yourKey {
@@ -555,11 +555,11 @@ body {
 	}
 }
 
-.copyBtn{
+.copyBtn {
 	overflow: visible;
 }
 
-.copyBtn::before{
+.copyBtn::before {
 	content: 'COPIED!';
 	opacity: 0;
 	position: absolute;
@@ -573,7 +573,7 @@ body {
 	letter-spacing: 2px;
 }
 
-.copyBtn:active::before{
+.copyBtn:active::before {
 	transition: opacity 0s;
 	opacity: 1;
 }
@@ -602,18 +602,21 @@ body {
 //                 ANIMATIONS
 //--------------------------------------------
 
-@keyframes bounceDown{
-	0%, 25%, 50%, 90%, 100% {
+@keyframes bounceDown {
+	0%,
+	25%,
+	50%,
+	90%,
+	100% {
 		transform: translateY(0.8em);
-	  }
-	  40% {
+	}
+	40% {
 		transform: translateY(1.7em);
-	  }
-	  70% {
+	}
+	70% {
 		transform: translateY(1.7em);
-	  }
+	}
 }
-
 
 //--------------------------------------------
 //              MEDIA  QUERIES  <3
@@ -655,7 +658,7 @@ body {
 				width: 180px;
 				height: 45px;
 			}
-			img{
+			img {
 				border-radius: 10px;
 			}
 
@@ -1080,6 +1083,10 @@ body {
 	}
 
 	.playerText {
+		padding-left: 0.3em;
+	}
+
+	.spectatorText {
 		padding-left: 0.3em;
 	}
 }

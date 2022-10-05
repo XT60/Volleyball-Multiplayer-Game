@@ -849,6 +849,9 @@ body #gameArea #scoreBoard .playerName {
   .playerText {
     padding-left: 0.3em;
   }
+  .spectatorText {
+    padding-left: 0.3em;
+  }
 }
 @media (min-width: 1200px) {
   .container .headerTextBig {
@@ -931,4 +934,4 @@ body #gameArea #scoreBoard .playerName {
   .buttons {
     margin: 0 30em;
   }
-}
+}/*# sourceMappingURL=styles.css.map */
