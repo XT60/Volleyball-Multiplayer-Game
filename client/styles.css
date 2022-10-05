@@ -39,7 +39,7 @@ body #gameArea .centerClass {
 body #gameArea .gameContainer {
   width: 100vw;
   height: 100vh;
-  background-image: linear-gradient(45deg, rgba(0, 65, 163, 0.7), rgba(0, 29, 61, 0.7)), url("../images/beach6-big.jpg");
+  background-image: linear-gradient(45deg, rgba(0, 65, 163, 0.7), rgba(0, 29, 61, 0.7)), url("./images/beach6-big.jpg");
   background-repeat: no-repeat;
   background-position: bottom;
   background-size: cover;
@@ -208,7 +208,7 @@ body #gameArea #scoreBoard .playerName {
   height: 100vh;
   width: 100vw;
   text-align: center;
-  background-image: linear-gradient(45deg, rgba(1, 35, 86, 0.8), rgba(0, 29, 61, 0.8)), url("../images/beach-mini.jpg");
+  background-image: linear-gradient(45deg, rgba(1, 35, 86, 0.8), rgba(0, 29, 61, 0.8)), url("./images/beach-mini.jpg");
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
@@ -245,7 +245,7 @@ body #gameArea #scoreBoard .playerName {
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
-  background-image: url("../images/icons/chevron-down.svg");
+  background-image: url("./images/icons/chevron-down.svg");
   -webkit-animation: bounceDown 2s infinite;
           animation: bounceDown 2s infinite;
 }
@@ -365,7 +365,7 @@ body #gameArea #scoreBoard .playerName {
 
 .btn1::after {
   content: "";
-  background-image: linear-gradient(35deg, rgba(253, 177, 0, 0.65), rgba(255, 214, 10, 0.65)), url("../images/beach-volley-mini.jpg");
+  background-image: linear-gradient(35deg, rgba(253, 177, 0, 0.65), rgba(255, 214, 10, 0.65)), url("./images/beach-volley-mini.jpg");
   background-repeat: no-repeat;
   opacity: 0;
   position: absolute;
@@ -379,7 +379,7 @@ body #gameArea #scoreBoard .playerName {
 
 .btn2::after {
   content: "";
-  background-image: linear-gradient(35deg, rgba(253, 177, 0, 0.65), rgba(255, 214, 10, 0.65)), url("../images/volleyball-team-mini.jpg");
+  background-image: linear-gradient(35deg, rgba(253, 177, 0, 0.65), rgba(255, 214, 10, 0.65)), url("./images/volleyball-team-mini.jpg");
   background-repeat: no-repeat;
   opacity: 0;
   position: absolute;
@@ -393,7 +393,7 @@ body #gameArea #scoreBoard .playerName {
 
 .btn3::after {
   content: "";
-  background-image: linear-gradient(35deg, rgba(253, 177, 0, 0.65), rgba(255, 214, 10, 0.65)), url("../images/volleyball-alone-mini.jpg");
+  background-image: linear-gradient(35deg, rgba(253, 177, 0, 0.65), rgba(255, 214, 10, 0.65)), url("./images/volleyball-alone-mini.jpg");
   background-repeat: no-repeat;
   opacity: 0;
   position: absolute;
@@ -585,7 +585,7 @@ body #gameArea #scoreBoard .playerName {
 }
 @media (min-width: 576px) {
   .container {
-    background-image: linear-gradient(45deg, rgba(1, 35, 86, 0.8), rgba(0, 29, 61, 0.8)), url("../images/beach-big.jpg");
+    background-image: linear-gradient(45deg, rgba(1, 35, 86, 0.8), rgba(0, 29, 61, 0.8)), url("./images/beach-big.jpg");
   }
   .container .headerTextBig {
     font-size: 5.2rem;
@@ -800,7 +800,7 @@ body #gameArea #scoreBoard .playerName {
     font-size: 2.7rem;
   }
   body #gameArea .gameContainer {
-    background-image: linear-gradient(45deg, rgba(0, 65, 163, 0.7), rgba(0, 29, 61, 0.7)), url("../images/beach8-big.jpg");
+    background-image: linear-gradient(45deg, rgba(0, 65, 163, 0.7), rgba(0, 29, 61, 0.7)), url("./images/beach8-big.jpg");
   }
   body #gameArea .gameContainer .buttons .startGameBtnClass {
     padding-left: 5.8em;
@@ -931,4 +931,4 @@ body #gameArea #scoreBoard .playerName {
   .buttons {
     margin: 0 30em;
   }
-}/*# sourceMappingURL=styles.css.map */
+}
