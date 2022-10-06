@@ -38,7 +38,8 @@
                     <span class="modeCheckbox">
                         <span class="playerCheckArea modeCheckboxBtn">
                             <input name="playerCheckbox" id="playerCheckbox" class="checkboxes" type="checkbox" checked>
-                            <label for="playerCheckbox" class="playerLabel labels"><span class="labelText playerText">player</span></label>
+                            <label for="playerCheckbox" class="playerLabel labels"><span
+                                    class="labelText playerText">player</span></label>
                         </span>
                         <span class="spectatorCheckArea modeCheckboxBtn">
                             <input id="spectatorCheckbox" class="checkboxes" type="checkbox">
@@ -107,69 +108,69 @@
 
     <span id="gameArea">
         <section class="gameContainer centerClass">
-                <div class="buttons">
-                    <p id="readyMsg"> your oponnent is ready </p>
-                    <button id="startGameBtn" class="btn startGameBtnClass">Start Game</button>
-                    <button id="returnBtn" class="btn">Return to main Menu</button>
+            <div class="buttons">
+                <p id="readyMsg"> your oponnent is ready </p>
+                <button id="startGameBtn" class="btn startGameBtnClass">Start Game</button>
+                <button id="returnBtn" class="btn">Return to main Menu</button>
+            </div>
+            <button id="returnBtnSmall" class="btn"><img src="./images/icons/arrow-back-up.svg"
+                    alt="return back arrow"></button>
+
+            <div class="allGameItemsContainer">
+
+                <div id="scoreBoard">
+                    <p class="leftPlay playerName">leftPlayer</p>
+                    <div class="playersScore">
+                        <span id="leftPlayerScore">0</span>
+                        <span id="rightPlayerScore">0</span>
+                    </div>
+                    <p class="rightPlay playerName">rightPlayer</p>
                 </div>
-                <button id="returnBtnSmall" class="btn"><img src="./images/icons/arrow-back-up.svg"
-                        alt="return back arrow"></button>
 
-                <div class="allGameItemsContainer">
+                <div id="court">
+                    <canvas width="1201" height="443"></canvas>
+                    <img id="courtImg" src="./images/court.png" alt="valleyball court">
 
-                    <div id="scoreBoard">
-                        <p class="leftPlay playerName">leftPlayer</p>
-                        <div class="playersScore">
-                            <span id="leftPlayerScore">0</span>
-                            <span id="rightPlayerScore">0</span>
-                        </div>
-                        <p class="rightPlay playerName">rightPlayer</p>
+                    <img id="ball" src="./images/ball.png" alt="ball image">
+
+                    <div id="leftPlayer">
+                        <img class="walkAnimation" src="./images/leftPlayer/walk/scaledSpriteSheet.png"
+                            alt="walkAnimation">
+                        <img class="shootAnimation" src="./images/leftPlayer/shoot/scaledSpriteSheet.png"
+                            alt="shootAnimation">
+                        <img class="jumpAnimation" src="./images/leftPlayer/jump/scaledSpriteSheet.png"
+                            alt="jumpAnimation">
                     </div>
 
-                    <div id="court">
-                        <canvas width="1201" height="443"></canvas>
-                        <img id="courtImg" src="./images/court.png" alt="valleyball court">
-
-                        <img id="ball" src="./images/ball.png" alt="ball image">
-
-                        <div id="leftPlayer">
-                            <img class="walkAnimation" src="./images/leftPlayer/walk/scaledSpriteSheet.png"
-                                alt="walkAnimation">
-                            <img class="shootAnimation" src="./images/leftPlayer/shoot/scaledSpriteSheet.png"
-                                alt="shootAnimation">
-                            <img class="jumpAnimation" src="./images/leftPlayer/jump/scaledSpriteSheet.png"
-                                alt="jumpAnimation">
-                        </div>
-
-                        <div id="rightPlayer">
-                            <img class="walkAnimation" src="./images/rightPlayer/walk/scaledSpriteSheet.png"
-                                alt="walkAnimation">
-                            <img class="shootAnimation" src="./images/rightPlayer/shoot/scaledSpriteSheet.png"
-                                alt="shootAnimation">
-                            <img class="jumpAnimation" src="./images/rightPlayer/jump/scaledSpriteSheet.png"
-                                alt="jumpAnimation">
-                        </div>
-                    </div>
-
-
-                    <div id="powerMeter">
-                        <img id="scale" src="./images/scale.png" alt="scale">
-                        <div id="gameIndicator" class="indicator"></div>
-                        <div id="leftIndicator" class="indicator"></div>
-                        <div id="rightIndicator" class="indicator"></div>
-                    </div>
-
-                    <div class="movementButttons">
-                        <button class="upMoveButton btn moveBtn"><img src="./images/icons/arrow-left.svg"
-                                alt="left arrow"></button>
-                        <button class="leftMoveButton btn moveBtn"><img src="./images/icons/arrow-left.svg"
-                                alt="left arrow"></button>
-                        <button class="specialActionButton btn moveBtn"><img src="./images/icons/ball-volleyball.svg"
-                                alt="volleyball icon"></button>
-                        <button class="rightMoveButton btn moveBtn"><img src="./images/icons/arrow-right.svg"
-                                alt="right arrow"></button>
+                    <div id="rightPlayer">
+                        <img class="walkAnimation" src="./images/rightPlayer/walk/scaledSpriteSheet.png"
+                            alt="walkAnimation">
+                        <img class="shootAnimation" src="./images/rightPlayer/shoot/scaledSpriteSheet.png"
+                            alt="shootAnimation">
+                        <img class="jumpAnimation" src="./images/rightPlayer/jump/scaledSpriteSheet.png"
+                            alt="jumpAnimation">
                     </div>
                 </div>
+
+
+                <div id="powerMeter">
+                    <img id="scale" src="./images/scale.png" alt="scale">
+                    <div id="gameIndicator" class="indicator"></div>
+                    <div id="leftIndicator" class="indicator"></div>
+                    <div id="rightIndicator" class="indicator"></div>
+                </div>
+
+                <div class="movementButttons">
+                    <button class="leftMoveButton btn moveBtn"><img src="./images/icons/arrow-left.svg"
+                            alt="left arrow"></button>
+                    <button class="upMoveButton btn moveBtn"><img src="./images/icons/arrow-big-up-line.svg"
+                            alt="left arrow"></button>
+                    <button class="specialActionButton btn moveBtn"><img src="./images/icons/ball-volleyball.svg"
+                            alt="volleyball icon"></button>
+                    <button class="rightMoveButton btn moveBtn"><img src="./images/icons/arrow-right.svg"
+                            alt="right arrow"></button>
+                </div>
+            </div>
         </section>
     </span>
     <script type="module" src="script.js"></script>

@@ -474,12 +474,13 @@ body #gameArea #scoreBoard .playerName {
   margin-top: 12em;
   display: flex;
   justify-content: center;
+  align-items: center;
 }
-.movementButttons .moveBtn:nth-child(odd) {
-  padding: 1em 1.6em;
-}
-.movementButttons .moveBtn:nth-child(even) {
-  padding: 1em 1.5em;
+.movementButttons .moveBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1em 1.5em 1.1em;
 }
 .movementButttons .btn {
   margin: 0.2em;

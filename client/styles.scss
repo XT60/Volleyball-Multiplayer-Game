@@ -544,13 +544,21 @@ body {
 	margin-top: 12em;
 	display: flex;
 	justify-content: center;
+	align-items: center;
 
-	.moveBtn:nth-child(odd) {
-		padding: 1em 1.6em;
+	.moveBtn{
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: 1em 1.5em 1.1em;
 	}
-	.moveBtn:nth-child(even) {
-		padding: 1em 1.5em;
-	}
+
+	// .moveBtn:nth-child(odd) {
+	// 	padding: 1em 1.6em 1.1em;
+	// }
+	// .moveBtn:nth-child(even) {
+	// 	padding: 1em 1.5em 1.1em;
+	// }
 
 	.btn {
 		margin: 0.2em;
