@@ -512,6 +512,10 @@ body #gameArea #scoreBoard .playerName {
   opacity: 1;
 }
 
+#gameSummaryWindow .container .contentContainer {
+  transform: scale(0.8);
+}
+
 @-webkit-keyframes bounceDown {
   0%, 25%, 50%, 90%, 100% {
     transform: translateY(0.8em);
@@ -652,7 +656,7 @@ body #gameArea #scoreBoard .playerName {
     margin: 0.75em 0;
   }
   .form {
-    width: 35%;
+    width: 90%;
   }
 }
 @media (min-width: 768px) {
@@ -741,6 +745,9 @@ body #gameArea #scoreBoard .playerName {
   }
 }
 @media (min-width: 915px) {
+  .container .form {
+    width: 35%;
+  }
   .container .form .modeCheckbox .modeCheckboxBtn {
     padding-left: 4.8em;
   }
@@ -942,22 +949,33 @@ body #gameArea #scoreBoard .playerName {
     margin: 0 30em;
   }
 }
-@media (min-width: 556px) and (max-width: 915px) and (orientation: landscape) {
+@media (min-width: 400px) and (max-width: 915px) and (orientation: landscape) {
   #optionsWindow .container .contentContainer {
     transform: scale(0.9);
     display: block;
   }
   #keyInWindow .container .contentContainer {
-    width: 70%;
+    width: 80%;
     transform: scale(0.7);
   }
   #keyInWindow .container .contentContainer .form {
-    width: 70%;
+    width: 80%;
     flex-direction: row;
     align-content: space-between;
     flex-wrap: wrap;
     align-items: stretch;
     justify-content: center;
+  }
+  #keyInWindow .container .contentContainer .form .enterBtn {
+    margin-right: 0.5em;
+    padding: 0.8em 1.4em;
+  }
+  #keyInWindow .container .contentContainer .form .modeCheckbox {
+    width: 75%;
+    align-items: center;
+  }
+  #keyInWindow .container .contentContainer .form .gameKeyInput {
+    width: 17em;
   }
   #keyOutWindow .container .contentContainer {
     width: 70%;
@@ -967,6 +985,17 @@ body #gameArea #scoreBoard .playerName {
   }
   #gameFindWindow .container .contentContainer {
     transform: scale(0.9);
+  }
+  #gameSummaryWindow .container .contentContainer .endButtons {
+    display: flex;
+    align-items: stretch;
+    flex-direction: row;
+    margin: 0 5%;
+  }
+  #gameSummaryWindow .container .contentContainer .endButtons .btn {
+    margin: 0 0.2em;
+    padding: 0.7em;
+    text-align: center;
   }
   #gameArea .gameContainer #returnBtnSmall {
     top: -2em;

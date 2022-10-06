@@ -585,6 +585,14 @@ body {
 	opacity: 1;
 }
 
+#gameSummaryWindow{
+	.container {
+		.contentContainer {
+			transform: scale(0.8);
+		}
+	}
+}
+
 // WAITING DOTS IDEA
 
 // .waitArea{
@@ -624,6 +632,7 @@ body {
 		transform: translateY(1.7em);
 	}
 }
+
 
 //--------------------------------------------
 //              MEDIA  QUERIES  <3
@@ -792,7 +801,7 @@ body {
 	}
 
 	.form {
-		width: 35%;
+		width: 90%;
 	}
 }
 
@@ -924,6 +933,8 @@ body {
 					padding-left: 4.8em;
 				}
 			}
+
+			width: 35%;
 		}
 	}
 
@@ -1222,7 +1233,7 @@ body {
 //           LANDSCAPE BREAKPOINTS
 //--------------------------------------------
 
-@media (min-width: 556px) and (max-width:915px) and (orientation: landscape) {
+@media (min-width: 400px) and (max-width:915px) and (orientation: landscape) {
 	#optionsWindow {
 		.container {
 			.contentContainer {
@@ -1235,16 +1246,30 @@ body {
 	#keyInWindow {
 		.container {
 			.contentContainer {
-				width: 70%;
+				width: 80%;
 				transform: scale(0.7);
 
 				.form {
-					width: 70%;
+					width: 80%;
 					flex-direction: row;
 					align-content: space-between;
 					flex-wrap: wrap;
 					align-items: stretch;
 					justify-content: center;
+
+					.enterBtn{
+						margin-right: .5em;
+						padding: 0.8em 1.4em;
+					}
+
+					.modeCheckbox{
+						width: 75%;
+						align-items: center;
+					}
+
+					.gameKeyInput{
+						width: 17em;
+					}
 				}
 			}
 		}
@@ -1265,6 +1290,25 @@ body {
 		.container {
 			.contentContainer {
 				transform: scale(0.9);
+			}
+		}
+	}
+
+	#gameSummaryWindow{
+		.container {
+			.contentContainer {
+				.endButtons {
+					display: flex;
+					align-items: stretch;
+					flex-direction: row;
+					margin: 0 5%;
+
+					.btn{
+						margin: 0 .2em;
+						padding: .7em;
+						text-align: center;
+					}
+				}
 			}
 		}
 	}

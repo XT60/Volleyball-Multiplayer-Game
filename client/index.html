@@ -38,9 +38,7 @@
                     <span class="modeCheckbox">
                         <span class="playerCheckArea modeCheckboxBtn">
                             <input name="playerCheckbox" id="playerCheckbox" class="checkboxes" type="checkbox" checked>
-                            <label for="playerCheckbox" class="playerLabel labels"><span
-                                    class="labelText playerText">player</span></label>
-
+                            <label for="playerCheckbox" class="playerLabel labels"><span class="labelText playerText">player</span></label>
                         </span>
                         <span class="spectatorCheckArea modeCheckboxBtn">
                             <input id="spectatorCheckbox" class="checkboxes" type="checkbox">
@@ -51,7 +49,7 @@
 
                     <p class="errorMsg"></p>
 
-                    <input type="submit" value="Enter" class="btn">
+                    <input type="submit" value="Enter" class="btn enterBtn">
                     <p>Error: that game does not exist! </p>
                     <button class="btn">Return</button>
                 </form>
@@ -93,14 +91,16 @@
 
     <div id="gameSummaryWindow">
         <section class="container">
-            <h2 class="gameResult">game result</h2>
-            <p class="explanation">optional explanation why game has ended</p>
-            <div class="endButtons">
-                <button id="leaveGameBtn" class="btn">return to main menu</button>
-                <button id="playAgainBtn" class="btn">play again </button>
-                <p id="rematchInfo"> your opponent wants to play again</p>
-                <button id="newOpponentBtn" class="btn">find new oponenet</button>
-                <button id="backToKeyOutBtn" class="btn">play with another friend </button>
+            <div class="contentContainer">
+                <h2 class="gameResult">game result</h2>
+                <p class="explanation">optional explanation why game has ended</p>
+                <div class="endButtons">
+                    <button id="leaveGameBtn" class="btn">return to main menu</button>
+                    <button id="playAgainBtn" class="btn">play again </button>
+                    <p id="rematchInfo"> your opponent wants to play again</p>
+                    <button id="newOpponentBtn" class="btn">find new oponent</button>
+                    <button id="backToKeyOutBtn" class="btn">play with another friend </button>
+                </div>
             </div>
         </section>
     </div>
