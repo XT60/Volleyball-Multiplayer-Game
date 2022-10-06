@@ -17,69 +17,77 @@
 <body>
     <div id="optionsWindow">
         <section class="container">
-            <h1 class="headerTextBig">Volleyball Muliplayer Game</h1>
-            <h5 class="headerTextSmall">Compete with players from all over the world!</h5>
-            <button id="newGame" class="btn btn1">New Game</button>
-            <button id="joinGame" class="btn btn2">Join Game</button>
-            <button id="findGame" class="btn btn3">Find Game</button>
+            <div class="contentContainer">
+                <h1 class="headerTextBig">Volleyball Muliplayer Game</h1>
+                <h5 class="headerTextSmall">Compete with players from all over the world!</h5>
+                <button id="newGame" class="btn btn1">New Game</button>
+                <button id="joinGame" class="btn btn2">Join Game</button>
+                <button id="findGame" class="btn btn3">Find Game</button>
+            </div>
         </section>
     </div>
 
 
     <div id="keyInWindow">
         <section class="container">
-            <form class="form">
-                <label name="key" class="gameKeyLabel">Input game key: </label>
-                <input name="key" type="text" class="gameKeyInput" placeholder="Your key...">
-                <p>Join as:</p>
-                <span class="modeCheckbox">
-                    <span class="playerCheckArea modeCheckboxBtn">
-                        <input name="playerCheckbox" id="playerCheckbox" class="checkboxes" type="checkbox" checked>
-                        <label for="playerCheckbox" class="playerLabel labels"><span
-                                class="labelText playerText">player</span></label>
+            <div class="contentContainer">
+                <form class="form">
+                    <label name="key" class="gameKeyLabel">Input game key: </label>
+                    <input name="key" type="text" class="gameKeyInput" placeholder="Your key...">
+                    <p>Join as:</p>
+                    <span class="modeCheckbox">
+                        <span class="playerCheckArea modeCheckboxBtn">
+                            <input name="playerCheckbox" id="playerCheckbox" class="checkboxes" type="checkbox" checked>
+                            <label for="playerCheckbox" class="playerLabel labels"><span
+                                    class="labelText playerText">player</span></label>
 
+                        </span>
+                        <span class="spectatorCheckArea modeCheckboxBtn">
+                            <input id="spectatorCheckbox" class="checkboxes" type="checkbox">
+                            <label for="spectatorCheckbox" class="spectatorLabel labels"><span
+                                    class="labelText spectatorText">spectator</span></label>
+                        </span>
                     </span>
-                    <span class="spectatorCheckArea modeCheckboxBtn">
-                        <input id="spectatorCheckbox" class="checkboxes" type="checkbox">
-                        <label for="spectatorCheckbox" class="spectatorLabel labels"><span
-                                class="labelText spectatorText">spectator</span></label>
-                    </span>
-                </span>
 
-                <p class="errorMsg"></p>
+                    <p class="errorMsg"></p>
 
-                <input type="submit" value="Enter" class="btn">
-                <p>Error: that game does not exist! </p>
-                <button class="btn">Return</button>
-            </form>
+                    <input type="submit" value="Enter" class="btn">
+                    <p>Error: that game does not exist! </p>
+                    <button class="btn">Return</button>
+                </form>
+            </div>
         </section>
     </div>
 
     <div id="keyOutWindow">
         <section class="container">
-            <p class="keyText"> this is your key</p>
-            <div class="jumpingArrowDown"></div>
-            <h5 class="yourKey" id="keyOut"> ...gameKey...</h5>
-            <!-- <p>share it with your friends to give them a chance to join your room and face you on court 🏐 or spectate
-                game 🔭</p> -->
-            <button class="btn copyBtn">Copy to clipboard</button>
-            <button class="btn returnBtn">Return</button>
+            <div class="contentContainer">
+                <p class="keyText"> this is your key</p>
+                <div class="jumpingArrowDown"></div>
+                <h5 class="yourKey" id="keyOut"> ...gameKey...</h5>
+                <!-- <p>share it with your friends to give them a chance to join your room and face you on court 🏐 or spectate
+                    game 🔭</p> -->
+                <button class="btn copyBtn">Copy to clipboard</button>
+                <button class="btn returnBtn">Return</button>
+            </div>
         </section>
     </div>
 
     <div id="gameFindWindow">
         <section class="container">
-            <!-- <div class="waitArea"> -->
-            <p class="waitMessage"> Waiting for other player to join the game
-                <!-- <div class="dots">
+            <div class="contentContainer">
+                <!-- <div class="waitArea"> -->
+                <p class="waitMessage"> Waiting for other player to join the game
+                    <!-- <div class="dots">
                     <div class="dot"></div>
                     <div class="dot"></div>
                     <div class="dot"></div>
                 </div> -->
-            </p>
-            <!-- </div> -->
-            <p class="waitKey"> You will be connected with other player soon!</p>
-            <button class="btn">Return</button>
+                </p>
+                <!-- </div> -->
+                <p class="waitKey"> You will be connected with other player soon!</p>
+                <button class="btn">Return</button>
+            </div>
         </section>
     </div>
 
@@ -99,71 +107,69 @@
 
     <span id="gameArea">
         <section class="gameContainer centerClass">
-            <div class="buttons">
-                <p id="readyMsg"> your oponnent is ready </p>
-                <button id="startGameBtn" class="btn startGameBtnClass">Start Game</button>
-                <button id="returnBtn" class="btn">Return to main Menu</button>
-            </div>
-            <button id="returnBtnSmall" class="btn"><img src="./images/icons/arrow-back-up.svg"
-                    alt="return back arrow"></button>
-
-            <div class="allGameItemsContainer">
-
-                <div id="scoreBoard">
-                    <p class="leftPlay playerName">leftPlayer</p>
-                    <div class="playersScore">
-                        <span id="leftPlayerScore">0</span>
-                        <span id="rightPlayerScore">0</span>
-                    </div>
-                    <p class="rightPlay playerName">rightPlayer</p>
+                <div class="buttons">
+                    <p id="readyMsg"> your oponnent is ready </p>
+                    <button id="startGameBtn" class="btn startGameBtnClass">Start Game</button>
+                    <button id="returnBtn" class="btn">Return to main Menu</button>
                 </div>
+                <button id="returnBtnSmall" class="btn"><img src="./images/icons/arrow-back-up.svg"
+                        alt="return back arrow"></button>
 
-                <div id="court">
-                    <canvas width="1201" height="443"></canvas>
-                    <img id="courtImg" src="./images/court.png" alt="valleyball court">
+                <div class="allGameItemsContainer">
 
-                    <img id="ball" src="./images/ball.png" alt="ball image">
-
-                    <div id="leftPlayer">
-                        <img class="walkAnimation" src="./images/leftPlayer/walk/scaledSpriteSheet.png"
-                            alt="walkAnimation">
-                        <img class="shootAnimation" src="./images/leftPlayer/shoot/scaledSpriteSheet.png"
-                            alt="shootAnimation">
-                        <img class="jumpAnimation" src="./images/leftPlayer/jump/scaledSpriteSheet.png"
-                            alt="jumpAnimation">
+                    <div id="scoreBoard">
+                        <p class="leftPlay playerName">leftPlayer</p>
+                        <div class="playersScore">
+                            <span id="leftPlayerScore">0</span>
+                            <span id="rightPlayerScore">0</span>
+                        </div>
+                        <p class="rightPlay playerName">rightPlayer</p>
                     </div>
 
-                    <div id="rightPlayer">
-                        <img class="walkAnimation" src="./images/rightPlayer/walk/scaledSpriteSheet.png"
-                            alt="walkAnimation">
-                        <img class="shootAnimation" src="./images/rightPlayer/shoot/scaledSpriteSheet.png"
-                            alt="shootAnimation">
-                        <img class="jumpAnimation" src="./images/rightPlayer/jump/scaledSpriteSheet.png"
-                            alt="jumpAnimation">
+                    <div id="court">
+                        <canvas width="1201" height="443"></canvas>
+                        <img id="courtImg" src="./images/court.png" alt="valleyball court">
+
+                        <img id="ball" src="./images/ball.png" alt="ball image">
+
+                        <div id="leftPlayer">
+                            <img class="walkAnimation" src="./images/leftPlayer/walk/scaledSpriteSheet.png"
+                                alt="walkAnimation">
+                            <img class="shootAnimation" src="./images/leftPlayer/shoot/scaledSpriteSheet.png"
+                                alt="shootAnimation">
+                            <img class="jumpAnimation" src="./images/leftPlayer/jump/scaledSpriteSheet.png"
+                                alt="jumpAnimation">
+                        </div>
+
+                        <div id="rightPlayer">
+                            <img class="walkAnimation" src="./images/rightPlayer/walk/scaledSpriteSheet.png"
+                                alt="walkAnimation">
+                            <img class="shootAnimation" src="./images/rightPlayer/shoot/scaledSpriteSheet.png"
+                                alt="shootAnimation">
+                            <img class="jumpAnimation" src="./images/rightPlayer/jump/scaledSpriteSheet.png"
+                                alt="jumpAnimation">
+                        </div>
+                    </div>
+
+
+                    <div id="powerMeter">
+                        <img id="scale" src="./images/scale.png" alt="scale">
+                        <div id="gameIndicator" class="indicator"></div>
+                        <div id="leftIndicator" class="indicator"></div>
+                        <div id="rightIndicator" class="indicator"></div>
+                    </div>
+
+                    <div class="movementButttons">
+                        <button class="upMoveButton btn moveBtn"><img src="./images/icons/arrow-left.svg"
+                                alt="left arrow"></button>
+                        <button class="leftMoveButton btn moveBtn"><img src="./images/icons/arrow-left.svg"
+                                alt="left arrow"></button>
+                        <button class="specialActionButton btn moveBtn"><img src="./images/icons/ball-volleyball.svg"
+                                alt="volleyball icon"></button>
+                        <button class="rightMoveButton btn moveBtn"><img src="./images/icons/arrow-right.svg"
+                                alt="right arrow"></button>
                     </div>
                 </div>
-
-
-                <div id="powerMeter">
-                    <img id="scale" src="./images/scale.png" alt="scale">
-                    <div id="gameIndicator" class="indicator"></div>
-                    <div id="leftIndicator" class="indicator"></div>
-                    <div id="rightIndicator" class="indicator"></div>
-                </div>
-
-                <div class="movementButttons">
-                    <button class="upMoveButton btn moveBtn"><img src="./images/icons/arrow-left.svg"
-                            alt="left arrow"></button>
-                    <button class="leftMoveButton btn moveBtn"><img src="./images/icons/arrow-left.svg"
-                            alt="left arrow"></button>
-                    <button class="specialActionButton btn moveBtn"><img src="./images/icons/ball-volleyball.svg"
-                            alt="volleyball icon"></button>
-                    <button class="rightMoveButton btn moveBtn"><img src="./images/icons/arrow-right.svg"
-                            alt="right arrow"></button>
-                </div>
-            </div>
-
-
         </section>
     </span>
     <script type="module" src="script.js"></script>
