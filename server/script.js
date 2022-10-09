@@ -5,7 +5,7 @@ const { v4 } = require('uuid');
 const { createServer } = require("http");
 const http = createServer(); 
 const { handleKeyUp, handleKeydown, updatePlayer, updateBall, 
-    initGame, updateScale} = require("./game");
+    initGame, updateScale, showBall} = require("./game");
 
 const { playerShootArea, netRect, blockZone, scaleTicks, 
     scaleTickTime, blockRect, playerShootAnimationArea} = require("./game.js");
@@ -299,6 +299,9 @@ setInterval(() => {
             }
             else{
                 room.startDelay -= interval;
+                if(room.startDelay <= 0){
+                    showBall(room.gameState);
+                }
             }
 
             if (winner){

@@ -388,6 +388,7 @@ socket.on("newGameState", (gameState) => {
     nextAnimationFrame -= interval;
     
     updateAllPositions(gameState);
+    updateVIsibility(ballElement, gameState.ball.visible, prevGameState.ball.visible);
     updateAnimation(gameState, 'leftPlayer');
     updateAnimation(gameState, 'rightPlayer');
     
@@ -576,6 +577,16 @@ function updateAllPositions(gameState){
     updatePosition(playerElements.right, gameState.rightPlayer.pos);
 }
 
+function updateVIsibility(element, isVisible, wasVisible){
+    if (isVisible !== wasVisible){
+        if (isVisible){
+            element.style.setProperty('display', "block");
+        }
+        else{
+            element.style.setProperty('display', "none");
+        }
+    }
+}
 
 function updateIndicatorPos(indicator, tick){
     const newPos = calculateScaleY(tick) * scaleMulti;

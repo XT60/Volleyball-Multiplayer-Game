@@ -97,7 +97,8 @@ function initGame(){
         },
         ball: {
             pos: [...ballDefaultPos],
-            vel: [...ballDefaultVel]
+            vel: [...ballDefaultVel],
+            visible: true
         },
         scale: {
             currTick: 0,
@@ -271,7 +272,6 @@ function shootBall(gameState, playerName, blocking = false){
 }
 
 function updateBall(gameState, timeInterval){
-    
     // position
     const ball = gameState['ball'];
     ball.pos[0] += ball.vel[0] * timeInterval;
@@ -280,10 +280,12 @@ function updateBall(gameState, timeInterval){
     // velocity
     ball.vel[1] += gravity * timeInterval;
     if (ball.pos[0] < 0 || ball.pos[0] > courtSize[0] - 2 * ballRadius){
+        hideBall(gameState);
         return otherPlayer(lastContact);
     }
 
     if (ball.pos[1] > groundLevel - 2 * ballRadius){
+        hideBall(gameState);
         if (lastContact === 'rightPlayer'){
             if (ball.pos[0] < netRect[0] - ballRadius/2){
                 return 'rightPlayer';
@@ -298,9 +300,19 @@ function updateBall(gameState, timeInterval){
         
     const ballPos = [ball.pos[0] + ballRadius, ball.pos[1] + ballRadius]
     if (rectCircleCollision(netRect, ballPos, ballRadius)){
+        hideBall(gameState);
         return otherPlayer(lastContact);
     }
     return null;
+}
+
+function hideBall(gameState){
+    gameState.ball.visible = false;
+    console.log("ball is hidden");
+}
+
+function showBall(gameState){
+    gameState.ball.visible = true;
 }
 
 function otherPlayer(playerName){
@@ -358,6 +370,7 @@ module.exports = {
     handleKeydown,
     updatePlayer,
     updateBall,
+    showBall,
     initGame,
     handleKeyUp,
     updateScale,
