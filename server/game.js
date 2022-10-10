@@ -120,14 +120,14 @@ function handleKeydown(gameState, playerName, eventCode){
             case 'ArrowLeft':
                 if (player.animationName !== 'shooting' &&
                     player.animationName !== 'blocking'){
-                    // console.log("walking")
+                    // console.log('walking')
                     player.vel[0] = -playerVelInterval[0];
                 }
                 break;
             case 'ArrowRight':
                 if (player.animationName !== 'shooting' &&
                     player.animationName !== 'blocking'){
-                    // console.log("walking")
+                    // console.log('walking')
                     player.vel[0] = playerVelInterval[0]
                 }
                 break;
@@ -218,7 +218,7 @@ function updatePlayer(gameState, playerName, timeInterval){
     const ballPos = [gameState.ball.pos[0] + ballRadius, gameState.ball.pos[1] + ballRadius];
     if (rectCircleCollision(animArea, ballPos, ballRadius)){
         const shootArea = getWolrdRect(player.pos, playerShootArea[playerName]);
-        if (rectCircleCollision(shootArea, ballPos, ballRadius)){
+        if (rectCircleCollision(shootArea, ballPos, ballRadius) && determineTerritory(ballPos) === playerName){
             shootBall(gameState, playerName, player.animationName === 'blocking');
         }
         if (player.animationName !== 'blocking'){
@@ -238,6 +238,15 @@ function updatePlayer(gameState, playerName, timeInterval){
     }
 }
 
+
+function determineTerritory(objectPos){
+    if (objectPos[0] < midCourt){
+        return 'leftPlayer';
+    }
+    return 'rightPlayer';
+}
+
+
 function getWolrdRect(pos, relRect){
     return [pos[0] + relRect[0], pos[1] + relRect[1], relRect[2], relRect[3]];
 }
@@ -250,7 +259,7 @@ function shootBall(gameState, playerName, blocking = false){
     }
     const dest = [0, 0];
     const ball = gameState.ball;
-    if(playerName === "leftPlayer"){
+    if(playerName === 'leftPlayer'){
         dest[0] = 900;
         ball.vel[0] = xBallVel;
     }
@@ -308,7 +317,7 @@ function updateBall(gameState, timeInterval){
 
 function hideBall(gameState){
     gameState.ball.visible = false;
-    console.log("ball is hidden");
+    console.log('ball is hidden');
 }
 
 function showBall(gameState){
@@ -316,10 +325,10 @@ function showBall(gameState){
 }
 
 function otherPlayer(playerName){
-    if (playerName === "leftPlayer"){
-        return "rightPlayer";
+    if (playerName === 'leftPlayer'){
+        return 'rightPlayer';
     }
-    return "leftPlayer";
+    return 'leftPlayer';
 }
 
 function rectCircleCollision(rect, cPos, cRadius){
@@ -357,7 +366,7 @@ function rectRectCollision(recta, rectb){
 
 function getRandom(a, b, accuracy = 100){
     if (b < a){
-        console.log("invalid getRandom arguments: " + `a=${a} and b=${b}`);
+        console.log('invalid getRandom arguments: ' + `a=${a} and b=${b}`);
         return 0;
     }
     if (b == a)    return a;
