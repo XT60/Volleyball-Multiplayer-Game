@@ -601,10 +601,10 @@ function updateAllPositions(gameState){
 function updateVIsibility(element, isVisible, wasVisible){
     if (isVisible !== wasVisible){
         if (isVisible){
-            element.style.setProperty('display', "block");
+            element.style.setProperty('opacity', "1");
         }
         else{
-            element.style.setProperty('display', "none");
+            element.style.setProperty('opacity', "0");
         }
     }
 }

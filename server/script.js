@@ -307,7 +307,6 @@ setInterval(() => {
                         io.to(room.specId).emit("gameHasEnded", 'one of the players exceeded winnerScore', room.score);
                     }
                     else{
-                        resetGameState(room.gameState);
                         io.to(roomId).to(room.specId).emit('scoreUpdate', room.score);
                         room.startDelay = restartDelay;
                     }
@@ -317,6 +316,7 @@ setInterval(() => {
             else{
                 room.startDelay -= interval;
                 if(room.startDelay <= 0){
+                    resetGameState(room.gameState);
                     showBall(gameState);
                     gameState.winner = "none";
                 }

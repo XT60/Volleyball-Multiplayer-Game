@@ -97,6 +97,7 @@ body #gameArea #court #ball {
   position: absolute;
   width: 3.497%;
   height: 9.48%;
+  transition: opacity ease 0.4s;
 }
 body #gameArea #court #leftPlayer {
   left: 100px;
