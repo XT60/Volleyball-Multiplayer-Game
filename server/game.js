@@ -107,7 +107,7 @@ function initGame(){
         },
         lastContact: null
     };
-    if (Math.random() >= 0){
+    if (Math.random() >= 0.5){
         gameState.ball.vel[0] *= -1;
     }
     return gameState;
@@ -129,7 +129,7 @@ function resetGameState(gameState){
     gameState.ball.vel = [...ballDefaultVel];
 
     gameState.lastContact = null;
-    if (Math.random() >= 0){
+    if (Math.random() >= 0.5){
         gameState.ball.vel[0] *= -1;
     }
 }
