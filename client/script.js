@@ -331,7 +331,7 @@ socket.on("initData", (data) => {
     scaleTicks = data.scaleTicks;
     scaleTickTime = data.scaleTickTime;
     myRoomId = data.roomId;
-    winAnimationInt = data.restartDelay / 5.7;
+    winAnimationInt = data.restartDelay / 5.5;
 
     //scale
 
@@ -430,7 +430,6 @@ function updateAnimation(gameState, playerName, ignoreTime = false){
     const animation = currAnimation[playerName];
     if (!ignoreTime && nextAnimationFrame > 0)     return
     if (gameState[playerName].animationName === animation.name){
-
         if (animationFrameCount[animation.name] === 1)  return
         const newFrame = animation.frame + animation.trend;
         if (newFrame >= animationFrameCount[animation.name] || newFrame < 0){
