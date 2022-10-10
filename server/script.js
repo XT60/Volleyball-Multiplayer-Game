@@ -5,7 +5,7 @@ const { v4 } = require('uuid');
 const { createServer } = require("http");
 const http = createServer(); 
 const { handleKeyUp, handleKeydown, updatePlayer, updateBall, 
-    initGame, updateScale, showBall} = require("./game");
+    initGame, updateScale, showBall, resetGameState} = require("./game");
 
 const { playerShootArea, netRect, blockZone, scaleTicks, 
     scaleTickTime, blockRect, playerShootAnimationArea} = require("./game.js");
@@ -24,7 +24,7 @@ const waitingRoom = [];
 const loopInterval = 1000 / 45;
 const startDelay = 1000;
 const maxInterval = 100; 
-const winnerScore = 100;
+const winnerScore = 21;
 const restartDelay = 1000;
 let lastFrame = 0;
 
@@ -108,7 +108,8 @@ io.on("connection", (socket) => {
                 room,
                 roomId,
                 scaleTicks,
-                scaleTickTime
+                scaleTickTime,
+                restartDelay
             });
             console.log(`${socket.id}:\t joined room ${roomId} as ${outRole}`);
             if (callback) callback(true);
@@ -223,6 +224,7 @@ io.on("connection", (socket) => {
             leftPlayer: false,
             rightPlayer: false
         };
+        room.gameState = initGame();
         io.emit("rematchStarted");
     }
 
@@ -286,35 +288,37 @@ setInterval(() => {
     const interval = Math.min(currTime - lastFrame, maxInterval);
     for (const roomId in rooms){
         const room = rooms[roomId];
+        const gameState = room.gameState;
         if (room.status === 'inGame'){
             let winner;
             lastFrame = currTime;
             
             if (room.startDelay < 0){
-                updatePlayer(room.gameState, 'leftPlayer', interval);
-                updatePlayer(room.gameState, 'rightPlayer', interval);
-                winner = updateBall(room.gameState, interval);
-                updateScale(room.gameState, currTime)
-                io.to(roomId).to(room.specId).emit("newGameState", room.gameState);
+                updatePlayer(gameState, 'leftPlayer', interval);
+                updatePlayer(gameState, 'rightPlayer', interval);
+                winner = updateBall(gameState, interval);
+                updateScale(gameState, currTime);
+                if (winner){
+                    gameState.winner = winner;
+                    room.score[winner] += 1;
+                    if (room.score[winner] >= winnerScore){
+                        room.status = 'full';
+                        io.to(roomId).emit("gameHasEnded", 'one of the players exceeded winnerScore', room.score);
+                        io.to(room.specId).emit("gameHasEnded", 'one of the players exceeded winnerScore', room.score);
+                    }
+                    else{
+                        resetGameState(room.gameState);
+                        io.to(roomId).to(room.specId).emit('scoreUpdate', room.score);
+                        room.startDelay = restartDelay;
+                    }
+                }
+                io.to(roomId).to(room.specId).emit("newGameState", gameState);
             }
             else{
                 room.startDelay -= interval;
                 if(room.startDelay <= 0){
-                    showBall(room.gameState);
-                }
-            }
-
-            if (winner){
-                room.score[winner] += 1;
-                if (room.score[winner] >= winnerScore){
-                    room.status = 'full';
-                    io.to(roomId).emit("gameHasEnded", 'one of the players exceeded winnerScore', room.score);
-                    io.to(room.specId).emit("gameHasEnded", 'one of the players exceeded winnerScore', room.score);
-                }
-                else{
-                    room.gameState = initGame();
-                    io.to(roomId).to(room.specId).emit('scoreUpdate', room.score);
-                    room.startDelay = restartDelay;
+                    showBall(gameState);
+                    gameState.winner = "none";
                 }
             }
         }

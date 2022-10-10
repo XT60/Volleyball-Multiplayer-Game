@@ -114,28 +114,29 @@ body #gameArea #court #rightPlayer {
   width: 5.745%;
   height: 39.503%;
 }
-body #gameArea #court .walkAnimation {
+body #gameArea #court .animation {
   position: absolute;
   left: 0;
   top: 0;
+}
+body #gameArea #court .walkAnimation {
   display: block;
   width: 400%;
   height: 100%;
 }
 body #gameArea #court .shootAnimation {
-  position: absolute;
-  left: 0;
-  top: 0;
   display: none;
   width: 200%;
   height: 100%;
 }
 body #gameArea #court .jumpAnimation {
-  position: absolute;
-  left: 0;
-  top: 0;
   display: none;
   width: 100%;
+  height: 100%;
+}
+body #gameArea #court .winAnimation {
+  display: none;
+  width: 300%;
   height: 100%;
 }
 body #gameArea #powerMeter {
@@ -1089,4 +1090,4 @@ body #gameArea #scoreBoard .playerName {
   #keyInWindow .container .contentContainer {
     display: contents;
   }
-}/*# sourceMappingURL=styles.css.map */
+}

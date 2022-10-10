@@ -27,11 +27,13 @@ animationFrameCount = {
     standing: 1,
     walking: 4,
     blocking: 1,
-    shooting: 2
-}   ;
+    shooting: 2,
+    winning: 3,
+};
 
     
-let prevGameState, myPlayer, scaleTicks, scaleMulti, a, b, myRoomId, scaleTickTime, myInterval, prevTime,
+let prevGameState, myPlayer, scaleTicks, scaleMulti, a, b, myRoomId, scaleTickTime,
+    myInterval, prevTime, winInterval, winAnimationInt, winIntervalRunning,
     inGame = false,
     currScale = 1,
     nextAnimationFrame = animationFrameSpan;
@@ -48,13 +50,15 @@ const ballElement = document.getElementById("ball"),
             "standing": document.querySelector('#leftPlayer .walkAnimation'), 
             "walking": document.querySelector('#leftPlayer .walkAnimation'),
             "shooting": document.querySelector('#leftPlayer .shootAnimation'),
-            "blocking": document.querySelector('#leftPlayer .jumpAnimation')
+            "blocking": document.querySelector('#leftPlayer .jumpAnimation'),
+            "winning": document.querySelector('#leftPlayer .winAnimation')
         },
         rightPlayer: { 
             "standing": document.querySelector('#rightPlayer .walkAnimation'),
             "walking": document.querySelector('#rightPlayer .walkAnimation'),
             "shooting": document.querySelector('#rightPlayer .shootAnimation'),
-            "blocking": document.querySelector('#rightPlayer .jumpAnimation')
+            "blocking": document.querySelector('#rightPlayer .jumpAnimation'),
+            "winning": document.querySelector('#rightPlayer .winAnimation')
         }
     },
 
@@ -287,7 +291,6 @@ document.getElementById("backToKeyOutBtn").addEventListener('click', () => {
 });
 
 
-
 socket.on("connect", () => {
     console.log('connected');
     reset();
@@ -328,6 +331,8 @@ socket.on("initData", (data) => {
     scaleTicks = data.scaleTicks;
     scaleTickTime = data.scaleTickTime;
     myRoomId = data.roomId;
+    winAnimationInt = data.restartDelay / 5.7;
+
     //scale
 
     // a = (scaleTicks - 1) / 2;
@@ -361,6 +366,7 @@ socket.on("scoreUpdate", (newScore) => updateScore(newScore));
 socket.on("newGameState", (gameState) => {
     if (!inGame){
         inGame = true;
+        nextAnimationFrame = 0;
         scoreBoardElement.style.setProperty('display', 'flex');
         readyMsgElement.style.setProperty('display', 'block');
         playerElements.left.style.setProperty('display', 'block');
@@ -399,17 +405,32 @@ socket.on("newGameState", (gameState) => {
     }
 
     // drawHitboxes(gameState)
+    if (gameState.winner !== "none"){
+        const winner = gameState.winner;
+        gameState[winner].animationName = "winning";
+        winInterval = setInterval(() => {
+            updateAnimation(gameState, winner, true)
+            // console.log("winnerInterval")
+        }, winAnimationInt);
+        winIntervalRunning = true;
+    }
+    else{
+        if (winIntervalRunning){
+            clearInterval(winInterval);
+            winIntervalRunning = false;
+        }
+    }
 
-    //action handling, sprites etc
+
     prevGameState = gameState;
 });
 
 
-function updateAnimation(gameState, playerName){
+function updateAnimation(gameState, playerName, ignoreTime = false){
     const animation = currAnimation[playerName];
-    if (nextAnimationFrame > 0)     return
-
+    if (!ignoreTime && nextAnimationFrame > 0)     return
     if (gameState[playerName].animationName === animation.name){
+
         if (animationFrameCount[animation.name] === 1)  return
         const newFrame = animation.frame + animation.trend;
         if (newFrame >= animationFrameCount[animation.name] || newFrame < 0){

@@ -132,28 +132,29 @@ body {
 				width: 5.745%;
 				height: 39.503%;
 			}
-			.walkAnimation {
+			.animation{
 				position: absolute;
 				left: 0;
 				top: 0;
+			}
+			.walkAnimation {
 				display: block;
 				width: 400%;
 				height: 100%;
 			}
 			.shootAnimation {
-				position: absolute;
-				left: 0;
-				top: 0;
 				display: none;
 				width: 200%;
 				height: 100%;
 			}
 			.jumpAnimation {
-				position: absolute;
-				left: 0;
-				top: 0;
 				display: none;
 				width: 100%;
+				height: 100%;
+			}
+			.winAnimation {
+				display: none;
+				width: 300%;
 				height: 100%;
 			}
 		}

@@ -5,7 +5,6 @@ const groundLevel = 409;                // 92.325
 
 const playerSize = [69, 175];           // 5.745
 const playerVelInterval = [0.8, -2];    // 0.166
-let lastContact = null;
 
 const ballRadius = 25;                  // 2.081
 const xBallVel = 0.4;                   //...       <-- values in %, but they won't work since % unit isn't universal between x and y axis
@@ -81,6 +80,7 @@ function updateScale(gameState, currTime){
 
 function initGame(){
     const gameState = {
+        winner: "none",
         leftPlayer: {
             pos: [...playerDefaultPos['leftPlayer']],
             animationName: 'standing',
@@ -104,14 +104,36 @@ function initGame(){
             currTick: 0,
             nextTick: scaleTickTime,
             trend: 1
-        }
+        },
+        lastContact: null
     };
-    lastContact = null;
     if (Math.random() >= 0){
         gameState.ball.vel[0] *= -1;
     }
     return gameState;
 }
+
+
+function resetGameState(gameState){
+    gameState.leftPlayer.animationName = 'standing';
+    gameState.leftPlayer.vel = [0, 0];
+    gameState.leftPlayer.shootValue = null;
+    gameState.leftPlayer.shootLock = 0;
+
+    gameState.rightPlayer.animationName = 'standing';
+    gameState.rightPlayer.vel = [0, 0];
+    gameState.rightPlayer.shootValue = null;
+    gameState.rightPlayer.shootLock = 0;
+
+    gameState.ball.pos = [...ballDefaultPos];
+    gameState.ball.vel = [...ballDefaultVel];
+
+    gameState.lastContact = null;
+    if (Math.random() >= 0){
+        gameState.ball.vel[0] *= -1;
+    }
+}
+
 
 function handleKeydown(gameState, playerName, eventCode){
     if (gameState){
@@ -277,7 +299,7 @@ function shootBall(gameState, playerName, blocking = false){
     ball.vel[0] += getRandom(-jinx[0], jinx[0]) * (shootValue - midTick);
     ball.vel[1] += getRandom(-jinx[1], jinx[1]) * (shootValue - midTick);
     gameState[playerName].shootValue = null;
-    lastContact = playerName;
+    gameState.lastContact = playerName;
 }
 
 function updateBall(gameState, timeInterval){
@@ -290,12 +312,12 @@ function updateBall(gameState, timeInterval){
     ball.vel[1] += gravity * timeInterval;
     if (ball.pos[0] < 0 || ball.pos[0] > courtSize[0] - 2 * ballRadius){
         hideBall(gameState);
-        return otherPlayer(lastContact);
+        return otherPlayer(gameState.lastContact);
     }
 
     if (ball.pos[1] > groundLevel - 2 * ballRadius){
         hideBall(gameState);
-        if (lastContact === 'rightPlayer'){
+        if (gameState.lastContact === 'rightPlayer'){
             if (ball.pos[0] < netRect[0] - ballRadius/2){
                 return 'rightPlayer';
             }
@@ -310,14 +332,14 @@ function updateBall(gameState, timeInterval){
     const ballPos = [ball.pos[0] + ballRadius, ball.pos[1] + ballRadius]
     if (rectCircleCollision(netRect, ballPos, ballRadius)){
         hideBall(gameState);
-        return otherPlayer(lastContact);
+        return otherPlayer(gameState.lastContact);
     }
     return null;
 }
 
 function hideBall(gameState){
     gameState.ball.visible = false;
-    console.log('ball is hidden');
+    // console.log('ball is hidden');
 }
 
 function showBall(gameState){
@@ -377,12 +399,13 @@ function getRandom(a, b, accuracy = 100){
 
 module.exports = {
     handleKeydown,
+    handleKeyUp,
+    initGame,
+    resetGameState,
+    updateScale,
     updatePlayer,
     updateBall,
     showBall,
-    initGame,
-    handleKeyUp,
-    updateScale,
 
     playerShootArea,
     playerShootAnimationArea,
