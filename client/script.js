@@ -404,7 +404,7 @@ socket.on("newGameState", (gameState) => {
         updateIndicatorPos(gameIndicatorElement, gameState.scale.currTick);
     }
 
-    // drawHitboxes(gameState)
+    drawHitboxes(gameState)
     if (gameState.winner !== "none"){
         const winner = gameState.winner;
         gameState[winner].animationName = "winning";

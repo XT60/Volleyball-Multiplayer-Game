@@ -4,7 +4,7 @@ const midCourt = 601;                   // 50
 const groundLevel = 409;                // 92.325
 
 const playerSize = [69, 175];           // 5.745
-const playerVelInterval = [0.8, -2];    // 0.166
+const playerVelInterval = [0.8, -1.7];    // 0.166
 
 const ballRadius = 25;                  // 2.081
 const xBallVel = 0.4;                   //...       <-- values in %, but they won't work since % unit isn't universal between x and y axis
@@ -17,7 +17,7 @@ const midTick = (scaleTicks - 1) / 2;
 const jinx = [0.2 / midTick, 5 / midTick];
 const scaleTickTime = 120;
 
-const netRect = [599, 191, 8, 220];
+const netRect = [597, 211, 8, 210];
 const blockZoneSize = [50, 20]
 const playerTerritory = {
     leftPlayer: [0, midCourt - playerSize[0]],
