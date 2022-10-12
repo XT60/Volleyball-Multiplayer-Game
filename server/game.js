@@ -52,20 +52,21 @@ const shootLock = 450;
 
 const intDev = (x, y) => Math.floor(x / y);
 
-function updateScale(gameState, currTime){
+function updateScale(gameState, interval){
     const scale = gameState.scale
-    if (scale.nextTick > currTime)    return false;
+    scale.nextTick -= interval;
+    if (scale.nextTick > 0)    return false;
     // console.log(currTime - lastTime);
     // lastTime = currTime;
-    if (scale.nextTick < currTime && currTime < scale.nextTick + scaleTickTime){
+    if (scale.nextTick + scaleTickTime > 0){
         if (scale.currTick + scale.trend >= scaleTicks || scale.currTick + scale.trend < 0){
             scale.trend *= -1;
         } 
-        scale.nextTick = scale.nextTick + scaleTickTime;
+        scale.nextTick += scaleTickTime;
         scale.currTick += scale.trend;
         return true;
     }
-    const missedTicks = intDev(currTime - scale.nextTick, scaleTickTime);
+    const missedTicks = intDev(interval - scale.nextTick, scaleTickTime);
     const missedTrends = intDev(missedTicks + scale.currTick, scaleTicks);
     if (missedTrends % 2 === 1){
         scale.trend *= -1;
@@ -75,7 +76,7 @@ function updateScale(gameState, currTime){
         scale.currTick = (scale.currTick + missedTicks) % scaleTicks; 
     }
     
-    scale.nextTick = scale.nextTick + scaleTickTime * (missedTicks + 1);
+    scale.nextTick = interval - scaleTickTime * missedTicks;
     return true
 }
 

@@ -169,7 +169,7 @@ body #gameArea #powerMeter #leftIndicator {
   z-index: 100;
 }
 body #gameArea #powerMeter #rightIndicator {
-  background-color: blue;
+  background-color: orange;
   opacity: 0.7;
   display: none;
   z-index: 100;

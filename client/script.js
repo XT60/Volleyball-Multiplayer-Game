@@ -33,9 +33,10 @@ animationFrameCount = {
 
     
 let prevGameState, myPlayer, scaleTicks, scaleMulti, a, b, myRoomId, scaleTickTime,
-    myInterval, prevTime, animationFrameSpan,
+    scaleInterval, prevTime, animationFrameSpan,
     inGame = false,
     currScale = 1,
+    intervalRunning = false,
     nextAnimationFrame = {
         leftPlayer: 0,
         rightPlayer: 0,
@@ -388,10 +389,21 @@ socket.on("newGameState", (gameState) => {
         movementButttonsElement.style.setProperty('display', 'flex');
 
         prevTime = new Date;
-        myInterval = setInterval(() => {
-            updateScaleTick(prevGameState, new Date());
-        }, 30);
+        intervalRunning = true;
+        startIndicatorInterval()()
     }
+
+    if (gameState.winner == "none"){
+        if (!intervalRunning){
+            startIndicatorInterval()()
+        }
+    }
+    else{
+        if (intervalRunning){
+            stopIndicatorInterval()
+        }
+    }
+
     const currTime = new Date();
     const interval = currTime - prevTime;
     prevTime = currTime;
@@ -488,13 +500,14 @@ function changeWindows(from, to){
 }
 
 
-function updateScaleTick(gameState, currTime){
+function updateScaleTick(gameState, interval){
     const scale = gameState.scale
-    if (currTime > scale.nextTick){
+    scale.nextTick -= interval;
+    if (scale.nextTick < 0){
         if (scale.currTick + scale.trend >= scaleTicks || scale.currTick + scale.trend < 0){
             scale.trend *= -1;
         } 
-        scale.nextTick = scale.nextTick + scaleTickTime;
+        scale.nextTick += scaleTickTime;
         scale.currTick += scale.trend;
         updateIndicatorPos(gameIndicatorElement, scale.currTick);
     }
@@ -596,6 +609,25 @@ function updateVIsibility(element, isVisible, wasVisible){
     }
 }
 
+
+function startIndicatorInterval(){
+    intervalRunning = true;
+    let prevTime, currTime;
+    prevTime = currTime = new Date();
+    scaleInterval = setInterval(() => {
+        currTime = new Date();
+        updateScaleTick(prevGameState, currTime - prevTime);
+        prevTime = currTime;
+    }, 30);
+
+}
+
+function stopIndicatorInterval(){
+    intervalRunning = false;
+    clearInterval(scaleInterval);
+}
+
+
 function updateIndicatorPos(indicator, tick){
     const newPos = calculateScaleY(tick) * scaleMulti;
     indicator.style.setProperty('left', cssPercent(newPos));
@@ -675,7 +707,8 @@ function reset(){
 
 function resetGameElement(){
     inGame = false;
-    clearInterval(myInterval);
+    stopIndicatorInterval()
+    intervalRunning = false;
     leftPlayerScoreElement.innerHTML = '0';
     rightPlayerScoreElement.innerHTML = '0';
     resize();

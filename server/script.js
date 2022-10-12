@@ -24,7 +24,7 @@ const waitingRoom = [];
 const loopInterval = 1000 / 45;
 const startDelay = 1000;
 const maxInterval = 100; 
-const winnerScore = 2;
+const winnerScore = 21;
 const animationFrameSpan = 150;
 const winAnimationSpan = animationFrameSpan * 5 - 40;
 let nextRoundDelay = winAnimationSpan;
@@ -308,7 +308,7 @@ setInterval(() => {
                     updatePlayer(gameState, 'leftPlayer', interval);
                     updatePlayer(gameState, 'rightPlayer', interval);
                     winner = updateBall(gameState, interval);
-                    updateScale(gameState, currTime);
+                    updateScale(gameState, interval);
                     if (winner){
                         gameState.winner = winner;
                         room.score[winner] += 1;
