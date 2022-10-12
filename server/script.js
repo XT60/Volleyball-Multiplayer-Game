@@ -8,7 +8,7 @@ const { handleKeyUp, handleKeydown, updatePlayer, updateBall,
     initGame, updateScale, showBall, resetGameState} = require("./game");
 
 const { playerShootArea, netRect, blockZone, scaleTicks, 
-    scaleTickTime, blockRect, playerShootAnimationArea} = require("./game.js");
+    scaleTickTime, blockRect, playerShootAnimationArea, gravity, playerGround} = require("./game.js");
 
 const io = require("socket.io")(http, {
     cors: {
@@ -109,7 +109,8 @@ io.on("connection", (socket) => {
                 roomId,
                 scaleTicks,
                 scaleTickTime,
-                restartDelay
+                gravity,
+                playerGround
             });
             console.log(`${socket.id}:\t joined room ${roomId} as ${outRole}`);
             if (callback) callback(true);

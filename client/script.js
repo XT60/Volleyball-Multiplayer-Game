@@ -9,6 +9,8 @@ gameAreaSize = [1201, 443],
 maxCourtfill = 0.9,
 animationFrameSpan = 150,
 maxScale = 1500 / gameAreaSize[0],
+loopTick = 34,
+
 
 currAnimation = {
     leftPlayer: {
@@ -33,16 +35,19 @@ animationFrameCount = {
 
     
 let prevGameState, myPlayer, scaleTicks, scaleMulti, a, b, myRoomId, scaleTickTime,
-    myInterval, prevTime, winInterval, winAnimationInt, winIntervalRunning,
+    myInterval, prevTime, winInterval, winIntervalRunning, gravity, playerGround,
     inGame = false,
     currScale = 1,
-    nextAnimationFrame = animationFrameSpan;
+    nextAnimationFrame = {
+        leftPlayer: animationFrameSpan,
+        rightPlayer: animationFrameSpan,
+    };
 
 
 const ballElement = document.getElementById("ball"),
     playerElements = {
-        left: document.getElementById('leftPlayer'),
-        right: document.getElementById('rightPlayer')
+        leftPlayer: document.getElementById('leftPlayer'),
+        rightPlayer: document.getElementById('rightPlayer')
     },
 
     animationElements = {
@@ -331,7 +336,8 @@ socket.on("initData", (data) => {
     scaleTicks = data.scaleTicks;
     scaleTickTime = data.scaleTickTime;
     myRoomId = data.roomId;
-    winAnimationInt = data.restartDelay / 5.5;
+    gravity = data.gravity;
+    playerGround = data.playerGround;
 
     //scale
 
@@ -366,11 +372,12 @@ socket.on("scoreUpdate", (newScore) => updateScore(newScore));
 socket.on("newGameState", (gameState) => {
     if (!inGame){
         inGame = true;
-        nextAnimationFrame = 0;
+        nextAnimationFrame.leftPlayer = 0;
+        nextAnimationFrame.rightPlayer = 0;
         scoreBoardElement.style.setProperty('display', 'flex');
         readyMsgElement.style.setProperty('display', 'block');
-        playerElements.left.style.setProperty('display', 'block');
-        playerElements.right.style.setProperty('display', 'block');
+        playerElements.leftPlayer.style.setProperty('display', 'block');
+        playerElements.rightPlayer.style.setProperty('display', 'block');
         ballElement.style.setProperty('display', 'block');
         powerMeterElement.style.setProperty('display', 'block');
         canvasElement.style.setProperty('display', 'block');
@@ -390,13 +397,11 @@ socket.on("newGameState", (gameState) => {
     const currTime = new Date();
     const interval = currTime - prevTime;
     prevTime = currTime;
-
-    nextAnimationFrame -= interval;
     
     updateAllPositions(gameState);
     updateVIsibility(ballElement, gameState.ball.visible, prevGameState.ball.visible);
-    updateAnimation(gameState, 'leftPlayer');
-    updateAnimation(gameState, 'rightPlayer');
+    updateAnimation(gameState, interval, 'leftPlayer');
+    updateAnimation(gameState, interval, 'rightPlayer');
     
     updateLeftPlayerIndicator(gameState);
     updateRightPlayerIndicator(gameState);
@@ -405,13 +410,25 @@ socket.on("newGameState", (gameState) => {
     }
 
     drawHitboxes(gameState)
+    
     if (gameState.winner !== "none"){
         const winner = gameState.winner;
-        gameState[winner].animationName = "winning";
+        const winPlayer = gameState[winner];
+        if (winPlayer.pos[1] === playerGround){
+            gameState[winner].animationName = "winning";
+        }
+
+        let prevTime, currTime, prevAnimFrame, currTick = 0;
+        prevTime = currTime = prevAnimFrame = new Date;
         winInterval = setInterval(() => {
-            updateAnimation(gameState, winner, true)
-            // console.log("winnerInterval")
-        }, winAnimationInt);
+            currTick += 1
+            currTime = new Date;
+            const interval =  currTime - prevTime;
+            updateAnimation(gameState, interval, "leftPlayer", true);
+            updateAnimation(gameState, interval, "rightPlayer", true);
+            updateVerticalPos(gameState, interval);
+            prevTime = currTime;
+        }, loopTick);
         winIntervalRunning = true;
     }
     else{
@@ -420,15 +437,41 @@ socket.on("newGameState", (gameState) => {
             winIntervalRunning = false;
         }
     }
-
-
     prevGameState = gameState;
 });
 
 
-function updateAnimation(gameState, playerName, ignoreTime = false){
+function updateVerticalPos(gameState, interval){
+    for(let name of ["leftPlayer", "rightPlayer"]){
+        const player = gameState[name];
+        if (player.pos[1] < playerGround){
+            player.pos[1] += player.vel[1] * interval;
+            if (player.pos[1] > playerGround){
+                player.pos[1] = playerGround;
+                player.vel[1] = 0;
+                currAnimation[name].trend = -1;     // for animation to be considered finished
+            }
+            updatePosition(playerElements[name], gameState[name].pos);
+            player.vel[1] += interval * gravity;
+        }
+    }
+}
+
+
+function updateAnimation(gameState, interval, playerName, onlyToFinish = false){
     const animation = currAnimation[playerName];
-    if (!ignoreTime && nextAnimationFrame > 0)     return
+    nextAnimationFrame[playerName] -= interval;
+    if (nextAnimationFrame[playerName] > 0)     return
+    if (onlyToFinish){
+        if (animation.trend === -1 && animation.frame === 0){
+            if (animation.name !== "standing"){
+                changeAnimation(playerName, animation.name, 'standing');
+                animation.trend = -1;
+                updatePlayerElement(playerName);
+            }
+            return
+        }
+    }      
     if (gameState[playerName].animationName === animation.name){
         if (animationFrameCount[animation.name] === 1)  return
         const newFrame = animation.frame + animation.trend;
@@ -444,7 +487,7 @@ function updateAnimation(gameState, playerName, ignoreTime = false){
         animation.name = gameState[playerName].animationName;
     }
     updatePlayerElement(playerName);
-    nextAnimationFrame = animationFrameSpan;
+    nextAnimationFrame[playerName] = animationFrameSpan;
 }
 
 
@@ -559,7 +602,7 @@ function keyUp(e){
 
 
 function updateLeftPlayerIndicator(gameState){
-    updatePosition(playerElements.left, gameState.leftPlayer.pos);
+    updatePosition(playerElements.leftPlayer, gameState.leftPlayer.pos);
     if (prevGameState.leftPlayer.shootValue != gameState.leftPlayer.shootValue){
         if(gameState.leftPlayer.shootValue === null){
             leftIndicatorElement.style.setProperty('display', 'none');
@@ -576,7 +619,7 @@ function updateLeftPlayerIndicator(gameState){
 
 
 function updateRightPlayerIndicator(gameState){
-    updatePosition(playerElements.right, gameState.rightPlayer.pos);
+    updatePosition(playerElements.rightPlayer, gameState.rightPlayer.pos);
     if (prevGameState.rightPlayer.shootValue != gameState.rightPlayer.shootValue){
         if(gameState.rightPlayer.shootValue === null){
             rightIndicatorElement.style.setProperty('display', 'none');
@@ -593,8 +636,8 @@ function updateRightPlayerIndicator(gameState){
 
 function updateAllPositions(gameState){
     updatePosition(ballElement, gameState.ball.pos);
-    updatePosition(playerElements.left, gameState.leftPlayer.pos);
-    updatePosition(playerElements.right, gameState.rightPlayer.pos);
+    updatePosition(playerElements.leftPlayer, gameState.leftPlayer.pos);
+    updatePosition(playerElements.rightPlayer, gameState.rightPlayer.pos);
 }
 
 function updateVIsibility(element, isVisible, wasVisible){
@@ -694,8 +737,8 @@ function resetGameElement(){
     
     scoreBoardElement.style.setProperty('display', 'none');
     readyMsgElement.style.setProperty('display', 'none');
-    playerElements.left.style.setProperty('display', 'none');
-    playerElements.right.style.setProperty('display', 'none');
+    playerElements.leftPlayer.style.setProperty('display', 'none');
+    playerElements.rightPlayer.style.setProperty('display', 'none');
     ballElement.style.setProperty('display', 'none');
     powerMeterElement.style.setProperty('display', 'none');
     canvasElement.style.setProperty('display', 'none');
@@ -704,6 +747,7 @@ function resetGameElement(){
     gameContainerElement.classList.add('centerClass');
     returnBtnElement.style.setProperty('display', 'block');
     returnBtnSmallElement.style.setProperty('display', 'none');
-    movementButttonsElement.style.setProperty('display', 'none')
+    movementButttonsElement.style.setProperty('display', 'none');
+    updateVIsibility(ballElement, true, false);
 }
 

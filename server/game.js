@@ -5,6 +5,7 @@ const groundLevel = 409;                // 92.325
 
 const playerSize = [69, 175];           // 5.745
 const playerVelInterval = [0.8, -1.7];    // 0.166
+const playerGround = groundLevel - playerSize[1];
 
 const ballRadius = 25;                  // 2.081
 const xBallVel = 0.4;                   //...       <-- values in %, but they won't work since % unit isn't universal between x and y axis
@@ -44,8 +45,8 @@ const blockRect = {
 
 
 const playerDefaultPos = {
-    leftPlayer: [300 - playerSize[0], groundLevel - playerSize[1]],
-    rightPlayer: [900, groundLevel - playerSize[1]]
+    leftPlayer: [300 - playerSize[0], playerGround],
+    rightPlayer: [900, playerGround]
 };
 const shootLock = 450;
 
@@ -119,11 +120,13 @@ function resetGameState(gameState){
     gameState.leftPlayer.vel = [0, 0];
     gameState.leftPlayer.shootValue = null;
     gameState.leftPlayer.shootLock = 0;
+    gameState.leftPlayer.pos[1] = playerGround;
 
     gameState.rightPlayer.animationName = 'standing';
     gameState.rightPlayer.vel = [0, 0];
     gameState.rightPlayer.shootValue = null;
     gameState.rightPlayer.shootLock = 0;
+    gameState.rightPlayer.pos[1] = playerGround;
 
     gameState.ball.pos = [...ballDefaultPos];
     gameState.ball.vel = [...ballDefaultVel];
@@ -214,10 +217,10 @@ function updatePlayer(gameState, playerName, timeInterval){
 
     //position Y
     let newY = player.pos[1] + player.vel[1] * timeInterval;
-    if(newY > groundLevel - playerSize[1]){
-        newY = groundLevel - playerSize[1];
+    if(newY > playerGround){
+        newY = playerGround;
         if (player.animationName === 'blocking'){
-            player.pos[1] = groundLevel - playerSize[1];
+            player.pos[1] = playerGround;
             if (player.vel[0] != 0) {
                 player.animationName = 'walking';
             }
@@ -413,5 +416,8 @@ module.exports = {
     blockZone,
     scaleTicks,
     scaleTickTime,
-    blockRect
+    blockRect,
+    gravity,
+    playerGround
+
 };
