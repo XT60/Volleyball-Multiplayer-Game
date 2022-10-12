@@ -7,9 +7,7 @@ const socket = io("http://127.0.0.1:3000", {
 const indicatorWidth = 2,
 gameAreaSize = [1201, 443],
 maxCourtfill = 0.9,
-animationFrameSpan = 150,
 maxScale = 1500 / gameAreaSize[0],
-loopTick = 34,
 
 
 currAnimation = {
@@ -35,12 +33,12 @@ animationFrameCount = {
 
     
 let prevGameState, myPlayer, scaleTicks, scaleMulti, a, b, myRoomId, scaleTickTime,
-    myInterval, prevTime, winInterval, winIntervalRunning, gravity, playerGround,
+    myInterval, prevTime, animationFrameSpan,
     inGame = false,
     currScale = 1,
     nextAnimationFrame = {
-        leftPlayer: animationFrameSpan,
-        rightPlayer: animationFrameSpan,
+        leftPlayer: 0,
+        rightPlayer: 0,
     };
 
 
@@ -336,8 +334,8 @@ socket.on("initData", (data) => {
     scaleTicks = data.scaleTicks;
     scaleTickTime = data.scaleTickTime;
     myRoomId = data.roomId;
-    gravity = data.gravity;
-    playerGround = data.playerGround;
+    animationFrameSpan = data.animationFrameSpan;
+    nextAnimationFrame.leftPlayer = nextAnimationFrame.rightPlayer = animationFrameSpan;
 
     //scale
 
@@ -410,68 +408,15 @@ socket.on("newGameState", (gameState) => {
     }
 
     drawHitboxes(gameState)
-    
-    if (gameState.winner !== "none"){
-        const winner = gameState.winner;
-        const winPlayer = gameState[winner];
-        if (winPlayer.pos[1] === playerGround){
-            gameState[winner].animationName = "winning";
-        }
-
-        let prevTime, currTime, prevAnimFrame, currTick = 0;
-        prevTime = currTime = prevAnimFrame = new Date;
-        winInterval = setInterval(() => {
-            currTick += 1
-            currTime = new Date;
-            const interval =  currTime - prevTime;
-            updateAnimation(gameState, interval, "leftPlayer", true);
-            updateAnimation(gameState, interval, "rightPlayer", true);
-            updateVerticalPos(gameState, interval);
-            prevTime = currTime;
-        }, loopTick);
-        winIntervalRunning = true;
-    }
-    else{
-        if (winIntervalRunning){
-            clearInterval(winInterval);
-            winIntervalRunning = false;
-        }
-    }
     prevGameState = gameState;
 });
 
 
-function updateVerticalPos(gameState, interval){
-    for(let name of ["leftPlayer", "rightPlayer"]){
-        const player = gameState[name];
-        if (player.pos[1] < playerGround){
-            player.pos[1] += player.vel[1] * interval;
-            if (player.pos[1] > playerGround){
-                player.pos[1] = playerGround;
-                player.vel[1] = 0;
-                currAnimation[name].trend = -1;     // for animation to be considered finished
-            }
-            updatePosition(playerElements[name], gameState[name].pos);
-            player.vel[1] += interval * gravity;
-        }
-    }
-}
 
-
-function updateAnimation(gameState, interval, playerName, onlyToFinish = false){
+function updateAnimation(gameState, interval, playerName){
     const animation = currAnimation[playerName];
     nextAnimationFrame[playerName] -= interval;
-    if (nextAnimationFrame[playerName] > 0)     return
-    if (onlyToFinish){
-        if (animation.trend === -1 && animation.frame === 0){
-            if (animation.name !== "standing"){
-                changeAnimation(playerName, animation.name, 'standing');
-                animation.trend = -1;
-                updatePlayerElement(playerName);
-            }
-            return
-        }
-    }      
+    if (nextAnimationFrame[playerName] > 0)     return     
     if (gameState[playerName].animationName === animation.name){
         if (animationFrameCount[animation.name] === 1)  return
         const newFrame = animation.frame + animation.trend;

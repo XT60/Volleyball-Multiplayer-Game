@@ -5,10 +5,10 @@ const { v4 } = require('uuid');
 const { createServer } = require("http");
 const http = createServer(); 
 const { handleKeyUp, handleKeydown, updatePlayer, updateBall, 
-    initGame, updateScale, showBall, resetGameState} = require("./game");
+    initGame, updateScale, showBall, resetGameState, isOnGround} = require("./game");
 
 const { playerShootArea, netRect, blockZone, scaleTicks, 
-    scaleTickTime, blockRect, playerShootAnimationArea, gravity, playerGround} = require("./game.js");
+    scaleTickTime, blockRect, playerShootAnimationArea} = require("./game.js");
 
 const io = require("socket.io")(http, {
     cors: {
@@ -24,8 +24,10 @@ const waitingRoom = [];
 const loopInterval = 1000 / 45;
 const startDelay = 1000;
 const maxInterval = 100; 
-const winnerScore = 21;
-const restartDelay = 1000;
+const winnerScore = 2;
+const animationFrameSpan = 150;
+const winAnimationSpan = animationFrameSpan * 5 - 40;
+let nextRoundDelay = winAnimationSpan;
 let lastFrame = 0;
 
 
@@ -52,14 +54,20 @@ io.on("connection", (socket) => {
         if (!isDataValid(roomId, socket.id, role)){
             return;
         }
-        handleKeydown(rooms[roomId].gameState, role, eventCode)
+        const room = rooms[roomId];
+        if (!room.inputDisabled){
+            handleKeydown(room.gameState, role, eventCode)
+        }
     });
 
     socket.on("keyup", (roomId, role, eventCode) => {
         if (!isDataValid(roomId, socket.id, role)){
             return;
         }
-        handleKeyUp(rooms[roomId].gameState, role, eventCode)
+        const room = rooms[roomId];
+        if (!room.inputDisabled){
+            handleKeyUp(room.gameState, role, eventCode)
+        }
     });
 
 
@@ -80,6 +88,8 @@ io.on("connection", (socket) => {
         rooms[roomId] = {
             status: 'waitingForPlayer',    // full, inGame
             gameState: initGame(),
+            gameStatus: "playing",          // falling - when point is scored but one of the players is in the air
+                                            // winning - one of the players plays winning animation
             startDelay: startDelay,
             leftPlayer: null,
             rightPlayer: null,
@@ -109,8 +119,7 @@ io.on("connection", (socket) => {
                 roomId,
                 scaleTicks,
                 scaleTickTime,
-                gravity,
-                playerGround
+                animationFrameSpan
             });
             console.log(`${socket.id}:\t joined room ${roomId} as ${outRole}`);
             if (callback) callback(true);
@@ -293,35 +302,59 @@ setInterval(() => {
         if (room.status === 'inGame'){
             let winner;
             lastFrame = currTime;
-            
-            if (room.startDelay < 0){
-                updatePlayer(gameState, 'leftPlayer', interval);
-                updatePlayer(gameState, 'rightPlayer', interval);
-                winner = updateBall(gameState, interval);
-                updateScale(gameState, currTime);
-                if (winner){
-                    gameState.winner = winner;
-                    room.score[winner] += 1;
-                    if (room.score[winner] >= winnerScore){
-                        room.status = 'full';
-                        io.to(roomId).emit("gameHasEnded", 'one of the players exceeded winnerScore', room.score);
-                        io.to(room.specId).emit("gameHasEnded", 'one of the players exceeded winnerScore', room.score);
+
+            switch (room.gameStatus){
+                case "playing":
+                    updatePlayer(gameState, 'leftPlayer', interval);
+                    updatePlayer(gameState, 'rightPlayer', interval);
+                    winner = updateBall(gameState, interval);
+                    updateScale(gameState, currTime);
+                    if (winner){
+                        gameState.winner = winner;
+                        room.score[winner] += 1;
+                        room.inputDisabled = true;
+                        nextRoundDelay = winAnimationSpan;
+                        if (isOnGround(gameState, 'leftPlayer') && isOnGround(gameState, 'rightPlayer')){
+                            room.gameStatus = "winning"
+                        }
+                        else{
+                            room.gameStatus = "falling"
+                        }
+                    }
+                    break;
+                case 'falling':
+                    updatePlayer(gameState, 'leftPlayer', interval);
+                    updatePlayer(gameState, 'rightPlayer', interval);
+                    if (isOnGround(gameState, 'leftPlayer') && isOnGround(gameState, 'rightPlayer')){
+                        room.gameStatus = 'winning';
                     }
                     else{
-                        io.to(roomId).to(room.specId).emit('scoreUpdate', room.score);
-                        room.startDelay = restartDelay;
+                        break;
                     }
-                }
-                io.to(roomId).to(room.specId).emit("newGameState", gameState);
+                case 'winning':
+                    if (nextRoundDelay === winAnimationSpan){
+                        const winner = gameState.winner;
+                        gameState[winner].animationName = 'winning';
+                    }
+                    nextRoundDelay -= interval;
+                    if (nextRoundDelay < 0){
+                        const winner = gameState.winner;
+                        if (room.score[winner] >= winnerScore){
+                            room.status = 'full';
+                            io.to(roomId).emit("gameHasEnded", 'one of the players exceeded winnerScore', room.score);
+                            io.to(room.specId).emit("gameHasEnded", 'one of the players exceeded winnerScore', room.score);
+                        }
+                        else{
+                            io.to(roomId).to(room.specId).emit('scoreUpdate', room.score);
+                            room.inputDisabled = false;
+                            resetGameState(room.gameState);
+                            showBall(gameState);
+                            gameState.winner = "none";
+                            room.gameStatus = "playing";
+                        }
+                    }
             }
-            else{
-                room.startDelay -= interval;
-                if(room.startDelay <= 0){
-                    resetGameState(room.gameState);
-                    showBall(gameState);
-                    gameState.winner = "none";
-                }
-            }
+            io.to(roomId).to(room.specId).emit("newGameState", gameState);
         }
     }
 }, loopInterval);

@@ -305,6 +305,12 @@ function shootBall(gameState, playerName, blocking = false){
     gameState.lastContact = playerName;
 }
 
+function isOnGround(gameState, playerName){
+    // res = gameState[playerName].pos[1] === playerGround;
+    // console.log(`${gameState[playerName].pos[1]}, ${playerGround}, ${res}, ` + playerName);
+    return gameState[playerName].pos[1] === playerGround;
+}
+
 function updateBall(gameState, timeInterval){
     // position
     const ball = gameState['ball'];
@@ -409,6 +415,7 @@ module.exports = {
     updatePlayer,
     updateBall,
     showBall,
+    isOnGround,
 
     playerShootArea,
     playerShootAnimationArea,
@@ -416,8 +423,5 @@ module.exports = {
     blockZone,
     scaleTicks,
     scaleTickTime,
-    blockRect,
-    gravity,
-    playerGround
-
+    blockRect
 };
