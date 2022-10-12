@@ -390,12 +390,12 @@ socket.on("newGameState", (gameState) => {
 
         prevTime = new Date;
         intervalRunning = true;
-        startIndicatorInterval()()
+        startIndicatorInterval()
     }
 
     if (gameState.winner == "none"){
         if (!intervalRunning){
-            startIndicatorInterval()()
+            startIndicatorInterval()
         }
     }
     else{
@@ -419,7 +419,6 @@ socket.on("newGameState", (gameState) => {
         updateIndicatorPos(gameIndicatorElement, gameState.scale.currTick);
     }
 
-    drawHitboxes(gameState)
     prevGameState = gameState;
 });
 
@@ -592,25 +591,8 @@ function updateRightPlayerIndicator(gameState){
 }
 
 
-function updateAllPositions(gameState){
-    updatePosition(ballElement, gameState.ball.pos);
-    updatePosition(playerElements.leftPlayer, gameState.leftPlayer.pos);
-    updatePosition(playerElements.rightPlayer, gameState.rightPlayer.pos);
-}
-
-function updateVIsibility(element, isVisible, wasVisible){
-    if (isVisible !== wasVisible){
-        if (isVisible){
-            element.style.setProperty('opacity', "1");
-        }
-        else{
-            element.style.setProperty('opacity', "0");
-        }
-    }
-}
-
-
 function startIndicatorInterval(){
+    if (intervalRunning) return 
     intervalRunning = true;
     let prevTime, currTime;
     prevTime = currTime = new Date();
@@ -622,7 +604,9 @@ function startIndicatorInterval(){
 
 }
 
+
 function stopIndicatorInterval(){
+    if (!intervalRunning) return
     intervalRunning = false;
     clearInterval(scaleInterval);
 }
@@ -631,6 +615,25 @@ function stopIndicatorInterval(){
 function updateIndicatorPos(indicator, tick){
     const newPos = calculateScaleY(tick) * scaleMulti;
     indicator.style.setProperty('left', cssPercent(newPos));
+}
+
+
+function updateAllPositions(gameState){
+    updatePosition(ballElement, gameState.ball.pos);
+    updatePosition(playerElements.leftPlayer, gameState.leftPlayer.pos);
+    updatePosition(playerElements.rightPlayer, gameState.rightPlayer.pos);
+}
+
+
+function updateVIsibility(element, isVisible, wasVisible){
+    if (isVisible !== wasVisible){
+        if (isVisible){
+            element.style.setProperty('opacity', "1");
+        }
+        else{
+            element.style.setProperty('opacity', "0");
+        }
+    }
 }
 
 
