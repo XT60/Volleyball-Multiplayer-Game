@@ -43,6 +43,8 @@ let prevGameState, myPlayer, scaleTicks, scaleMulti, a, b, myRoomId, scaleTickTi
     };
 
 
+
+//  ------------------- HTML DOM elements -------------------
 const ballElement = document.getElementById("ball"),
     playerElements = {
         leftPlayer: document.getElementById('leftPlayer'),
@@ -115,6 +117,8 @@ const ballElement = document.getElementById("ball"),
     copyBtnElement = document.querySelector('.copyBtn');
     
 
+
+//  ------------------- user input listeners -------------------
 gameIndicatorElement.style.setProperty('width', cssPercent(indicatorWidth));
 playerCheckboxElement.addEventListener('click', () => {
     spectatorCheckboxElement.checked = false;
@@ -127,6 +131,8 @@ spectatorCheckboxElement.addEventListener('click', () => {
 window.addEventListener("resize", resize);
 
 
+
+//  ------------------- window buttons -------------------
 // optionsWindow
 document.getElementById('newGame').addEventListener('click', createRoom);
 
@@ -220,61 +226,6 @@ returnBtnSmallElement.addEventListener('click', () => {
     })
 });
 
-function addMobileBtnListeners(){
-    mobileButtons.left.addEventListener('touchstart', () => {
-        socket.emit("keydown", myRoomId, myPlayer, "ArrowLeft");
-    });
-    mobileButtons.right.addEventListener('touchstart', () => {
-        socket.emit("keydown", myRoomId, myPlayer, "ArrowRight");
-    });
-    mobileButtons.up.addEventListener('touchstart', () => {
-        socket.emit("keydown", myRoomId, myPlayer, "ArrowUp");
-    });
-    mobileButtons.shoot.addEventListener('touchstart', () => {
-        socket.emit("keydown", myRoomId, myPlayer, "Space");
-    });
-    mobileButtons.left.addEventListener('touchend', () => {
-        socket.emit("keyup", myRoomId, myPlayer, "ArrowLeft");
-    });
-    mobileButtons.right.addEventListener('touchend', () => {
-        socket.emit("keyup", myRoomId, myPlayer, "ArrowRight");
-    });
-    mobileButtons.up.addEventListener('touchend', () => {
-        socket.emit("keyup", myRoomId, myPlayer, "ArrowUp");
-    });
-    mobileButtons.shoot.addEventListener('touchend', () => {
-        socket.emit("keyup", myRoomId, myPlayer, "Space");
-    });
-}
-
-function removeMobileBtnListeners(){
-    mobileButtons.left.removeEventListener('touchstart', () => {
-        socket.emit("keydown", myRoomId, myPlayer, "ArrowLeft");
-    });
-    mobileButtons.right.removeEventListener('touchstart', () => {
-        socket.emit("keydown", myRoomId, myPlayer, "ArrowRight");
-    });
-    mobileButtons.up.removeEventListener('touchstart', () => {
-        socket.emit("keydown", myRoomId, myPlayer, "ArrowUp");
-    });
-    mobileButtons.shoot.removeEventListener('touchstart', () => {
-        socket.emit("keydown", myRoomId, myPlayer, "Space");
-    });
-    mobileButtons.left.removeEventListener('touchend', () => {
-        socket.emit("keyup", myRoomId, myPlayer, "ArrowLeft");
-    });
-    mobileButtons.right.removeEventListener('touchend', () => {
-        socket.emit("keyup", myRoomId, myPlayer, "ArrowRight");
-    });
-    mobileButtons.up.removeEventListener('touchend', () => {
-        socket.emit("keyup", myRoomId, myPlayer, "ArrowUp");
-    });
-    mobileButtons.shoot.removeEventListener('touchend', () => {
-        socket.emit("keyup", myRoomId, myPlayer, "Space");
-    });
-}
-
-
 //gameSummaryWindow
 document.getElementById("leaveGameBtn").addEventListener('click', () => {
     leaveRoom(() => {
@@ -301,6 +252,8 @@ document.getElementById("backToKeyOutBtn").addEventListener('click', () => {
 });
 
 
+
+//  ------------------- server events -------------------
 socket.on("connect", () => {
     console.log('connected');
     reset();
@@ -333,6 +286,7 @@ socket.on("rematchStarted", () => {
     changeWindows(summaryWindowElement, gameElement);
 })
 
+
 socket.on("debugInfo", (debugInfo) => initHitboxes(debugInfo));
 
 
@@ -343,34 +297,23 @@ socket.on("initData", (data) => {
     myRoomId = data.roomId;
     animationFrameSpan = data.animationFrameSpan;
     nextAnimationFrame.leftPlayer = nextAnimationFrame.rightPlayer = animationFrameSpan;
-
-    //scale
-
-    // a = (scaleTicks - 1) / 2;
-    // b = Math.pow(a, 3) 
-    // scaleMulti = (100 - indicatorWidth) / (2 * b);
-    // console.log(scaleMulti)
     scaleMulti = (100 - indicatorWidth) / (scaleTicks - 1);
     
     //players
     if (socket.id == room.leftPlayer){
         myPlayer = 'leftPlayer';
-        // setup viewport for leftPlayer
     }
     else if (socket.id == room.rightPlayer){
         myPlayer = 'rightPlayer';
-        // setup viewport for rightPlayer
     }
     else{
         myPlayer = null;        // you are in spectator mode
-        // setup viewport for spectator
     }
     prevGameState = room.gameState;
     updateScore(room.score);
 });
 
 
-// Socket.io Events
 socket.on("scoreUpdate", (newScore) => updateScore(newScore));
 
 
@@ -430,42 +373,6 @@ socket.on("newGameState", (gameState) => {
 });
 
 
-
-function updateAnimation(gameState, interval, playerName){
-    const animation = currAnimation[playerName];
-    nextAnimationFrame[playerName] -= interval;
-    if (nextAnimationFrame[playerName] > 0)     return     
-    if (gameState[playerName].animationName === animation.name){
-        if (animationFrameCount[animation.name] === 1)  return
-        const newFrame = animation.frame + animation.trend;
-        if (newFrame >= animationFrameCount[animation.name] || newFrame < 0){
-            animation.trend *= -1;
-        }
-        animation.frame += animation.trend;
-    }
-    else{
-        animation.trend = 1;
-        animation.frame = 0;
-        changeAnimation(playerName, animation.name, gameState[playerName].animationName);
-        animation.name = gameState[playerName].animationName;
-    }
-    updatePlayerElement(playerName);
-    nextAnimationFrame[playerName] = animationFrameSpan;
-}
-
-
-function changeAnimation(playerName, from, to){
-    animationElements[playerName][from].style.setProperty('display', 'none');
-    animationElements[playerName][to].style.setProperty('display', 'block');
-}
-
-
-function updatePlayerElement(playerName){
-    const animation = currAnimation[playerName];    
-    animationElements[playerName][animation.name].style.setProperty('left', `${-100 * animation.frame}%`);
-}
-
-
 socket.on("opponentLeft", () => {
     changeWindows(gameElement, summaryWindowElement);
     gameEndCauseElement.innerHTML = "Your opponent left the game";
@@ -494,7 +401,8 @@ socket.on("rematchProposal", () => {
 });
 
 
-// Helper Fucntions
+
+//  ------------------- events handling functions -------------------
 function changeWindows(from, to){
     from.style.setProperty('display', 'none');
     if (to === gameElement){
@@ -503,20 +411,6 @@ function changeWindows(from, to){
         return;
     }
     to.style.setProperty('display', 'block');
-}
-
-
-function updateScaleTick(gameState, interval){
-    const scale = gameState.scale
-    scale.nextTick -= interval;
-    if (scale.nextTick < 0){
-        if (scale.currTick + scale.trend >= scaleTicks || scale.currTick + scale.trend < 0){
-            scale.trend *= -1;
-        } 
-        scale.nextTick += scaleTickTime;
-        scale.currTick += scale.trend;
-        updateIndicatorPos(gameIndicatorElement, scale.currTick);
-    }
 }
 
 
@@ -555,6 +449,29 @@ function createRoom(){
 }
 
 
+function reset(){
+    prevGameState = undefined;
+    myPlayer = undefined;
+    myRoomId = undefined;
+    const windows = document.querySelectorAll("body > div");
+    for (const element of windows){
+        element.style.setProperty('display', 'none');
+    }
+    gameElement.style.setProperty('display', 'none');
+    optionsWindowElement.style.setProperty('display', 'block');
+}
+
+
+function handleResponse(success, errorMsg, callback){
+    if (!success){
+        console.log(errorMsg);
+        return;
+    }
+    callback();
+}
+
+
+// player input listeners
 function keyDown(e){
     socket.emit("keydown", myRoomId, myPlayer, e.code)
 }
@@ -562,6 +479,78 @@ function keyDown(e){
 
 function keyUp(e){
     socket.emit("keyup", myRoomId, myPlayer, e.code)
+}
+
+
+function addMobileBtnListeners(){
+    mobileButtons.left.addEventListener('touchstart', () => {
+        socket.emit("keydown", myRoomId, myPlayer, "ArrowLeft");
+    });
+    mobileButtons.right.addEventListener('touchstart', () => {
+        socket.emit("keydown", myRoomId, myPlayer, "ArrowRight");
+    });
+    mobileButtons.up.addEventListener('touchstart', () => {
+        socket.emit("keydown", myRoomId, myPlayer, "ArrowUp");
+    });
+    mobileButtons.shoot.addEventListener('touchstart', () => {
+        socket.emit("keydown", myRoomId, myPlayer, "Space");
+    });
+    mobileButtons.left.addEventListener('touchend', () => {
+        socket.emit("keyup", myRoomId, myPlayer, "ArrowLeft");
+    });
+    mobileButtons.right.addEventListener('touchend', () => {
+        socket.emit("keyup", myRoomId, myPlayer, "ArrowRight");
+    });
+    mobileButtons.up.addEventListener('touchend', () => {
+        socket.emit("keyup", myRoomId, myPlayer, "ArrowUp");
+    });
+    mobileButtons.shoot.addEventListener('touchend', () => {
+        socket.emit("keyup", myRoomId, myPlayer, "Space");
+    });
+}
+
+
+function removeMobileBtnListeners(){
+    mobileButtons.left.removeEventListener('touchstart', () => {
+        socket.emit("keydown", myRoomId, myPlayer, "ArrowLeft");
+    });
+    mobileButtons.right.removeEventListener('touchstart', () => {
+        socket.emit("keydown", myRoomId, myPlayer, "ArrowRight");
+    });
+    mobileButtons.up.removeEventListener('touchstart', () => {
+        socket.emit("keydown", myRoomId, myPlayer, "ArrowUp");
+    });
+    mobileButtons.shoot.removeEventListener('touchstart', () => {
+        socket.emit("keydown", myRoomId, myPlayer, "Space");
+    });
+    mobileButtons.left.removeEventListener('touchend', () => {
+        socket.emit("keyup", myRoomId, myPlayer, "ArrowLeft");
+    });
+    mobileButtons.right.removeEventListener('touchend', () => {
+        socket.emit("keyup", myRoomId, myPlayer, "ArrowRight");
+    });
+    mobileButtons.up.removeEventListener('touchend', () => {
+        socket.emit("keyup", myRoomId, myPlayer, "ArrowUp");
+    });
+    mobileButtons.shoot.removeEventListener('touchend', () => {
+        socket.emit("keyup", myRoomId, myPlayer, "Space");
+    });
+}
+
+
+
+//  ------------------- other functions -------------------
+function updateScaleTick(gameState, interval){
+    const scale = gameState.scale
+    scale.nextTick -= interval;
+    if (scale.nextTick < 0){
+        if (scale.currTick + scale.trend >= scaleTicks || scale.currTick + scale.trend < 0){
+            scale.trend *= -1;
+        } 
+        scale.nextTick += scaleTickTime;
+        scale.currTick += scale.trend;
+        updateIndicatorPos(gameIndicatorElement, scale.currTick);
+    }
 }
 
 
@@ -632,16 +621,46 @@ function updateAllPositions(gameState){
 }
 
 
-function updateVIsibility(element, isVisible, wasVisible){
-    if (isVisible !== wasVisible){
-        if (isVisible){
-            element.style.setProperty('opacity', "1");
-        }
-        else{
-            element.style.setProperty('opacity', "0");
-        }
-    }
+function updatePosition(element, pos){
+    element.style.setProperty('left', `${pos[0] * currScale}px`);
+    element.style.setProperty('top', `${pos[1] * currScale}px`);
 }
+
+
+function updatePlayerElement(playerName){
+    const animation = currAnimation[playerName];    
+    animationElements[playerName][animation.name].style.setProperty('left', `${-100 * animation.frame}%`);
+}
+
+
+function updateAnimation(gameState, interval, playerName){
+    const animation = currAnimation[playerName];
+    nextAnimationFrame[playerName] -= interval;
+    if (nextAnimationFrame[playerName] > 0)     return     
+    if (gameState[playerName].animationName === animation.name){
+        if (animationFrameCount[animation.name] === 1)  return
+        const newFrame = animation.frame + animation.trend;
+        if (newFrame >= animationFrameCount[animation.name] || newFrame < 0){
+            animation.trend *= -1;
+        }
+        animation.frame += animation.trend;
+    }
+    else{
+        animation.trend = 1;
+        animation.frame = 0;
+        changeAnimation(playerName, animation.name, gameState[playerName].animationName);
+        animation.name = gameState[playerName].animationName;
+    }
+    updatePlayerElement(playerName);
+    nextAnimationFrame[playerName] = animationFrameSpan;
+}
+
+
+function changeAnimation(playerName, from, to){
+    animationElements[playerName][from].style.setProperty('display', 'none');
+    animationElements[playerName][to].style.setProperty('display', 'block');
+}
+
 
 function updatePlayerLabels(){
     playerLabelElements[myPlayer].innerHTML = 'you';
@@ -658,44 +677,29 @@ function otherPlayer(playerName){
 }
 
 
+function updateVIsibility(element, isVisible, wasVisible){
+    if (isVisible !== wasVisible){
+        if (isVisible){
+            element.style.setProperty('opacity', "1");
+        }
+        else{
+            element.style.setProperty('opacity', "0");
+        }
+    }
+}
+
+
 function updateScore(newScore){
     leftPlayerScoreElement.innerHTML = '' + newScore.leftPlayer;
     rightPlayerScoreElement.innerHTML = '' + newScore.rightPlayer;
 }
 
 
-function updatePosition(element, pos){
-    element.style.setProperty('left', `${pos[0] * currScale}px`);
-    element.style.setProperty('top', `${pos[1] * currScale}px`);
-}
-
 function updateElementSize(element, width, height){
     element.style.setProperty("width", `${width}px`);
     element.style.setProperty("height", `${height}px`);
 }
 
-function cssPercent(number){
-    return `${number}%`
-}
-
-
-function calculateScaleY(x) {
-    if (x < 0 || x >= scaleTicks){
-        console.log(`wrong scale X argument: ${x}`);
-        return -1;
-    }
-    return x
-    // return Math.pow(x - a, 3) + b;
-}
-
-
-function handleResponse(success, errorMsg, callback){
-    if (!success){
-        console.log(errorMsg);
-        return;
-    }
-    callback();
-}
 
 function resize(){
     const tmp = Math.min(maxCourtfill * window.innerWidth / gameAreaSize[0],
@@ -714,18 +718,6 @@ function resize(){
     updateElementSize(courtElement, newWidth, newHeight);
     updateElementSize(canvasElement, newWidth, newHeight);
     if (inGame) updateAllPositions(prevGameState);
-}
-
-function reset(){
-    prevGameState = undefined;
-    myPlayer = undefined;
-    myRoomId = undefined;
-    const windows = document.querySelectorAll("body > div");
-    for (const element of windows){
-        element.style.setProperty('display', 'none');
-    }
-    gameElement.style.setProperty('display', 'none');
-    optionsWindowElement.style.setProperty('display', 'block');
 }
 
 
@@ -753,3 +745,16 @@ function resetGameElement(){
     updateVIsibility(ballElement, true, false);
 }
 
+
+function cssPercent(number){
+    return `${number}%`
+}
+
+
+function calculateScaleY(x) {
+    if (x < 0 || x >= scaleTicks){
+        console.log(`wrong scale X argument: ${x}`);
+        return -1;
+    }
+    return x
+}
