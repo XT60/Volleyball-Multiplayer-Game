@@ -169,7 +169,7 @@ body #gameArea #powerMeter #leftIndicator {
   z-index: 100;
 }
 body #gameArea #powerMeter #rightIndicator {
-  background-color: orange;
+  background-color: blue;
   opacity: 0.7;
   display: none;
   z-index: 100;
@@ -491,6 +491,9 @@ body #gameArea #scoreBoard .playerName {
   justify-content: center;
   align-items: center;
   padding: 1em 1.5em 1.1em;
+}
+.movementButttons .moveBtn img {
+  pointer-events: none;
 }
 .movementButttons .btn {
   margin: 0.2em;
@@ -1131,4 +1134,4 @@ body #gameArea #scoreBoard .playerName {
   #keyInWindow .container .contentContainer {
     display: contents;
   }
-}
+}/*# sourceMappingURL=styles.css.map */

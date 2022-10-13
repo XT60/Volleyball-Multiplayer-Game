@@ -560,6 +560,10 @@ body {
 		justify-content: center;
 		align-items: center;
 		padding: 1em 1.5em 1.1em;
+		
+		img{
+			pointer-events: none;
+		}
 	}
 
 	// .moveBtn:nth-child(odd) {
