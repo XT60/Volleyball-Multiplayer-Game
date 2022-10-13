@@ -663,8 +663,8 @@ function changeAnimation(playerName, from, to){
 
 
 function updatePlayerLabels(){
-    playerLabelElements[myPlayer].innerHTML = 'you';
-    playerLabelElements[otherPlayer(myPlayer)].innerHTML = 'opponent'
+    playerLabelElements[myPlayer].innerHTML = '&nbsp;&nbsp;&nbsp;&nbsp;You&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+    playerLabelElements[otherPlayer(myPlayer)].innerHTML = 'Opponent'
 
 }
 
