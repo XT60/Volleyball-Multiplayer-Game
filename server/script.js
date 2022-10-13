@@ -4,6 +4,7 @@
 const { v4 } = require('uuid');
 const { createServer } = require("http");
 const http = createServer(); 
+
 const { handleKeyUp, handleKeydown, updatePlayer, updateBall, 
     initGame, updateScale, showBall, resetGameState, isOnGround} = require("./game");
 
@@ -18,6 +19,8 @@ const io = require("socket.io")(http, {
       }
 });
 
+
+//  ------------------- constants and variables -------------------
 const rooms = {};
 const waitingRoom = [];
 
@@ -31,6 +34,7 @@ let nextRoundDelay = winAnimationSpan;
 let lastFrame = 0;
 
 
+//  ------------------- server events -------------------
 io.on("connection", (socket) => {
     console.log(`${socket.id}:\t connected`);
     io.to(socket.id).emit("debugInfo", {
@@ -71,22 +75,17 @@ io.on("connection", (socket) => {
     });
 
 
+//  ------------------- event handlers -------------------
     function createAndJoinRoom(callback){
         const roomId = createRoom();
         joinRoom(roomId, socket, 'player');
         callback(roomId);
     }
 
-    function disconnecting(socket){
-        console.log(`${socket.id}:\t disconnected`);
-        // socket.rooms.forEach(room => io.to(room).emit('opponentLeft'));
-        socket.rooms.forEach(room => leaveRoom(socket, room, () => {}));
-    }
-
     function createRoom (){
         const roomId = v4(); 
         rooms[roomId] = {
-            status: 'waitingForPlayer',    // full, inGame
+            status: 'waitingForPlayer',     // full, inGame
             gameState: initGame(),
             gameStatus: "playing",          // falling - when point is scored but one of the players is in the air
                                             // winning - one of the players plays winning animation
@@ -214,6 +213,47 @@ io.on("connection", (socket) => {
         console.log(`${opponent.id}:\t joined room:\t ${roomId}`);
     }
 
+    function declareReady(roomId, socket, playerRole, callback){
+        console.log(`${socket.id}:\t got declare ready event from"`);
+        const room = rooms[roomId];
+        
+        if (!room){                                         // validation 
+            callback(false, "room with given roomId doesn't exist");
+            return;
+        }
+        if (room[playerRole] != socket.id){
+            callback(false, "you do not have permissions for for that player "+
+            "or that role does not exist");
+            return;
+        }
+        if (room.playerReady[playerRole]){
+            callback(false, 'player has already declared ready');
+            return 
+        }
+
+        room.playerReady[playerRole] = true;                //action
+        const other = otherPlayer(playerRole);
+        if (!room.playerReady[other]){
+            io.to(room[other]).emit('opponentReady');
+        }
+        else{
+            startGame(roomId);
+        }
+        console.log(`${socket.id}:\t player is ready`);
+        callback(true);
+    }
+
+    function startGame(roomId){
+        console.log(`${roomId}:\t game started in this room`);
+        const room = rooms[roomId];
+        room.startDelay = startDelay;
+        room.status = "inGame";
+        room.score = {
+            leftPlayer: 0,
+            rightPlayer: 0
+        };
+    }
+
     function declareRematch(roomId, role){
         if (!isDataValid(roomId, socket.id, role)){
             return;
@@ -247,52 +287,15 @@ io.on("connection", (socket) => {
         callback(false, `there is not a socket in waiting room with given ID: ${socketId}`);
     }
 
-    function declareReady(roomId, socket, playerRole, callback){
-        console.log(`${socket.id}:\t got declare ready event from"`);
-        const room = rooms[roomId];
-        
-        // validation 
-        if (!room){
-            callback(false, "room with given roomId doesn't exist");
-            return;
-        }
-        if (room[playerRole] != socket.id){
-            callback(false, "you do not have permissions for for that player "+
-            "or that role does not exist");
-            return;
-        }
-        if (room.playerReady[playerRole]){
-            callback(false, 'player has already declared ready');
-            return 
-        }
 
-        //action
-        room.playerReady[playerRole] = true;
-        const other = otherPlayer(playerRole);
-        if (!room.playerReady[other]){
-            io.to(room[other]).emit('opponentReady');
-        }
-        else{
-            startGame(roomId);
-        }
-        console.log(`${socket.id}:\t player is ready`);
-        callback(true);
+    function disconnecting(socket){
+        console.log(`${socket.id}:\t disconnected`);
+        socket.rooms.forEach(room => leaveRoom(socket, room, () => {}));
     }
 }); 
 
 
-function startGame(roomId){
-    console.log(`${roomId}:\t game started in this room`);
-    // console.log(io.sockets.adapter.rooms.get(roomId));
-    const room = rooms[roomId];
-    room.startDelay = startDelay;
-    room.status = "inGame";
-    room.score = {
-        leftPlayer: 0,
-        rightPlayer: 0
-    };
-}
-
+//  ------------------- main loop -------------------
 setInterval(() => {
     const currTime = new Date();
     const interval = Math.min(currTime - lastFrame, maxInterval);
@@ -360,6 +363,7 @@ setInterval(() => {
 }, loopInterval);
 
 
+//  ------------------- helper functions -------------------
 function otherPlayer(player){
     if (player === "leftPlayer"){
         return "rightPlayer";
@@ -389,7 +393,3 @@ function isDataValid(roomId, socketId, role){
 
 
 http.listen(process.env.PORT || 3000);
-
-
-
-

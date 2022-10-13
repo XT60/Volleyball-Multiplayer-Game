@@ -1,14 +1,16 @@
-const gravity = 0.02;                   // 0.00451
-const courtSize = [1201, 443];          // 100, 100
-const midCourt = 601;                   // 50
-const groundLevel = 409;                // 92.325
+//  ------------------- game constants and variables -------------------
+const gravity = 0.02;                   
+const courtSize = [1201, 443];          
+const midCourt = 601;                   
+const groundLevel = 409;                
 
-const playerSize = [69, 175];           // 5.745
-const playerVelInterval = [0.8, -1.7];    // 0.166
+const playerSize = [69, 175];               
+const playerVelInterval = [0.8, -1.7];    
 const playerGround = groundLevel - playerSize[1];
+const shootLock = 450;
 
-const ballRadius = 25;                  // 2.081
-const xBallVel = 0.4;                   //...       <-- values in %, but they won't work since % unit isn't universal between x and y axis
+const ballRadius = 25;                  
+const xBallVel = 0.4;                   
 const ballGMultiplier = 0.02;
 const ballDefaultVel = [xBallVel, 0];
 const ballDefaultPos = [midCourt - ballRadius, 20];
@@ -24,62 +26,91 @@ const playerTerritory = {
     leftPlayer: [0, midCourt - playerSize[0]],
     rightPlayer: [midCourt, 1201 - playerSize[0]]
 };
+
 const blockZone = {
     leftPlayer: [midCourt - blockZoneSize[0], 
     groundLevel - blockZoneSize[1], blockZoneSize[0], blockZoneSize[1]],
     rightPlayer: [midCourt, groundLevel - blockZoneSize[1],
     blockZoneSize[0], blockZoneSize[1]]
 };
+
 const playerShootArea = {
     leftPlayer: [42, -65, 150, 150],
     rightPlayer: [-116, -65, 150, 150]
 };
+
 const playerShootAnimationArea = {
     leftPlayer: [52, 35, 35, 40],
     rightPlayer: [-11, 35, 35, 40]
 };
+
 const blockRect = {
     leftPlayer: [39, 0, 30, 88],
     rightPlayer: [0, 0, 30, 88]
 };
 
-
 const playerDefaultPos = {
     leftPlayer: [300 - playerSize[0], playerGround],
     rightPlayer: [900, playerGround]
 };
-const shootLock = 450;
 
-const intDev = (x, y) => Math.floor(x / y);
 
-function updateScale(gameState, interval){
-    const scale = gameState.scale
-    scale.nextTick -= interval;
-    if (scale.nextTick > 0)    return false;
-    // console.log(currTime - lastTime);
-    // lastTime = currTime;
-    if (scale.nextTick + scaleTickTime > 0){
-        if (scale.currTick + scale.trend >= scaleTicks || scale.currTick + scale.trend < 0){
-            scale.trend *= -1;
-        } 
-        scale.nextTick += scaleTickTime;
-        scale.currTick += scale.trend;
-        return true;
+//  ------------------- key handlers -------------------
+function handleKeydown(gameState, playerName, eventCode){
+    if (gameState){
+        const player = gameState[playerName];
+        switch (eventCode){
+            case 'ArrowLeft':
+                if (player.animationName !== 'shooting' &&
+                    player.animationName !== 'blocking'){
+                    // console.log('walking')
+                    player.vel[0] = -playerVelInterval[0];
+                }
+                break;
+            case 'ArrowRight':
+                if (player.animationName !== 'shooting' &&
+                    player.animationName !== 'blocking'){
+                    // console.log('walking')
+                    player.vel[0] = playerVelInterval[0]
+                }
+                break;
+            case 'ArrowUp':
+                if (player.animationName !== 'shooting' &&
+                    player.animationName !== 'blocking'){
+                    const playerRect = [...player.pos, ...playerSize];
+                    if (rectRectCollision(playerRect, blockZone[playerName])){
+                        player.animationName = 'blocking';
+                        player.vel[1] = playerVelInterval[1];
+                        player.vel[0] = 0;
+                    }
+                }
+                break;
+            case 'Space':
+                const scale = gameState.scale;
+                if (!player.shootValue){
+                    player.shootValue = scale.currTick;
+                }
+                break;      
+        }    
     }
-    const missedTicks = intDev(interval - scale.nextTick, scaleTickTime);
-    const missedTrends = intDev(missedTicks + scale.currTick, scaleTicks);
-    if (missedTrends % 2 === 1){
-        scale.trend *= -1;
-        scale.currTick = scaleTicks - 1 - (scale.currTick + missedTicks) % scaleTicks; 
-    }
-    else{
-        scale.currTick = (scale.currTick + missedTicks) % scaleTicks; 
-    }
-    
-    scale.nextTick = interval - scaleTickTime * missedTicks;
-    return true
 }
 
+function handleKeyUp(gameState, playerName, eventCode){
+    if (gameState){
+        const player = gameState[playerName];
+        switch (eventCode){
+            case 'ArrowLeft':
+                player.vel[0] = 0;
+                break;
+            case 'ArrowRight':
+                player.vel[0] = 0;
+                break;
+        }    
+    }
+}
+
+
+//  ------------------- game state functions -------------------
 function initGame(){
     const gameState = {
         winner: "none",
@@ -139,67 +170,14 @@ function resetGameState(gameState){
 }
 
 
-function handleKeydown(gameState, playerName, eventCode){
-    if (gameState){
-        const player = gameState[playerName];
-        switch (eventCode){
-            case 'ArrowLeft':
-                if (player.animationName !== 'shooting' &&
-                    player.animationName !== 'blocking'){
-                    // console.log('walking')
-                    player.vel[0] = -playerVelInterval[0];
-                }
-                break;
-            case 'ArrowRight':
-                if (player.animationName !== 'shooting' &&
-                    player.animationName !== 'blocking'){
-                    // console.log('walking')
-                    player.vel[0] = playerVelInterval[0]
-                }
-                break;
-            case 'ArrowUp':
-                if (player.animationName !== 'shooting' &&
-                    player.animationName !== 'blocking'){
-                    const playerRect = [...player.pos, ...playerSize];
-                    if (rectRectCollision(playerRect, blockZone[playerName])){
-                        player.animationName = 'blocking';
-                        player.vel[1] = playerVelInterval[1];
-                        player.vel[0] = 0;
-                    }
-                }
-                break;
-            case 'Space':
-                const scale = gameState.scale;
-                if (!player.shootValue){
-                    player.shootValue = scale.currTick;
-                }
-                break;      
-        }    
-    }
-}
-
-function handleKeyUp(gameState, playerName, eventCode){
-    if (gameState){
-        const player = gameState[playerName];
-        switch (eventCode){
-            case 'ArrowLeft':
-                player.vel[0] = 0;
-                break;
-            case 'ArrowRight':
-                player.vel[0] = 0;
-                break;
-        }    
-    }
-}
-
+//  ------------------- update functions -------------------
 function updatePlayer(gameState, playerName, timeInterval){
     const player = gameState[playerName];
     const territory = playerTerritory[playerName];
     let moved = false;
     player.shootLock -= timeInterval;
 
-    //position X
-    if (player.shootLock <= 0){
+    if (player.shootLock <= 0){                                     // position X
         let newX = player.pos[0] + player.vel[0] * timeInterval;
         if (newX < territory[0]){
             newX = territory[0];
@@ -215,9 +193,7 @@ function updatePlayer(gameState, playerName, timeInterval){
         }
     }
 
-
-    //position Y
-    let newY = player.pos[1] + player.vel[1] * timeInterval;
+    let newY = player.pos[1] + player.vel[1] * timeInterval;        // position Y
     if(newY > playerGround){
         newY = playerGround;
         if (player.animationName === 'blocking'){
@@ -236,11 +212,9 @@ function updatePlayer(gameState, playerName, timeInterval){
         player.pos[1] = newY;
     }
 
-    // Y velocity
-    player.vel[1] += gravity * timeInterval;
+    player.vel[1] += gravity * timeInterval;                        // Y velocity
 
-    // shooting a ball
-    const animArea = getWolrdRect(player.pos, playerShootAnimationArea[playerName]);
+    const animArea = getWolrdRect(player.pos, playerShootAnimationArea[playerName]);                // shooting a ball
     const ballPos = [gameState.ball.pos[0] + ballRadius, gameState.ball.pos[1] + ballRadius];
     if (rectCircleCollision(animArea, ballPos, ballRadius)){
         const shootArea = getWolrdRect(player.pos, playerShootArea[playerName]);
@@ -262,54 +236,6 @@ function updatePlayer(gameState, playerName, timeInterval){
             }
         }
     }
-}
-
-
-function determineTerritory(objectPos){
-    if (objectPos[0] < midCourt){
-        return 'leftPlayer';
-    }
-    return 'rightPlayer';
-}
-
-
-function getWolrdRect(pos, relRect){
-    return [pos[0] + relRect[0], pos[1] + relRect[1], relRect[2], relRect[3]];
-}
-
-
-function shootBall(gameState, playerName, blocking = false){
-    let shootValue = gameState[playerName].shootValue;
-    if (shootValue === null){
-        shootValue = 0;
-    }
-    const dest = [0, 0];
-    const ball = gameState.ball;
-    if(playerName === 'leftPlayer'){
-        dest[0] = 900;
-        ball.vel[0] = xBallVel;
-    }
-    else{
-        dest[0] = 300;
-        ball.vel[0] = -xBallVel;
-    }
-    const xInt = Math.abs(dest[0] - ball.pos[0])
-    const time =  xInt / xBallVel;
-    ball.vel[1] = -(gravity * time * 0.5 - xInt / time); 
-    if (blocking) {
-        ball.vel[0] /= 3;
-    }  
-    // console.log(ball.vel);
-    ball.vel[0] += getRandom(-jinx[0], jinx[0]) * (shootValue - midTick);
-    ball.vel[1] += getRandom(-jinx[1], jinx[1]) * (shootValue - midTick);
-    gameState[playerName].shootValue = null;
-    gameState.lastContact = playerName;
-}
-
-function isOnGround(gameState, playerName){
-    // res = gameState[playerName].pos[1] === playerGround;
-    // console.log(`${gameState[playerName].pos[1]}, ${playerGround}, ${res}, ` + playerName);
-    return gameState[playerName].pos[1] === playerGround;
 }
 
 function updateBall(gameState, timeInterval){
@@ -347,22 +273,63 @@ function updateBall(gameState, timeInterval){
     return null;
 }
 
-function hideBall(gameState){
-    gameState.ball.visible = false;
-    // console.log('ball is hidden');
-}
-
-function showBall(gameState){
-    gameState.ball.visible = true;
-}
-
-function otherPlayer(playerName){
-    if (playerName === 'leftPlayer'){
-        return 'rightPlayer';
+function updateScale(gameState, interval){
+    const scale = gameState.scale
+    scale.nextTick -= interval;
+    if (scale.nextTick > 0)    return false;
+    if (scale.nextTick + scaleTickTime > 0){
+        if (scale.currTick + scale.trend >= scaleTicks || scale.currTick + scale.trend < 0){
+            scale.trend *= -1;
+        } 
+        scale.nextTick += scaleTickTime;
+        scale.currTick += scale.trend;
+        return true;
     }
-    return 'leftPlayer';
+    const missedTicks = intDev(interval - scale.nextTick, scaleTickTime);
+    const missedTrends = intDev(missedTicks + scale.currTick, scaleTicks);
+    if (missedTrends % 2 === 1){
+        scale.trend *= -1;
+        scale.currTick = scaleTicks - 1 - (scale.currTick + missedTicks) % scaleTicks; 
+    }
+    else{
+        scale.currTick = (scale.currTick + missedTicks) % scaleTicks; 
+    }
+    
+    scale.nextTick = interval - scaleTickTime * missedTicks;
+    return true
 }
 
+
+//  ------------------- action functions -------------------
+function shootBall(gameState, playerName, blocking = false){
+    let shootValue = gameState[playerName].shootValue;
+    if (shootValue === null){
+        shootValue = 0;
+    }
+    const dest = [0, 0];
+    const ball = gameState.ball;
+    if(playerName === 'leftPlayer'){
+        dest[0] = 900;
+        ball.vel[0] = xBallVel;
+    }
+    else{
+        dest[0] = 300;
+        ball.vel[0] = -xBallVel;
+    }
+    const xInt = Math.abs(dest[0] - ball.pos[0])
+    const time =  xInt / xBallVel;
+    ball.vel[1] = -(gravity * time * 0.5 - xInt / time); 
+    if (blocking) {
+        ball.vel[0] /= 3;
+    }  
+    ball.vel[0] += getRandom(-jinx[0], jinx[0]) * (shootValue - midTick);
+    ball.vel[1] += getRandom(-jinx[1], jinx[1]) * (shootValue - midTick);
+    gameState[playerName].shootValue = null;
+    gameState.lastContact = playerName;
+}
+
+
+//  ------------------- collision detection functions -------------------
 function rectCircleCollision(rect, cPos, cRadius){
     //circle definitelly don't overlap rect
     const res = cPos[0] < rect[0] - cRadius || rect[0] + rect[2] + cRadius < cPos[0] || 
@@ -396,6 +363,27 @@ function rectRectCollision(recta, rectb){
             recta[1] > rectb[1] + rectb[3]) 
 }
 
+
+//  ------------------- helper functions -------------------
+function isOnGround(gameState, playerName){
+    return gameState[playerName].pos[1] === playerGround;
+}
+
+function hideBall(gameState){
+    gameState.ball.visible = false;
+}
+
+function showBall(gameState){
+    gameState.ball.visible = true;
+}
+
+function otherPlayer(playerName){
+    if (playerName === 'leftPlayer'){
+        return 'rightPlayer';
+    }
+    return 'leftPlayer';
+}
+
 function getRandom(a, b, accuracy = 100){
     if (b < a){
         console.log('invalid getRandom arguments: ' + `a=${a} and b=${b}`);
@@ -406,7 +394,21 @@ function getRandom(a, b, accuracy = 100){
     return (Math.random() % interval) / accuracy + a;
 }
 
+const intDev = (x, y) => Math.floor(x / y);
 
+function determineTerritory(objectPos){
+    if (objectPos[0] < midCourt){
+        return 'leftPlayer';
+    }
+    return 'rightPlayer';
+}
+
+function getWolrdRect(pos, relRect){
+    return [pos[0] + relRect[0], pos[1] + relRect[1], relRect[2], relRect[3]];
+}
+
+
+//  ------------------- exports -------------------
 module.exports = {
     handleKeydown,
     handleKeyUp,
