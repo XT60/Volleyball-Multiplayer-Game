@@ -4,8 +4,9 @@
 const { v4 } = require('uuid');
 const { createServer } = require("http");
 const http = createServer(); 
+
 const { handleKeyUp, handleKeydown, updatePlayer, updateBall, 
-    initGame, updateScale} = require("./game");
+    initGame, updateScale, showBall, resetGameState, isOnGround} = require("./game");
 
 const { playerShootArea, netRect, blockZone, scaleTicks, 
     scaleTickTime, blockRect, playerShootAnimationArea} = require("./game.js");
@@ -18,17 +19,22 @@ const io = require("socket.io")(http, {
       }
 });
 
+
+//  ------------------- constants and variables -------------------
 const rooms = {};
 const waitingRoom = [];
 
 const loopInterval = 1000 / 45;
 const startDelay = 1000;
 const maxInterval = 100; 
-const winnerScore = 100;
-const restartDelay = 1000;
+const winnerScore = 21;
+const animationFrameSpan = 150;
+const winAnimationSpan = animationFrameSpan * 5 - 40;
+let nextRoundDelay = winAnimationSpan;
 let lastFrame = 0;
 
 
+//  ------------------- server events -------------------
 io.on("connection", (socket) => {
     console.log(`${socket.id}:\t connected`);
     io.to(socket.id).emit("debugInfo", {
@@ -52,34 +58,37 @@ io.on("connection", (socket) => {
         if (!isDataValid(roomId, socket.id, role)){
             return;
         }
-        handleKeydown(rooms[roomId].gameState, role, eventCode)
+        const room = rooms[roomId];
+        if (!room.inputDisabled){
+            handleKeydown(room.gameState, role, eventCode)
+        }
     });
 
     socket.on("keyup", (roomId, role, eventCode) => {
         if (!isDataValid(roomId, socket.id, role)){
             return;
         }
-        handleKeyUp(rooms[roomId].gameState, role, eventCode)
+        const room = rooms[roomId];
+        if (!room.inputDisabled){
+            handleKeyUp(room.gameState, role, eventCode)
+        }
     });
 
 
+//  ------------------- event handlers -------------------
     function createAndJoinRoom(callback){
         const roomId = createRoom();
         joinRoom(roomId, socket, 'player');
         callback(roomId);
     }
 
-    function disconnecting(socket){
-        console.log(`${socket.id}:\t disconnected`);
-        // socket.rooms.forEach(room => io.to(room).emit('opponentLeft'));
-        socket.rooms.forEach(room => leaveRoom(socket, room, () => {}));
-    }
-
     function createRoom (){
         const roomId = v4(); 
         rooms[roomId] = {
-            status: 'waitingForPlayer',    // full, inGame
+            status: 'waitingForPlayer',     // full, inGame
             gameState: initGame(),
+            gameStatus: "playing",          // falling - when point is scored but one of the players is in the air
+                                            // winning - one of the players plays winning animation
             startDelay: startDelay,
             leftPlayer: null,
             rightPlayer: null,
@@ -108,7 +117,8 @@ io.on("connection", (socket) => {
                 room,
                 roomId,
                 scaleTicks,
-                scaleTickTime
+                scaleTickTime,
+                animationFrameSpan
             });
             console.log(`${socket.id}:\t joined room ${roomId} as ${outRole}`);
             if (callback) callback(true);
@@ -203,6 +213,47 @@ io.on("connection", (socket) => {
         console.log(`${opponent.id}:\t joined room:\t ${roomId}`);
     }
 
+    function declareReady(roomId, socket, playerRole, callback){
+        console.log(`${socket.id}:\t got declare ready event from"`);
+        const room = rooms[roomId];
+        
+        if (!room){                                         // validation 
+            callback(false, "room with given roomId doesn't exist");
+            return;
+        }
+        if (room[playerRole] != socket.id){
+            callback(false, "you do not have permissions for for that player "+
+            "or that role does not exist");
+            return;
+        }
+        if (room.playerReady[playerRole]){
+            callback(false, 'player has already declared ready');
+            return 
+        }
+
+        room.playerReady[playerRole] = true;                //action
+        const other = otherPlayer(playerRole);
+        if (!room.playerReady[other]){
+            io.to(room[other]).emit('opponentReady');
+        }
+        else{
+            startGame(roomId);
+        }
+        console.log(`${socket.id}:\t player is ready`);
+        callback(true);
+    }
+
+    function startGame(roomId){
+        console.log(`${roomId}:\t game started in this room`);
+        const room = rooms[roomId];
+        room.startDelay = startDelay;
+        room.status = "inGame";
+        room.score = {
+            leftPlayer: 0,
+            rightPlayer: 0
+        };
+    }
+
     function declareRematch(roomId, role){
         if (!isDataValid(roomId, socket.id, role)){
             return;
@@ -223,6 +274,7 @@ io.on("connection", (socket) => {
             leftPlayer: false,
             rightPlayer: false
         };
+        room.gameState = initGame();
         io.emit("rematchStarted");
     }
 
@@ -235,90 +287,83 @@ io.on("connection", (socket) => {
         callback(false, `there is not a socket in waiting room with given ID: ${socketId}`);
     }
 
-    function declareReady(roomId, socket, playerRole, callback){
-        console.log(`${socket.id}:\t got declare ready event from"`);
-        const room = rooms[roomId];
-        
-        // validation 
-        if (!room){
-            callback(false, "room with given roomId doesn't exist");
-            return;
-        }
-        if (room[playerRole] != socket.id){
-            callback(false, "you do not have permissions for for that player "+
-            "or that role does not exist");
-            return;
-        }
-        if (room.playerReady[playerRole]){
-            callback(false, 'player has already declared ready');
-            return 
-        }
 
-        //action
-        room.playerReady[playerRole] = true;
-        const other = otherPlayer(playerRole);
-        if (!room.playerReady[other]){
-            io.to(room[other]).emit('opponentReady');
-        }
-        else{
-            startGame(roomId);
-        }
-        console.log(`${socket.id}:\t player is ready`);
-        callback(true);
+    function disconnecting(socket){
+        console.log(`${socket.id}:\t disconnected`);
+        socket.rooms.forEach(room => leaveRoom(socket, room, () => {}));
     }
 }); 
 
 
-function startGame(roomId){
-    console.log(`${roomId}:\t game started in this room`);
-    // console.log(io.sockets.adapter.rooms.get(roomId));
-    const room = rooms[roomId];
-    room.startDelay = startDelay;
-    room.status = "inGame";
-    room.score = {
-        leftPlayer: 0,
-        rightPlayer: 0
-    };
-}
-
+//  ------------------- main loop -------------------
 setInterval(() => {
     const currTime = new Date();
     const interval = Math.min(currTime - lastFrame, maxInterval);
     for (const roomId in rooms){
         const room = rooms[roomId];
+        const gameState = room.gameState;
         if (room.status === 'inGame'){
             let winner;
             lastFrame = currTime;
-            
-            if (room.startDelay < 0){
-                updatePlayer(room.gameState, 'leftPlayer', interval);
-                updatePlayer(room.gameState, 'rightPlayer', interval);
-                winner = updateBall(room.gameState, interval);
-                updateScale(room.gameState, currTime)
-                io.to(roomId).to(room.specId).emit("newGameState", room.gameState);
-            }
-            else{
-                room.startDelay -= interval;
-            }
 
-            if (winner){
-                room.score[winner] += 1;
-                if (room.score[winner] >= winnerScore){
-                    room.status = 'full';
-                    io.to(roomId).emit("gameHasEnded", 'one of the players exceeded winnerScore', room.score);
-                    io.to(room.specId).emit("gameHasEnded", 'one of the players exceeded winnerScore', room.score);
-                }
-                else{
-                    room.gameState = initGame();
-                    io.to(roomId).to(room.specId).emit('scoreUpdate', room.score);
-                    room.startDelay = restartDelay;
-                }
+            switch (room.gameStatus){
+                case "playing":
+                    updatePlayer(gameState, 'leftPlayer', interval);
+                    updatePlayer(gameState, 'rightPlayer', interval);
+                    winner = updateBall(gameState, interval);
+                    updateScale(gameState, interval);
+                    if (winner){
+                        gameState.winner = winner;
+                        room.score[winner] += 1;
+                        room.inputDisabled = true;
+                        nextRoundDelay = winAnimationSpan;
+                        if (isOnGround(gameState, 'leftPlayer') && isOnGround(gameState, 'rightPlayer')){
+                            room.gameStatus = "winning"
+                        }
+                        else{
+                            room.gameStatus = "falling"
+                        }
+                    }
+                    break;
+                case 'falling':
+                    updatePlayer(gameState, 'leftPlayer', interval);
+                    updatePlayer(gameState, 'rightPlayer', interval);
+                    if (isOnGround(gameState, 'leftPlayer') && isOnGround(gameState, 'rightPlayer')){
+                        room.gameStatus = 'winning';
+                    }
+                    else{
+                        break;
+                    }
+                case 'winning':
+                    if (nextRoundDelay === winAnimationSpan){
+                        const winner = gameState.winner;
+                        gameState[winner].animationName = 'winning';
+                    }
+                    nextRoundDelay -= interval;
+                    if (nextRoundDelay < 0){
+                        const winner = gameState.winner;
+                        if (room.score[winner] >= winnerScore){
+                            room.status = 'full';
+                            io.to(roomId).emit("gameHasEnded", 'one of the players exceeded winnerScore', room.score);
+                            io.to(room.specId).emit("gameHasEnded", 'one of the players exceeded winnerScore', room.score);
+                        }
+                        else{
+                            io.to(roomId).to(room.specId).emit('scoreUpdate', room.score);
+                            room.inputDisabled = false;
+                            resetGameState(room.gameState);
+                            showBall(gameState);
+                            gameState.winner = "none";
+                            room.gameStatus = "playing";
+                        }
+                    }
             }
+            io.to(roomId).to(room.specId).emit("newGameState", gameState);
         }
     }
 }, loopInterval);
 
 
+//  ------------------- helper functions -------------------
 function otherPlayer(player){
     if (player === "leftPlayer"){
         return "rightPlayer";
@@ -348,7 +393,3 @@ function isDataValid(roomId, socketId, role){
 
 
 http.listen(process.env.PORT || 3000);
-
-
-
-

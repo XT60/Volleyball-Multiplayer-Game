@@ -71,7 +71,8 @@ body #gameArea #court {
   height: 443px;
   position: absolute;
   left: 50%;
-  transform: translate(-50%, 0);
+  top: 30%;
+  transform: translate(-50%, -50%);
 }
 body #gameArea #court #courtImg {
   width: 100%;
@@ -96,6 +97,7 @@ body #gameArea #court #ball {
   position: absolute;
   width: 3.497%;
   height: 9.48%;
+  transition: opacity ease 0.4s;
 }
 body #gameArea #court #leftPlayer {
   left: 100px;
@@ -113,28 +115,29 @@ body #gameArea #court #rightPlayer {
   width: 5.745%;
   height: 39.503%;
 }
-body #gameArea #court .walkAnimation {
+body #gameArea #court .animation {
   position: absolute;
   left: 0;
   top: 0;
+}
+body #gameArea #court .walkAnimation {
   display: block;
   width: 400%;
   height: 100%;
 }
 body #gameArea #court .shootAnimation {
-  position: absolute;
-  left: 0;
-  top: 0;
   display: none;
   width: 200%;
   height: 100%;
 }
 body #gameArea #court .jumpAnimation {
-  position: absolute;
-  left: 0;
-  top: 0;
   display: none;
   width: 100%;
+  height: 100%;
+}
+body #gameArea #court .winAnimation {
+  display: none;
+  width: 300%;
   height: 100%;
 }
 body #gameArea #powerMeter {
@@ -166,7 +169,7 @@ body #gameArea #powerMeter #leftIndicator {
   z-index: 100;
 }
 body #gameArea #powerMeter #rightIndicator {
-  background-color: blue;
+  background-color: orange;
   opacity: 0.7;
   display: none;
   z-index: 100;
@@ -213,6 +216,12 @@ body #gameArea #scoreBoard .playerName {
   background-position: center;
   background-size: cover;
   color: rgb(255, 255, 255);
+}
+.container .contentContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 .container .headerTextBig {
   font-family: "Playball", cursive;
@@ -417,6 +426,14 @@ body #gameArea #scoreBoard .playerName {
   font-weight: bold;
 }
 
+.waitMessage::after {
+  content: " .";
+  position: relative;
+  left: -0.25em;
+  -webkit-animation: loadingDots 1s infinite;
+          animation: loadingDots 1s infinite;
+}
+
 .waitKey {
   margin: 0 1em 0.7em;
   font-size: 2rem;
@@ -467,12 +484,13 @@ body #gameArea #scoreBoard .playerName {
   margin-top: 12em;
   display: flex;
   justify-content: center;
+  align-items: center;
 }
-.movementButttons .moveBtn:nth-child(odd) {
-  padding: 1em 1.6em;
-}
-.movementButttons .moveBtn:nth-child(even) {
-  padding: 1em 1.5em;
+.movementButttons .moveBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1em 1.5em 1.1em;
 }
 .movementButttons .btn {
   margin: 0.2em;
@@ -505,6 +523,10 @@ body #gameArea #scoreBoard .playerName {
   opacity: 1;
 }
 
+#gameSummaryWindow .container .contentContainer {
+  transform: scale(0.8);
+}
+
 @-webkit-keyframes bounceDown {
   0%, 25%, 50%, 90%, 100% {
     transform: translateY(0.8em);
@@ -526,6 +548,38 @@ body #gameArea #scoreBoard .playerName {
   }
   70% {
     transform: translateY(1.7em);
+  }
+}
+@-webkit-keyframes loadingDots {
+  0%, 20% {
+    color: transparent;
+    text-shadow: 0.25em 0 0 transparent, 0.5em 0 0 transparent;
+  }
+  40% {
+    color: white;
+    text-shadow: 0.25em 0 0 transparent, 0.5em 0 0 transparent;
+  }
+  60% {
+    text-shadow: 0.25em 0 0 white, 0.5em 0 0 transparent;
+  }
+  80%, 100% {
+    text-shadow: 0.25em 0 0 white, 0.5em 0 0 white;
+  }
+}
+@keyframes loadingDots {
+  0%, 20% {
+    color: transparent;
+    text-shadow: 0.25em 0 0 transparent, 0.5em 0 0 transparent;
+  }
+  40% {
+    color: white;
+    text-shadow: 0.25em 0 0 transparent, 0.5em 0 0 transparent;
+  }
+  60% {
+    text-shadow: 0.25em 0 0 white, 0.5em 0 0 transparent;
+  }
+  80%, 100% {
+    text-shadow: 0.25em 0 0 white, 0.5em 0 0 white;
   }
 }
 @media (min-width: 375px) {
@@ -645,7 +699,7 @@ body #gameArea #scoreBoard .playerName {
     margin: 0.75em 0;
   }
   .form {
-    width: 35%;
+    width: 90%;
   }
 }
 @media (min-width: 768px) {
@@ -734,6 +788,9 @@ body #gameArea #scoreBoard .playerName {
   }
 }
 @media (min-width: 915px) {
+  .container .form {
+    width: 35%;
+  }
   .container .form .modeCheckbox .modeCheckboxBtn {
     padding-left: 4.8em;
   }
@@ -812,7 +869,7 @@ body #gameArea #scoreBoard .playerName {
     height: 60px;
   }
   body #gameArea .allGameItemsContainer {
-    margin-top: 6em;
+    margin-top: 5em;
   }
   body #gameArea .movementButttons {
     display: none !important;
@@ -838,7 +895,7 @@ body #gameArea #scoreBoard .playerName {
     height: 66px;
   }
   body #gameArea .allGameItemsContainer {
-    margin-top: 6em;
+    margin-top: 5em;
   }
   body #gameArea .buttons {
     margin: 0 5em;
@@ -847,6 +904,9 @@ body #gameArea #scoreBoard .playerName {
     margin: 0 10em;
   }
   .playerText {
+    padding-left: 0.3em;
+  }
+  .spectatorText {
     padding-left: 0.3em;
   }
 }
@@ -895,7 +955,7 @@ body #gameArea #scoreBoard .playerName {
     top: 28em;
   }
   body #gameArea .allGameItemsContainer {
-    margin-top: 2em;
+    margin-top: 4em;
   }
   .buttons {
     margin: 0 15em;
@@ -911,7 +971,7 @@ body #gameArea #scoreBoard .playerName {
     height: 70px;
   }
   body #gameArea .allGameItemsContainer {
-    margin-top: 1em;
+    margin-top: 2.5em;
   }
 }
 @media (min-width: 1400px) {
@@ -930,5 +990,145 @@ body #gameArea #scoreBoard .playerName {
 @media (min-width: 1800px) {
   .buttons {
     margin: 0 30em;
+  }
+}
+@media (min-width: 400px) and (max-width: 915px) and (orientation: landscape) {
+  #optionsWindow .container .contentContainer {
+    transform: scale(0.9);
+    display: block;
+  }
+  #keyInWindow .container .contentContainer {
+    width: 80%;
+    transform: scale(0.7);
+  }
+  #keyInWindow .container .contentContainer .form {
+    width: 80%;
+    flex-direction: row;
+    align-content: space-between;
+    flex-wrap: wrap;
+    align-items: stretch;
+    justify-content: center;
+  }
+  #keyInWindow .container .contentContainer .form .enterBtn {
+    margin-right: 0.5em;
+    padding: 0.8em 1.4em;
+  }
+  #keyInWindow .container .contentContainer .form .modeCheckbox {
+    width: 75%;
+    align-items: center;
+  }
+  #keyInWindow .container .contentContainer .form .gameKeyInput {
+    width: 17em;
+  }
+  #keyOutWindow .container .contentContainer {
+    width: 70%;
+    transform: scale(0.7);
+    display: flex;
+    justify-content: center;
+  }
+  #gameFindWindow .container .contentContainer {
+    transform: scale(0.9);
+  }
+  #gameSummaryWindow .container .contentContainer .endButtons {
+    display: flex;
+    align-items: stretch;
+    flex-direction: row;
+    margin: 0 5%;
+  }
+  #gameSummaryWindow .container .contentContainer .endButtons .btn {
+    margin: 0 0.2em;
+    padding: 0.7em;
+    text-align: center;
+  }
+  #gameArea .gameContainer #returnBtnSmall {
+    top: -2em;
+    left: 0.25em;
+    padding: 0.1em 0.35em 0 0.15em;
+  }
+  #gameArea .gameContainer .allGameItemsContainer #scoreBoard {
+    top: -8.5em;
+  }
+  #gameArea .gameContainer .allGameItemsContainer #powerMeter {
+    top: 0.2em;
+    height: 38px;
+  }
+  #gameArea .gameContainer .allGameItemsContainer .movementButttons {
+    margin-top: 0.6em;
+  }
+  #gameArea .gameContainer .allGameItemsContainer .movementButttons .btn {
+    font-size: 1.45rem;
+  }
+}
+@media (min-width: 640px) and (orientation: landscape) {
+  #gameArea .gameContainer .allGameItemsContainer #powerMeter {
+    top: 1.8em;
+    height: 38px;
+  }
+  #gameArea .gameContainer .allGameItemsContainer .movementButttons {
+    margin-top: 2.2em;
+  }
+  #gameArea .gameContainer .allGameItemsContainer .movementButttons .btn {
+    font-size: 1.45rem;
+  }
+}
+@media (min-width: 670px) and (orientation: landscape) {
+  #gameArea .gameContainer .allGameItemsContainer #powerMeter {
+    top: 3.5em;
+    height: 38px;
+  }
+  #gameArea .gameContainer .allGameItemsContainer .movementButttons {
+    margin-top: 4.3em;
+  }
+  #gameArea .gameContainer .allGameItemsContainer .movementButttons .btn {
+    font-size: 1.45rem;
+  }
+}
+@media (min-width: 992px) {
+  #gameArea .gameContainer .allGameItemsContainer #powerMeter {
+    top: 20em;
+    height: 55px;
+  }
+  #gameArea #court {
+    top: 35% !important;
+  }
+  #gameArea #scoreBoard {
+    top: -3em !important;
+  }
+}
+@media (min-width: 1100px) {
+  #gameArea .gameContainer .allGameItemsContainer #powerMeter {
+    top: 21.5em;
+  }
+}
+@media (min-width: 1300px) {
+  #gameArea .gameContainer .allGameItemsContainer #powerMeter {
+    top: 24em;
+  }
+}
+@media (min-width: 1600px) {
+  #gameArea .gameContainer .allGameItemsContainer #powerMeter {
+    top: 29em;
+  }
+}
+@media (min-width: 1700px) {
+  #gameArea .gameContainer .allGameItemsContainer #powerMeter {
+    top: 33em;
+  }
+}
+@media (min-width: 800px) and (max-height: 380px) and (orientation: landscape) {
+  #gameArea .gameContainer .allGameItemsContainer #powerMeter {
+    top: 0.8em;
+    height: 38px;
+  }
+  #gameArea .gameContainer .allGameItemsContainer .movementButttons {
+    margin-top: 1.3em;
+  }
+  #gameArea .gameContainer .allGameItemsContainer .movementButttons .btn {
+    font-size: 1.45rem;
+  }
+}
+@media (min-width: 915px) and (orientation: landscape) {
+  #keyInWindow .container .contentContainer {
+    display: contents;
   }
 }
