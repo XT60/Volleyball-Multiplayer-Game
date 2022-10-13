@@ -75,16 +75,8 @@
     <div id="gameFindWindow">
         <section class="container">
             <div class="contentContainer">
-                <!-- <div class="waitArea"> -->
-                <p class="waitMessage"> Waiting for other player to join the game
-                    <!-- <div class="dots">
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                </div> -->
-                </p>
-                <!-- </div> -->
-                <p class="waitKey"> You will be connected with other player soon!</p>
+                <p class="waitMessage">Waiting for other player to join the game</p>
+                <p class="waitKey">You will be connected with other player soon!</p>
                 <button class="btn">Return</button>
             </div>
         </section>
@@ -119,12 +111,12 @@
             <div class="allGameItemsContainer">
 
                 <div id="scoreBoard">
-                    <p class="leftPlay playerName">leftPlayer</p>
+                    <p class="playerName" id="leftPlayerLabel">leftPlayer</p>
                     <div class="playersScore">
                         <span id="leftPlayerScore">0</span>
                         <span id="rightPlayerScore">0</span>
                     </div>
-                    <p class="rightPlay playerName">rightPlayer</p>
+                    <p class="playerName" id="rightPlayerLabel">rightPlayer</p>
                 </div>
 
                 <div id="court">
@@ -134,24 +126,27 @@
                     <img id="ball" src="./images/ball.png" alt="ball image">
 
                     <div id="leftPlayer">
-                        <img class="walkAnimation" src="./images/leftPlayer/walk/scaledSpriteSheet.png"
+                        <img class="walkAnimation animation" src="./images/leftPlayer/walk/scaledSpriteSheet.png"
                             alt="walkAnimation">
-                        <img class="shootAnimation" src="./images/leftPlayer/shoot/scaledSpriteSheet.png"
+                        <img class="shootAnimation animation" src="./images/leftPlayer/shoot/scaledSpriteSheet.png"
                             alt="shootAnimation">
-                        <img class="jumpAnimation" src="./images/leftPlayer/jump/scaledSpriteSheet.png"
+                        <img class="jumpAnimation animation" src="./images/leftPlayer/jump/scaledSpriteSheet.png"
                             alt="jumpAnimation">
+                        <img class="winAnimation animation" src="./images/leftPlayer/win/scaledSpriteSheet.png"
+                            alt="winAnimation">
                     </div>
 
                     <div id="rightPlayer">
-                        <img class="walkAnimation" src="./images/rightPlayer/walk/scaledSpriteSheet.png"
+                        <img class="walkAnimation animation" src="./images/rightPlayer/walk/scaledSpriteSheet.png"
                             alt="walkAnimation">
-                        <img class="shootAnimation" src="./images/rightPlayer/shoot/scaledSpriteSheet.png"
+                        <img class="shootAnimation animation" src="./images/rightPlayer/shoot/scaledSpriteSheet.png"
                             alt="shootAnimation">
-                        <img class="jumpAnimation" src="./images/rightPlayer/jump/scaledSpriteSheet.png"
+                            <img class="jumpAnimation animation" src="./images/rightPlayer/jump/scaledSpriteSheet.png"
                             alt="jumpAnimation">
+                        <img class="winAnimation animation" src="./images/rightPlayer/win/scaledSpriteSheet.png"
+                            alt="winAnimation">
                     </div>
                 </div>
-
 
                 <div id="powerMeter">
                     <img id="scale" src="./images/scale.png" alt="scale">
