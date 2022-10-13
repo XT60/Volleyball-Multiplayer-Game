@@ -49,6 +49,11 @@ const ballElement = document.getElementById("ball"),
         rightPlayer: document.getElementById('rightPlayer')
     },
 
+    playerLabelElements = {
+        leftPlayer: document.getElementById('leftPlayerLabel'),
+        rightPlayer: document.getElementById('rightPlayerLabel')
+    },
+
     animationElements = {
         leftPlayer: { 
             "standing": document.querySelector('#leftPlayer .walkAnimation'), 
@@ -108,6 +113,7 @@ const ballElement = document.getElementById("ball"),
     returnBtnSmallElement = document.querySelector('#returnBtnSmall'),
     movementButttonsElement = document.querySelector('.movementButttons'),
     copyBtnElement = document.querySelector('.copyBtn');
+    
 
 gameIndicatorElement.style.setProperty('width', cssPercent(indicatorWidth));
 playerCheckboxElement.addEventListener('click', () => {
@@ -371,6 +377,7 @@ socket.on("scoreUpdate", (newScore) => updateScore(newScore));
 socket.on("newGameState", (gameState) => {
     if (!inGame){
         inGame = true;
+        updatePlayerLabels();
         nextAnimationFrame.leftPlayer = 0;
         nextAnimationFrame.rightPlayer = 0;
         scoreBoardElement.style.setProperty('display', 'flex');
@@ -634,6 +641,20 @@ function updateVIsibility(element, isVisible, wasVisible){
             element.style.setProperty('opacity', "0");
         }
     }
+}
+
+function updatePlayerLabels(){
+    playerLabelElements[myPlayer].innerHTML = 'you';
+    playerLabelElements[otherPlayer(myPlayer)].innerHTML = 'opponent'
+
+}
+
+
+function otherPlayer(playerName){
+    if (playerName === "leftPlayer"){
+        return "rightPlayer";
+    }
+    return "leftPlayer";
 }
 
 
